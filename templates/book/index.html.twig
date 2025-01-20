@@ -3,18 +3,22 @@
 {% block title %}Hello BookController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        {% for book in pagination %}
+          {% for book in books %}
+        
+        <h2>{{ book.name }}</h2>
+        <img src="{{ asset('uploads/images/' ~ book.picture) }}" alt="{{ book.name }}"</img>
+        <p> Prix: <br>{{ book.price }} €</p>
+        
+        {# <a href="{{ path('books_show') }}" class="btn btn-primary">Plus d'infos</a> #}
+        {% endfor %}  
+        {% endfor %}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/wamp64/www/manga-wara/src/Controller/BookController.php</code></li>
-        <li>Your template at <code>C:/wamp64/www/manga-wara/templates/book/index.html.twig</code></li>
-    </ul>
-</div>
+    <div class="pagination">
+        {{ knp_pagination_render(pagination) }}
+    </div> 
+ 
+        <br>
+<a href="{{ path('books_new') }}" class="btn btn-success">Nouveau titre</a>
 {% endblock %}

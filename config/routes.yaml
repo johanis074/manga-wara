@@ -3,3 +3,6 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+books_show:
+    path: /books/{id}
+    controller: App\Controller\BookController::books_show

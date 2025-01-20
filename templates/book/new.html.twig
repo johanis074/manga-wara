@@ -1,0 +1,14 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+            {{ form_row(form.picture) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.editor) }}
+            {{ form_row(form.category) }}
+            {{ form_row(form.synopsis) }}
+           <p> {{ form_row(form.price) }} €</p>
+           {{ form_row(form.reference) }}
+           {{ form_row(form.isbn) }}
+           {{ form_row(form.ean) }}
+            
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        {{ form_end(form) }}
+<a href="{{ path('books_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
