@@ -1,43 +1,26 @@
 <?php
 namespace App\Controller;
 
-use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface as HasherUserPasswordHasherInterface;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginController extends AbstractController
 {
-    /**
-     * @Route("/login", name="app_login")
-     */
-    public function login(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
-    {
-        // Suppose $plaintextPassword is the plain text password from the request
-        $plaintextPassword = $request->request->get('password');
-        $email = $request->request->get('email');
+    #[Route('/login', name: 'app_login')]
+    public function index(AuthenticationUtils $authenticationUtils): Response
+        {
+            // get the login error if there is one
+            $error = $authenticationUtils->getLastAuthenticationError();
 
-        // Find the user by email
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+            // last username entered by the user
+            $lastUsername = $authenticationUtils->getLastUsername();
 
-        if (!$user) {
-            // Handle user not found
-            return new Response('User not found', 404);
-        }
-
-        // Check if the password is valid
-        if ($passwordHasher->isPasswordValid($user, $plaintextPassword)) {
-            // Handle successful login
-            return new Response('Login successful');
-        } else {
-            // Handle invalid password
-            return new Response('Invalid password', 401);
-        }
+            return $this->render('login/index.html.twig', [
+                'last_username' => $lastUsername,
+                'error'         => $error,
+        ]);
     }
 }
 ?>

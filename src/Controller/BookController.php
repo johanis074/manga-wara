@@ -16,14 +16,29 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class BookController extends AbstractController
 {
-    #[Route('/books', name: 'books_index', methods:['GET'])]
-    public function index(BookRepository $repository): Response
-    {
-        $books = $repository->findAll();
-        return $this->render('book/index.html.twig', [
-            'books' => $books,
-        ]);
-    }
+    #[Route('/books', name: 'app_accueil', methods: ['GET'])]
+public function index(BookRepository $repository, Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
+{
+    // Créez une requête pour récupérer les livres
+    $query = $entityManager->getRepository(Book::class)->createQueryBuilder('b')
+        ->getQuery();
+
+    // Paginez la requête
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1), // Numéro de la page, 1 par défaut
+        2 // Nombre d'éléments par page
+    );
+
+    // Rendez le template avec les livres paginés
+    return $this->render('book/index.html.twig', [
+        'pagination' => $pagination,
+    ]);
+}
+        
+    // return $this->render('book/index.html.twig', [
+    //     'books' => $books,
+    // ]);
 
     #[Route('/new', name: 'books_new', methods:['GET','POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
@@ -77,22 +92,6 @@ class BookController extends AbstractController
 
         return $this->render('book/show.html.twig', [
             'book' => $book,
-        ]);
-    }
-
-    public function list(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
-    {
-        $query = $entityManager->getRepository(Book::class)->createQueryBuilder('b')
-            ->getQuery();
-
-        $pagination = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1), // Numéro de la page, 1 par défaut
-            10 // Nombre d'éléments par page
-        );
-
-        return $this->render('book/list.html.twig', [
-            'pagination' => $pagination,
         ]);
     }
 }

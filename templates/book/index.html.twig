@@ -1,24 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello BookController!{% endblock %}
-
 {% block body %}
+    {% if not app.user %}
+            {# page inscription affiché si pas connecté #}
+            <a href="{{ path('app_register') }}">
+                <button>S'inscrire</button>
+            </a>
 
+            {# page de connexion affiché si pas connecté #}
+            <a href="{{ path('app_login') }}">
+                <button>Se connecter</button>
+            </a>
+        {% else %}
+            {# Sinon si app.user est défini, c'est qu'un utilisateur est connecté #}
+            <a href="{{ path('app_logout') }}">
+                <button>Déconnexion</button>
+            </a>
+        {% endif %}
+    <h1>Livres</h1>
+
+    <ul>
         {% for book in pagination %}
-          {% for book in books %}
-        
-        <h2>{{ book.name }}</h2>
+            <h2>{{ book.name }}</h2>
         <img src="{{ asset('uploads/images/' ~ book.picture) }}" alt="{{ book.name }}"</img>
         <p> Prix: <br>{{ book.price }} €</p>
-        
-        {# <a href="{{ path('books_show') }}" class="btn btn-primary">Plus d'infos</a> #}
-        {% endfor %}  
         {% endfor %}
+    </ul>
 
     <div class="pagination">
         {{ knp_pagination_render(pagination) }}
-    </div> 
- 
+    </div>
         <br>
 <a href="{{ path('books_new') }}" class="btn btn-success">Nouveau titre</a>
 {% endblock %}
