@@ -29,6 +29,17 @@ class RegistrationController extends AbstractController
         $this->authenticator = $authenticator;
     }
 
+    public function generateRandomPseudo(): string
+    {
+        $characters = '0123456789';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < 10; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return 'user' . $randomString;
+    }
+
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, UserAuthenticatorInterface $userAuthenticator): Response
     {
@@ -44,7 +55,7 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
-
+            $user->setPseudo($this->generateRandomPseudo());
             $user->setRoles(['ROLE_CLIENT']);
             $entityManager->persist($user);
             $entityManager->flush();
@@ -58,12 +69,14 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            // authenticate the user
-            return $userAuthenticator->authenticateUser(
+            // authenticate the user and redirect to home
+            $userAuthenticator->authenticateUser(
                 $user,
                 $this->authenticator, // Use the injected authenticator
                 $request
             );
+
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('registration/register.html.twig', [
@@ -85,12 +98,13 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
 
-        // @TODO Change the redirect on success and handle or remove the flash message in your templates
+        // Redirect to home on success
         $this->addFlash('success', 'Your email address has been verified.');
 
-        return $this->redirectToRoute('books_index');
+        return $this->redirectToRoute('home');
     }
 }
+?>
 
 
 

@@ -22,7 +22,7 @@
     <ul>
         {% for book in pagination %}
             <h2>{{ book.name }}</h2>
-        <img src="{{ asset('uploads/images/' ~ book.picture) }}" alt="{{ book.name }}"</img>
+        <img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}"</img>
         <p> Prix: <br>{{ book.price }} €</p>
         {% endfor %}
     </ul>

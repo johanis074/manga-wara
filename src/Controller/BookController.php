@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class BookController extends AbstractController
 {
-    #[Route('/books', name: 'app_accueil', methods: ['GET'])]
+    #[Route('/books', name: 'books_index', methods: ['GET'])]
 public function index(BookRepository $repository, Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
 {
     // Créez une requête pour récupérer les livres

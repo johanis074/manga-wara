@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProfileController!{% endblock %}
+
+{% block body %}
+    <a href="{{ path('app_home') }}"><button>Retour</button></a>
+    <h1>Profil</h1>
+    <h2>Votre pseudonyme:</h2>
+    <p>{{ app.user.pseudo }}</p>
+    {{ form_start(profileForm, {'action': path('app_profile'), 'method': 'POST'}) }}
+        {{ form_row(profileForm.pseudo, {'label': 'Pseudo'}) }}
+        <button class="btn btn-lg btn-primary" type="submit">Modifier son pseudo</button>
+    {{ form_end(profileForm) }}
+
+{% endblock %}

@@ -13,8 +13,11 @@
 
     {{ form_start(registrationForm) }}
         {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
+        {{ form_row(registrationForm.plainPassword.first, {
             label: 'Password'
+        }) }}
+        {{ form_row(registrationForm.plainPassword.second, {
+            label: 'ConfirmPassword'
         }) }}
         {{ form_row(registrationForm.agreeTerms) }}
 
