@@ -1,0 +1,173 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProfileController!{% endblock %}
+
+{% block body %}
+    <a href="{{ path('app_home') }}"><button>Retour</button></a>
+    
+
+    {{ form_start(profileForm, {'action': path('app_profile'), 'method': 'POST', 'enctype': 'multipart/form-data'}) }}
+        <div class="form-group">
+            <h1>Profil</h1>
+            <h2>Photo de profil:</h2>
+            <img src="{{ asset('uploads/pictureUser/' ~ app.user.pictureUser) }}" alt="Photo de profil" style="width: 100px; height: 100px;">
+            <button type="button" id="openPopup">Choisir une photo</button>
+            <input type="hidden" id="selectedPhoto" name="profileForm[profilePicture]">
+        </div>
+        <h2>Votre pseudonyme:</h2>
+        <p>{{ app.user.pseudo }}</p>
+        <button type="button" id="openPseudoPopup" class="btn btn-lg btn-primary">Modifier son pseudo</button>
+    {{ form_end(profileForm) }}
+    
+
+    <!-- Pop-up for profile pictures -->
+    <div id="popup" style="display:none;">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <h2>Choisissez une photo de profil</h2>
+            <div class="photo-options">
+                <img src="uploads/pictureUser/cat.webp" alt="Photo 1" class="selectable-photo" data-value="photo1.jpg">
+                <img src="path/to/photo2.jpg" alt="Photo 2" class="selectable-photo" data-value="photo2.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+                <img src="path/to/photo3.jpg" alt="Photo 3" class="selectable-photo" data-value="photo3.jpg">
+            </div>
+        </div>
+    </div>
+
+    <!-- Pop-up for modifying pseudo -->
+    <div id="pseudoPopup" style="display:none;">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <h2>Modifier votre pseudo</h2>
+            <input type="text" id="newPseudo" placeholder="Nouveau pseudo">
+            <button type="button" id="savePseudo">Enregistrer</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let openPopupButton = document.getElementById('openPopup');
+            let popup = document.getElementById('popup');
+            let closePopup = document.getElementsByClassName('close');
+            let selectablePhotos = document.getElementsByClassName('selectable-photo');
+            let selectedPhotoInput = document.getElementById('selectedPhoto');
+
+            let openPseudoPopupButton = document.getElementById('openPseudoPopup');
+            let pseudoPopup = document.getElementById('pseudoPopup');
+            let newPseudoInput = document.getElementById('newPseudo');
+            let savePseudoButton = document.getElementById('savePseudo');
+
+            openPopupButton.onclick = function() {
+                popup.style.display = 'block';
+            }
+
+            openPseudoPopupButton.onclick = function() {
+                pseudoPopup.style.display = 'block';
+            }
+
+            for (let i = 0; i < closePopup.length; i++) {
+                closePopup[i].onclick = function() {
+                    popup.style.display = 'none';
+                    pseudoPopup.style.display = 'none';
+                }
+            }
+
+            window.onclick = function(event) {
+                if (event.target == popup) {
+                    popup.style.display = 'none';
+                }
+                if (event.target == pseudoPopup) {
+                    pseudoPopup.style.display = 'none';
+                }
+            }
+
+            for (let i = 0; i < selectablePhotos.length; i++) {
+                selectablePhotos[i].onclick = function() {
+                    selectedPhotoInput.value = this.getAttribute('data-value');
+                    popup.style.display = 'none';
+                }
+            }
+
+            savePseudoButton.onclick = function() {
+                let newPseudo = newPseudoInput.value;
+                if (newPseudo) {
+                    document.getElementById('profileForm_pseudo').value = newPseudo;
+                    pseudoPopup.style.display = 'none';
+                }
+            }
+        });
+    </script>
+
+    <style>
+        /* Style for the pop-up */
+        #popup, #pseudoPopup {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .photo-options img {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        #newPseudo {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+
+        #savePseudo {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #savePseudo:hover {
+            background-color: #0056b3;
+        }
+    </style>
+{% endblock %}
