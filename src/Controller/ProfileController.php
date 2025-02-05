@@ -22,7 +22,7 @@ class ProfileController extends AbstractController
             // Update the pseudo if provided
             $pseudo = $form->get('pseudo')->getData();
             if ($pseudo) {
-                $user->setPseudo($pseudo);
+                $user->$pseudo;
             }
 
             $entityManager->flush();
