@@ -4,7 +4,7 @@
 
 {% block body %}
 <h1>Manga-Wara</h1>
-<a href="{{ path('books_index') }}"><button>Manga</button></a>
+<a href="{{ path('app_books') }}"><button>Manga</button></a>
 {% if not app.user %}
             {# page inscription affiché si pas connecté #}
             <a href="{{ path('app_register') }}">

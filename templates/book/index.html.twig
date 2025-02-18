@@ -1,35 +1,54 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% if not app.user %}
-            {# page inscription affiché si pas connecté #}
-            <a href="{{ path('app_register') }}">
-                <button>S'inscrire</button>
-            </a>
+     <header>
+        <section>
+            <a href="{{ path('app_home') }}">
+            <img src="{{ asset('uploads/logo.webp') }}" alt="Logo MangaWara"></a>
+            
+            <form action="">
+                <input type="search" name="q" placeholder="Search">
+            </form>
+                <div>
+                    {% if not app.user %}
+                    <a href="{{ path('app_register') }}">
+                        S'inscrire
+                    </a>
+                    <a href="{{ path('app_login') }}">
+                        Se connecter
+                    </a>
+                    {% else %}
+                    <a href="{{ path('app_logout') }}">
+                        Déconnexion
+                    </a>
+                    {% endif %}
+                </div>
+            </section>
+        <nav>  
+            <a href="#">Mangas</a>
+            <a href="#">Figurines</a>
+            <a href="#">Bon plan</a>
+        </nav>
+    </header>
+    
+    <main >
+        <ul class="cards-container">
+            {% for book in pagination %}
+                <li class="card">
+                    <a href="{{ path('books_show', {'id': book.id}) }}">
+                        <h3>  {{ book.name }}</h3>
+                        <img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}">
+                        Prix: {{ book.price }} €
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
 
-            {# page de connexion affiché si pas connecté #}
-            <a href="{{ path('app_login') }}">
-                <button>Se connecter</button>
-            </a>
-        {% else %}
-            {# Sinon si app.user est défini, c'est qu'un utilisateur est connecté #}
-            <a href="{{ path('app_logout') }}">
-                <button>Déconnexion</button>
-            </a>
-        {% endif %}
-    <h1>Livres</h1>
+        <div class="pagination">
+            {{ knp_pagination_render(pagination) }}
+        </div>
 
-    <ul>
-        {% for book in pagination %}
-            <h2>{{ book.name }}</h2>
-        <img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}"</img>
-        <p> Prix: <br>{{ book.price }} €</p>
-        {% endfor %}
-    </ul>
-
-    <div class="pagination">
-        {{ knp_pagination_render(pagination) }}
-    </div>
         <br>
-<a href="{{ path('books_new') }}" class="btn btn-success">Nouveau titre</a>
+        <a href="{{ path('books_new') }}">Nouveau titre</a>
+    </main>
 {% endblock %}

@@ -5,15 +5,84 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ book.name }}</h1>
-    <img src="{{ asset('uploads/images/' ~ book.picture) }}" alt="{{ book.name }}"</img>
-    <p>{{ book.synopsis }}</p>
-    <p>Editeur: {{ book.editor }}</p>
-    <p>Catégorie: {{ book.category }}</p>
-    <p>Référence: {{ book.reference }}</p>
-    <p>ISBN: {{ book.isbn }}</p>
-    <p>EAN: {{ book.ean }}</p>
-    <div>prix: 
-    {{book.price}} €<br>
-        <a href="{{ path('book_list')}}">Retour au catalogue</a>
+    <header>
+        <section>
+            <a href="{{ path('app_home') }}">
+            <img src="{{ asset('uploads/logo.webp') }}" alt="Logo MangaWara"></a>
+            
+            <form action="">
+                <input type="search" name="q" placeholder="Search">
+            </form>
+            <div>
+                {% if not app.user %}
+                <a href="{{ path('app_register') }}">
+                    S'inscrire
+                </a>
+                <a href="{{ path('app_login') }}">
+                    Se connecter
+                </a>
+                {% else %}
+                <a href="{{ path('app_logout') }}">
+                    Déconnexion
+                </a>
+                {% endif %}
+            </div>
+        </section>
+        <nav>  
+            <a href="#">Mangas</a>
+            <a href="#">Figurines</a>
+            <a href="#">Bon plan</a>
+        </nav>
+    </header>
+
+    <main class="container-books">
+    
+    <section class="book-show1">
+        <div class="">
+        {# <a href="{{ path('app_books') }}" class="btn btn-secondary">Retour au catalogue</a> #}
+            <h1>{{ book.name }}</h1>
+            <img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}"/>
+        </div>
+        <div >
+            <p>{{ book.synopsis }}</p>
+            <p>Editeur: {{ book.editor.name}}</p>
+            <p>Catégorie: {{ book.category.name}}</p>
+            <p>Référence: {{ book.reference}}</p>
+            <p>ISBN: {{ book.isbn}}</p>
+            <p>EAN: {{ book.ean}}</p>
+            <p>Prix: {{ book.price }} €</p>
+            <a href="{{ path('cart_add', { 'id': book.id }) }}" class="btn btn-primary">Ajouter au panier</a>
+        </div>
+
+    <!-- Bouton "Ajouter au panier" -->
+    </section>
+    <section class="book-show2">
+    {# Formulaire pour ajouter un commentaire #}
+        {{ form_start(form) }}
+            {{ form_row(form.content) }}
+            <button type="submit" class="btn btn-success">Envoyer</button>
+        {{ form_end(form) }}
+
+    {# Affichage des commentaires #}
+        <ul>
+            {% for comment in pagination %}
+                <li>
+                    
+                    <p>Posté par: <img src="{{ asset('uploads/pictureUser/' ~ app.user.pictureUser) }}" alt="image du profil"></img> {{ comment.user.pseudo }}</p>
+                    <p>Posté le: {{ comment.date|date('d/m/Y H:i') }}</p>
+                    <p>{{ comment.content }}</p>
+                </li>
+            {% else %}
+                <p>Aucun commentaire pour le moment.</p>
+            {% endfor %}
+        </ul>
+
+    {# Pagination #}
+        <div class="pagination">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </section>
+    {# Lien de retour #}
+    
+    </main>
 {% endblock %}

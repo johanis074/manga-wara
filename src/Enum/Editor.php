@@ -7,5 +7,6 @@ enum Editor: string
     case GLENAT = 'glenat';
     case MEIAN = 'meian';
     case KOMIKKU = 'komikku';
+    case OTOTO = 'ototo';
 }
 ?>

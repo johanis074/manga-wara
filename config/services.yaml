@@ -4,7 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    pictures_directory: '%kernel.project_dir%/public/uploads/images'
+    pictures_directory: '%kernel.project_dir%/public/uploads/pictureProduct'
 services:
     # default configuration for services in *this* file
     Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface:
@@ -15,7 +15,13 @@ services:
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
-
+    App\Service\CartService:
+        arguments:
+            $session: '@session'
+    App\Controller\CartController:
+        arguments:
+            $cartService: '@App\Service\CartService'
+            $entityManager: '@doctrine.orm.entity_manager'
     App\:
         resource: '../src/'
         exclude:

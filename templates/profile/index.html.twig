@@ -5,6 +5,8 @@
 {% block body %}
     <a href="{{ path('app_home') }}"><button>Retour</button></a>
     <h1>Profil</h1>
+    <h2>Votre image de profil:</h2>
+    <img src="{{ asset('uploads/pictureUser/' ~ app.user.pictureUser) }}" alt="Image de profil"/>
     <h2>Votre pseudonyme:</h2>
     <p>{{ app.user.pseudo }}</p>
     {{ form_start(profileForm, {'action': path('app_profile'), 'method': 'POST'}) }}

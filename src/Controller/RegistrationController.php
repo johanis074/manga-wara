@@ -29,26 +29,19 @@ class RegistrationController extends AbstractController
         $this->authenticator = $authenticator;
     }
 
-    public function generateRandomPseudo(): string
-    {
-        $characters = '0123456789';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < 10; $i++) {
-            $randomString .= $characters[random_int(0, $charactersLength - 1)];
-        }
-        return 'user' . $randomString;
-    }
-
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, UserAuthenticatorInterface $userAuthenticator): Response
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager,
+        UserAuthenticatorInterface $userAuthenticator
+    ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
+            // Encode the plain password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
@@ -56,11 +49,13 @@ class RegistrationController extends AbstractController
                 )
             );
             $user->setPseudo($this->generateRandomPseudo());
+            $user->setPictureUser('default.webp');
             $user->setRoles(['ROLE_CLIENT']);
+
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // generate a signed url and email it to the user
+            // Generate a signed URL and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
                     ->from(new Address('francoise.johanis@gmail.com', 'master'))
@@ -69,14 +64,12 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            // authenticate the user and redirect to home
-            $userAuthenticator->authenticateUser(
+            // Authenticate the user
+            return $userAuthenticator->authenticateUser(
                 $user,
-                $this->authenticator, // Use the injected authenticator
+                $this->authenticator,
                 $request
             );
-
-            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('registration/register.html.twig', [
@@ -89,23 +82,27 @@ class RegistrationController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // validate email confirmation link, sets User::isVerified=true and persists
+        // Validate email confirmation link, sets User::isVerified=true and persists
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
-
             return $this->redirectToRoute('app_register');
         }
 
         // Redirect to home on success
         $this->addFlash('success', 'Your email address has been verified.');
-
         return $this->redirectToRoute('home');
     }
+
+    private function generateRandomPseudo(): string
+    {
+        $characters = '0123456789';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < 10; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return 'user' . $randomString;
+    }
 }
-?>
-
-
-
-

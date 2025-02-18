@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -20,8 +19,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Assert\NotBlank]
-    #[Assert\Email]
     private ?string $email = null;
 
     /**
@@ -34,14 +31,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank]
     private ?string $password = null;
 
     #[ORM\Column]
     private bool $isVerified = false;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $pseudo = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $pictureUser = null;
 
     public function getId(): ?int
     {
@@ -135,11 +134,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->pseudo;
     }
 
-    public function setPseudo(?string $pseudo): self
+    public function setPseudo(string $pseudo): static
     {
         $this->pseudo = $pseudo;
 
         return $this;
     }
-}
 
+    public function getPictureUser(): ?string
+    {
+        return $this->pictureUser;
+    }
+
+    public function setPictureUser(string $pictureUser): static
+    {
+        $this->pictureUser = $pictureUser;
+
+        return $this;
+    }
+}

@@ -6,3 +6,15 @@ controllers:
 books_show:
     path: /books/{id}
     controller: App\Controller\BookController::books_show
+# config/routes.yaml
+cart_add:
+    path: /cart/add/{id}
+    controller: App\Controller\CartController::add
+
+cart_remove:
+    path: /cart/remove/{id}
+    controller: App\Controller\CartController::remove
+
+cart_view:
+    path: /cart
+    controller: App\Controller\CartController::view
