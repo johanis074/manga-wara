@@ -2,35 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\BookRepository;
+use Editor;
 use CategoryManga;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Editor;
+use App\Repository\BookRepository;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
-class Book
+class Book extends Product
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $picture = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
-
-    
-
-    #[ORM\Column]
-    private ?float $price = null;
-
-    
-
     #[ORM\Column]
     private ?int $reference = null;
 
@@ -49,60 +29,12 @@ class Book
     #[ORM\Column(type: Types::TEXT)]
     private ?string $synopsis = null;
 
-    /**
-     * @var Collection<int, Product>
-     */
-    #[ORM\ManyToMany(targetEntity: Product::class, mappedBy: 'book')]
-    private Collection $products;
-
     public function __construct()
     {
-        $this->editor = Editor::KANA; // Définir une valeur par défaut
-        $this->category = CategoryManga::SHONEN; // Définir une valeur par défaut
-        $this->products = new ArrayCollection();
+        parent::__construct(); // Appel au constructeur parent (si besoin)
+        $this->editor = Editor::KANA; // Valeur par défaut
+        $this->category = CategoryManga::SHONEN; // Valeur par défaut
     }
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getPicture(): ?string
-    {
-        return $this->picture;
-    }
-
-    public function setPicture(string $picture): static
-    {
-        $this->picture = $picture;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
-    public function setPrice(float $price): static
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    
 
     public function getReference(): ?int
     {
@@ -112,7 +44,6 @@ class Book
     public function setReference(int $reference): static
     {
         $this->reference = $reference;
-
         return $this;
     }
 
@@ -124,7 +55,6 @@ class Book
     public function setIsbn(int $isbn): static
     {
         $this->isbn = $isbn;
-
         return $this;
     }
 
@@ -136,7 +66,6 @@ class Book
     public function setEan(int $ean): static
     {
         $this->ean = $ean;
-
         return $this;
     }
 
@@ -148,7 +77,6 @@ class Book
     public function setEditor(?Editor $editor): static
     {
         $this->editor = $editor;
-
         return $this;
     }
 
@@ -160,7 +88,6 @@ class Book
     public function setCategory(?CategoryManga $category): static
     {
         $this->category = $category;
-
         return $this;
     }
 
@@ -169,37 +96,9 @@ class Book
         return $this->synopsis;
     }
 
-    public function setSynopsis(string $sysnopsis): static
+    public function setSynopsis(string $synopsis): static
     {
-        $this->synopsis = $sysnopsis;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    public function addProduct(Product $product): static
-    {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-            $product->addBook($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): static
-    {
-        if ($this->products->removeElement($product)) {
-            $product->removeBook($this);
-        }
-
+        $this->synopsis = $synopsis;
         return $this;
     }
 }

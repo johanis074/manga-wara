@@ -18,6 +18,9 @@
                         Se connecter
                     </a>
                     {% else %}
+                    <a href="{{ path('app_profile') }}">
+                        Mon compte
+                    </a>
                     <a href="{{ path('app_logout') }}">
                         Déconnexion
                     </a>
@@ -38,8 +41,13 @@
                     <a href="{{ path('books_show', {'id': book.id}) }}">
                         <h3>  {{ book.name }}</h3>
                         <img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}">
-                        Prix: {{ book.price }} €
+                        <p> Prix: {{ book.price }} € </p>
                     </a>
+                    <a href="{{ path('cart_add', {id: book.id}) }}" class="add-to-cart" data-id="{{ book.id }}">
+    ➕ Ajouter au panier
+</a>
+
+
                 </li>
             {% endfor %}
         </ul>

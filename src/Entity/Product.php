@@ -2,59 +2,60 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ProductRepository::class)]
-class Product
+#[ORM\MappedSuperclass]
+abstract class Product
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    protected ?int $id = null;
 
-    /**
-     * @var Collection<int, book>
-     */
-    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'products')]
-    private Collection $book;
+    #[ORM\Column(length: 255)]
+    protected ?string $name = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $picture = null;
 
-    public function __construct()
-    {
-        $this->book = new ArrayCollection();
-    }
+    #[ORM\Column]
+    protected ?float $price = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, book>
-     */
-    public function getBook(): Collection
+    public function getName(): ?string
     {
-        return $this->book;
+        return $this->name;
     }
 
-    public function addBook(Book $book): static
+    public function setName(string $name): static
     {
-        if (!$this->book->contains($book)) {
-            $this->book->add($book);
-        }
-
+        $this->name = $name;
         return $this;
     }
 
-    public function removeBook(Book $book): static
+    public function getPicture(): ?string
     {
-        $this->book->removeElement($book);
+        return $this->picture;
+    }
 
+    public function setPicture(?string $picture): static
+    {
+        $this->picture = $picture;
         return $this;
     }
 
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
 
+    public function setPrice(float $price): static
+    {
+        $this->price = $price;
+        return $this;
+    }
 }

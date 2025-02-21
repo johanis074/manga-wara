@@ -2,82 +2,59 @@
 
 namespace App\Controller;
 
-use App\Entity\Book;
 use App\Service\CartService;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CartController extends AbstractController
 {
-    private $cartService;
-    private $entityManager;
-
-    public function __construct(CartService $cartService, EntityManagerInterface $entityManager)
+    #[Route('/cart', name: 'cart_index')]
+    public function index(CartService $cartService): Response
     {
-        $this->cartService = $cartService;
-        $this->entityManager = $entityManager;
-    }
-
-    /**
-     * @Route("/cart/add/{id}", name="cart_add", methods: ["POST"])
-     */
-    public function add(int $id): Response
-    {
-        $book = $this->entityManager->getRepository(Book::class)->find($id);
-
-        if (!$book) {
-            $this->addFlash('error', 'Le livre n\'existe pas.');
-            return $this->redirectToRoute('cart_view');
-        }
-
-        $this->cartService->add($book->getId());
-        $this->addFlash('success', 'Le livre a été ajouté au panier.');
-
-        return $this->redirectToRoute('cart_view');
-    }
-
-    /**
-     * @Route("/cart/remove/{id}", name="cart_remove", methods: ["POST"])
-     */
-    public function remove(int $id): Response
-    {
-        $this->cartService->remove($id);
-        $this->addFlash('success', 'Le livre a été retiré du panier.');
-
-        return $this->redirectToRoute('cart_view');
-    }
-
-    /**
-     * @Route("/cart", name="cart_view")
-     */
-    public function view(): Response
-    {
-        $cartItems = $this->cartService->get();
-        $books = [];
-
-        if (!empty($cartItems)) {
-            $bookIds = array_keys($cartItems);
-            $books = $this->entityManager->getRepository(Book::class)->findBy(['id' => $bookIds]);
-        }
-
-        $cartWithBooks = [];
-        foreach ($cartItems as $bookId => $item) {
-            $book = $books[array_search($bookId, array_column($books, 'id'))] ?? null;
-            if ($book) {
-                $cartWithBooks[] = [
-                    'book' => $book,
-                    'quantity' => $item['quantity'],
-                ];
-            }
-        }
-
-        $total = $this->cartService->getTotal($books);
-
         return $this->render('cart/index.html.twig', [
-            'cart' => $cartWithBooks,
-            'total' => $total,
+            'cart' => $cartService->getCart(),
+            'total' => $cartService->getTotal(),
         ]);
     }
+
+    #[Route('/cart/add/{id}', name: 'cart_add', methods: ['POST'])]
+    public function add(int $id, CartService $cartService, Request $request): JsonResponse
+    {
+        $cartService->add($id);
+    
+        // Vérifie si la requête est AJAX
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'success' => true,
+                'totalItems' => count($cartService->getCart()),
+                'totalPrice' => $cartService->getTotal()
+            ]);
+        }
+    
+        // Redirection classique si la requête n'est pas AJAX
+        return $this->redirectToRoute('cart_index');
+    }
+
+
+
+
+#[Route('/cart/remove/{id}', name: 'cart_remove')]
+public function remove(int $id, CartService $cartService): Response
+{
+    $cartService->remove($id);
+    return $this->redirectToRoute('cart_index');
+}
+
+#[Route('/cart/info', name: 'cart_info')]
+public function cartInfo(CartService $cartService): JsonResponse
+{
+    return new JsonResponse([
+        'totalItems' => count($cartService->getCart()), // Nombre total d'articles
+        'totalPrice' => $cartService->getTotal() // Prix total en €
+    ]);
+}
+
 }
