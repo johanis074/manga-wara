@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const productId = this.dataset.id;
 
             fetch(`/cart/add/${productId}`, {
-                method: "POST", // ⬅️ IMPORTANT : Utiliser POST car la route Symfony l'attend
+                method: "POST",
                 headers: {
                     "X-Requested-With": "XMLHttpRequest"
                 }
@@ -46,4 +46,69 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => popup.classList.remove("visible"), 3000);
     }
 });
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("search-input");
+    const resultsContainer = document.getElementById("search-results");
+    const booksContainer = document.querySelector(".cards-container");
+
+    input.addEventListener("input", function () {
+        const query = input.value.trim();
+        
+        if (query.length === 0) {
+            resultsContainer.innerHTML = "";
+            return;
+        }
+
+        fetch(`/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                resultsContainer.innerHTML = "";
+                booksContainer.innerHTML = ""; // Vider la liste avant d'afficher les résultats
+
+                if (data.length === 0) {
+                    booksContainer.innerHTML = "<p>Aucun résultat trouvé.</p>";
+                    return;
+                }
+
+                data.forEach(book => {
+                    const bookElement = document.createElement("li");
+                    bookElement.classList.add("card");
+
+                    bookElement.innerHTML = `
+                        <a href="/books/${book.id}">
+                            <h3>${book.name}</h3>
+                            <img src="/uploads/pictureProduct/${book.picture}" alt="${book.name}">
+                            <p>Prix: ${book.price} €</p>
+                        </a>
+                        <a href="/cart/add/${book.id}" class="add-to-cart" data-id="${book.id}">
+                            ➕ Ajouter au panier
+                        </a>
+                    `;
+
+                    booksContainer.appendChild(bookElement);
+                });
+            })
+            .catch(error => console.error("Erreur lors de la recherche :", error));
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    let dropdownTrigger = document.querySelector(".dropdown-trigger");
+    let dropdownMenu = document.querySelector(".dropdown-menu");
+
+    dropdownTrigger.addEventListener("click", function (event) {
+        event.preventDefault();
+        dropdownMenu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!dropdownTrigger.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.remove("show");
+        }
+    });
+});
+
 

@@ -15,6 +15,11 @@ cart_remove:
     path: /cart/remove/{id}
     controller: App\Controller\CartController::remove
 
-cart_view:
+cart_index:
     path: /cart
-    controller: App\Controller\CartController::view
+    controller: App\Controller\CartController::index
+
+app_search:
+    path: /search
+    controller: App\Controller\SearchController::search
+

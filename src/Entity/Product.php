@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use DateTimeImmutable;
 
 #[ORM\MappedSuperclass]
 abstract class Product
@@ -20,6 +21,20 @@ abstract class Product
 
     #[ORM\Column]
     protected ?float $price = null;
+
+    #[ORM\Column(type: 'datetime_immutable')]
+    protected ?DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(type: 'integer')]
+    protected int $views = 0;
+
+    #[ORM\Column(type: 'integer')]
+    protected int $sales = 0;
+
+    public function __construct()
+    {
+        $this->createdAt = new DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -56,6 +71,51 @@ abstract class Product
     public function setPrice(float $price): static
     {
         $this->price = $price;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getViews(): int
+    {
+        return $this->views;
+    }
+
+    public function setViews(int $views): static
+    {
+        $this->views = $views;
+        return $this;
+    }
+
+    public function incrementViews(): static
+    {
+        $this->views++;
+        return $this;
+    }
+
+    public function getSales(): int
+    {
+        return $this->sales;
+    }
+
+    public function setSales(int $sales): static
+    {
+        $this->sales = $sales;
+        return $this;
+    }
+
+    public function incrementSales(): static
+    {
+        $this->sales++;
         return $this;
     }
 }

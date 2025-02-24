@@ -17,10 +17,55 @@
     <p>Article ajouté au panier !</p>
     <p>Total articles : <span id="popup-total-items">0</span></p>
     <p>Total : <span id="popup-total-price">0</span> €</p>
+    <a href="{{ path('cart_index') }}">Voir le panier</a>
     </div>
 
-    
-     
+        <header>
+            {% block header %}
+                <section>
+                    <a href="{{ path('app_home') }}">
+                    <img src="{{ asset('uploads/logo.webp') }}" alt="Logo MangaWara"></a>
+                    
+                    <div id="search-container">
+                        <input type="text" id="search-input" placeholder="Rechercher..." autocomplete="off">
+                        <ul id="search-results"></ul>
+                    </div>
+                        <div>
+                            <a href="{{ path('cart_index') }}">
+                                Panier </a>
+                            {% if not app.user %}
+                            <a href="{{ path('app_register') }}">
+                                S'inscrire
+                            </a>
+                            <a href="{{ path('app_login') }}">
+                                Se connecter
+                            </a>
+                            {% else %}
+                            <a href="{{ path('app_profile') }}">
+                                Mon compte
+                            </a>
+                            <a href="{{ path('app_logout') }}">
+                                Déconnexion
+                            </a>
+                            {% endif %}
+                        </div>
+                    </section>
+                <nav> 
+                    <div class="dropdown">
+                        <span class="dropdown-trigger">Manga </span>
+                        <div class="dropdown-menu">
+                        <a href="{{ path('books_index') }}">Toutes</a>
+                        {% for category in categories %}
+                            <a href="{{ path('books_index', {'category': category.name}) }}">{{ category.name }}</a>
+                        {% endfor %}
+                        </div>
+                        </div>
+                    <a href="#">Figurines</a>
+                    <a href="#">Bon plan</a>
+                    
+                </nav>
+            {% endblock %}
+        </header>
         {% block body %}{% endblock %}
     <script src="{{ asset('js/script.js') }}"></script>
     </body> 

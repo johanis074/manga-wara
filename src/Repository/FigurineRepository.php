@@ -16,6 +16,35 @@ class FigurineRepository extends ServiceEntityRepository
         parent::__construct($registry, Figurine::class);
     }
 
+        // src/Repository/FigurineRepository.php
+    public function findNewFigurines(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('f')
+            ->orderBy('f.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findPopularFigurines(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('f')
+            ->orderBy('f.views', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findBestSellingFigurines(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('f')
+            ->orderBy('f.sales', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+
     //    /**
     //     * @return Figurine[] Returns an array of Figurine objects
     //     */

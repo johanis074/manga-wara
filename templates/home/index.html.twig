@@ -1,25 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Manga-Wara{% endblock %}
+{% block title %}Accueil{% endblock %}
 
 {% block body %}
-<h1>Manga-Wara</h1>
-<a href="{{ path('app_books') }}"><button>Manga</button></a>
-{% if not app.user %}
-            {# page inscription affiché si pas connecté #}
-            <a href="{{ path('app_register') }}">
-                <button>S'inscrire</button>
-            </a>
+    <h1>Bienvenue sur notre boutique</h1>
 
-            {# page de connexion affiché si pas connecté #}
-            <a href="{{ path('app_login') }}">
-                <button>Se connecter</button>
-            </a>
-        {% else %}
-            {# Sinon si app.user est défini, c'est qu'un utilisateur est connecté #}
-            <a href="{{ path('app_logout') }}">
-                <button>Déconnexion</button>
-            </a>
-            <a href="{{ path('app_profile') }}"><button>Profil</button></a>
-        {% endif %}
+    <section>
+        <h2>Nouveaux Produits</h2>
+        <div class="products">
+            {% for product in newProducts %}
+                <div class="product">
+                    <img src="{{ product.picture }}" alt="{{ product.name }}">
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.price }} €</p>
+                </div>
+            {% else %}
+                <p>Aucun nouveau produit.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section>
+        <h2>Produits Populaires</h2>
+        <div class="products">
+            {% for product in popularProducts %}
+                <div class="product">
+                    <img src="{{ product.picture }}" alt="{{ product.name }}">
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.price }} €</p>
+                </div>
+            {% else %}
+                <p>Aucun produit populaire.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section>
+        <h2>Meilleures Ventes</h2>
+        <div class="products">
+            {% for product in bestSellers %}
+                <div class="product">
+                    <img src="{{ product.picture }}" alt="{{ product.name }}">
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.price }} €</p>
+                </div>
+            {% else %}
+                <p>Aucune meilleure vente.</p>
+            {% endfor %}
+        </div>
+    </section>
 {% endblock %}

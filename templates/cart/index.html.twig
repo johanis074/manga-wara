@@ -4,10 +4,11 @@
 
 {% block body %}
 <h1>Mon Panier</h1>
-
+<a href="{{ path('books_index') }}">Retour aux livres</a>
 {% if cart is empty %}
     <p>Votre panier est vide.</p>
 {% else %}
+    {# <a href="{{ path('cart_empty') }}">Vider le panier</a> #}
     <table>
         <thead>
             <tr>
@@ -37,6 +38,11 @@
     </table>
     <h3>Total : {{ total }}€</h3>
 {% endif %}
+<a href="{{ path('cart_pdf') }}" class="btn btn-primary">Télécharger le bon de commande (PDF)</a>
+{# <form action="{{ path('cart_checkout') }}" method="POST">
+    <button type="submit" class="btn btn-primary">Payer avec Stripe</button>
+</form> #}
 
-<a href="{{ path('app_books') }}">Retour aux livres</a>
+{# <a href="{{ path('cart') }}">Commander</a> #}
+
 {% endblock %}

@@ -15,6 +15,47 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
+    // src/Repository/ProductRepository.php
+
+    public function findBySearchQuery(string $query): array
+    {
+    return $this->createQueryBuilder('p')
+        ->where('p.name LIKE :query')
+        ->setParameter('query', '%' . $query . '%')
+        ->setMaxResults(10) // Limite les résultats affichés
+        ->getQuery()
+        ->getResult();
+    }
+
+    // src/Repository/ProductRepository.php
+
+    public function findNewProducts(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findPopularProducts(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.views', 'DESC') // Exemple : tri par nombre de vues
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findBestSellers(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.sales', 'DESC') // Exemple : tri par nombre de ventes
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
 
 //    /**
 //     * @return Product[] Returns an array of Product objects

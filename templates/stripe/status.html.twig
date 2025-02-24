@@ -1,0 +1,9 @@
+{% if status == 'success' %}
+    <h1>Paiement réussi ! 🎉</h1>
+    <p>Merci pour votre achat.</p>
+    <p>Montant payé : {{ amount }} {{ currency }}</p>
+{% else %}
+    <h1>Échec du paiement ❌</h1>
+    <p>Une erreur s'est produite lors du paiement. Veuillez réessayer.</p>
+{% endif %}
+<a href="{{ path('homepage') }}">Retour à l'accueil</a>

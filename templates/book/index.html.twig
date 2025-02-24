@@ -1,40 +1,25 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-     <header>
-        <section>
-            <a href="{{ path('app_home') }}">
-            <img src="{{ asset('uploads/logo.webp') }}" alt="Logo MangaWara"></a>
+{% block body %} 
+    <main>
+        {# Formulaire de filtres #}
+        <form method="get" action="{{ path('books_index') }}" class="filter-form">
+            <label for="editor">Éditeur :</label>
+            <select name="editor" id="editor">
+                <option value="">Tous</option>
+                {% for editor in editors %}
+                    <option value="{{ editor.name }}" {% if app.request.query.get('editor') == editor.name %}selected{% endif %}>
+                        {{ editor.name }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            {# Menu déroulant au survol de "Manga" #}
             
-            <form action="">
-                <input type="search" name="q" placeholder="Search">
-            </form>
-                <div>
-                    {% if not app.user %}
-                    <a href="{{ path('app_register') }}">
-                        S'inscrire
-                    </a>
-                    <a href="{{ path('app_login') }}">
-                        Se connecter
-                    </a>
-                    {% else %}
-                    <a href="{{ path('app_profile') }}">
-                        Mon compte
-                    </a>
-                    <a href="{{ path('app_logout') }}">
-                        Déconnexion
-                    </a>
-                    {% endif %}
-                </div>
-            </section>
-        <nav>  
-            <a href="#">Mangas</a>
-            <a href="#">Figurines</a>
-            <a href="#">Bon plan</a>
-        </nav>
-    </header>
-    
-    <main >
+            <button type="submit">Filtrer</button>
+        </form>
+
+        {# Liste des livres filtrés #}
         <ul class="cards-container">
             {% for book in pagination %}
                 <li class="card">
@@ -44,14 +29,15 @@
                         <p> Prix: {{ book.price }} € </p>
                     </a>
                     <a href="{{ path('cart_add', {id: book.id}) }}" class="add-to-cart" data-id="{{ book.id }}">
-    ➕ Ajouter au panier
-</a>
-
-
+                        ➕ Ajouter au panier
+                    </a>
                 </li>
+            {% else %}
+                <p>Aucun livre trouvé pour ces filtres.</p>
             {% endfor %}
         </ul>
 
+        {# Pagination #}
         <div class="pagination">
             {{ knp_pagination_render(pagination) }}
         </div>

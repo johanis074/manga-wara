@@ -5,8 +5,10 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     pictures_directory: '%kernel.project_dir%/public/uploads/pictureProduct'
+    # stripe.secret_key: '%env(STRIPE_SECRET_KEY)%'
 services:
     # default configuration for services in *this* file
+    
     Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface:
         alias: 'security.authenticator.form_login.main'
     _defaults:
@@ -29,5 +31,13 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Twig\AppExtension:
+        tags: ['twig.extension']
+
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # App\Service\StripeService:
+    #         arguments:
+    #             $secretKey: '%env(STRIPE_SECRET_KEY)%'

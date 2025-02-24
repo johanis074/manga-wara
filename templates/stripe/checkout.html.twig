@@ -1,0 +1,18 @@
+<form id="payment-form">
+    <button id="checkout-button">Payer avec Stripe</button>
+</form>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe("{{ stripe_public_key }}");
+    document.getElementById("checkout-button").addEventListener("click", async () => {
+        const response = await fetch("{{ path('stripe_checkout') }}", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ product_name: "Livre", price: 2000, quantity: 1 })
+        });
+
+        const session = await response.json();
+        stripe.redirectToCheckout({ sessionId: session.id });
+    });
+</script>

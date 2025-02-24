@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Editor;
+use CategoryManga;
 use App\Entity\Book;
 use App\Form\BookType;
 use App\Entity\Comment;
@@ -19,17 +21,39 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class BookController extends AbstractController
 {
-    #[Route('/books', name: 'app_books', methods: ['GET'])]
-    public function index(BookRepository $repository, Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
+    #[Route('/books', name: 'books_index')]
+    public function index(EntityManagerInterface $em, Request $request, PaginatorInterface $paginator)
     {
-        $query = $entityManager->getRepository(Book::class)->createQueryBuilder('b')->getQuery();
-        $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 50);
+        $editor = $request->query->get('editor');
+        $category = $request->query->get('category');
+
+        $qb = $em->getRepository(Book::class)->createQueryBuilder('b');
+
+        if ($editor) {
+            $qb->andWhere('b.editor = :editor')
+               ->setParameter('editor', $editor);
+        }
+
+        if ($category) {
+            $qb->andWhere('b.category = :category')
+               ->setParameter('category', $category);
+        }
+
+        $query = $qb->getQuery();
+
+        // Pagination
+        $pagination = $paginator->paginate(
+            $query, 
+            $request->query->getInt('page', 1),
+            10
+        );
 
         return $this->render('book/index.html.twig', [
             'pagination' => $pagination,
+            'editors' => Editor::cases(), // Récupère dynamiquement les éditeurs
+            'categories' => CategoryManga::cases() // Récupère dynamiquement les catégories
         ]);
     }
-
     #[Route('/new', name: 'books_new', methods:['GET','POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
