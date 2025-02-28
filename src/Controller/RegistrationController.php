@@ -21,55 +21,52 @@ use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 class RegistrationController extends AbstractController
 {
     private EmailVerifier $emailVerifier;
-    private AuthenticatorInterface $authenticator;
 
-    public function __construct(EmailVerifier $emailVerifier, AuthenticatorInterface $authenticator)
+    public function __construct(EmailVerifier $emailVerifier)
     {
         $this->emailVerifier = $emailVerifier;
-        $this->authenticator = $authenticator;
     }
 
     #[Route('/register', name: 'app_register')]
     public function register(
         Request $request,
-        UserPasswordHasherInterface $userPasswordHasher,
+        UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
-        UserAuthenticatorInterface $userAuthenticator
+        UserAuthenticatorInterface $userAuthenticator,
+        AuthenticatorInterface $authenticator
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
+            // Encodage du mot de passe
+            $hashedPassword = $passwordHasher->hashPassword(
+                $user,
+                $form->get('plainPassword')->getData()
             );
+            $user->setPassword($hashedPassword);
+
+            // Définition des valeurs par défaut
             $user->setPseudo($this->generateRandomPseudo());
             $user->setPictureUser('default.webp');
             $user->setRoles(['ROLE_CLIENT']);
 
+            // Persistance et sauvegarde en base
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // Generate a signed URL and email it to the user
+            // Envoi de l'email de confirmation
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
-                    ->from(new Address('francoise.johanis@gmail.com', 'master'))
+                    ->from(new Address('francoise.johanis@gmail.com', 'Master'))
                     ->to($user->getEmail())
-                    ->subject('Please Confirm your Email')
+                    ->subject('Veuillez confirmer votre adresse e-mail')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            // Authenticate the user
-            return $userAuthenticator->authenticateUser(
-                $user,
-                $this->authenticator,
-                $request
-            );
+            // Authentification automatique
+            return $userAuthenticator->authenticateUser($user, $authenticator, $request);
         }
 
         return $this->render('registration/register.html.twig', [
@@ -82,7 +79,6 @@ class RegistrationController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // Validate email confirmation link, sets User::isVerified=true and persists
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
         } catch (VerifyEmailExceptionInterface $exception) {
@@ -90,10 +86,10 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
 
-        // Redirect to home on success
-        $this->addFlash('success', 'Your email address has been verified.');
+        $this->addFlash('success', 'Votre adresse e-mail a été vérifiée.');
         return $this->redirectToRoute('home');
     }
+
 
     private function generateRandomPseudo(): string
     {

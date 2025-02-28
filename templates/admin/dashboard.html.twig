@@ -1,0 +1,46 @@
+{# templates/admin/dashboard.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<h1>Admin Dashboard</h1>
+
+<h2>Mangas</h2>
+<a href="{{ path('books_new') }}" class="btn btn-primary">Ajouter un Manga</a>
+<ul>
+    {% for book in books %}
+        <li>
+            {{ book.name }}
+            <a href="{{ path('admin_product_edit', {id: book.id, type: 'book'}) }}">Modifier</a>
+            <a href="{{ path('admin_book_delete', {id: book.id}) }}" onclick="return confirm('Supprimer ce manga ?');">Supprimer</a>
+        </li>
+    {% endfor %}
+</ul>
+
+<h2>Figurines</h2>
+<a href="" class="btn btn-primary">Ajouter une Figurine</a>
+<ul>
+    {% for figurine in figurines %}
+        <li>
+            {{ figurine.name }}
+            <a href="{{ path('admin_product_edit', {id: figurine.id, type: 'figurine'}) }}">Modifier</a>
+            <a href="{{ path('admin_figurine_delete', {id: figurine.id}) }}" onclick="return confirm('Supprimer cette figurine ?');">Supprimer</a>
+        </li>
+    {% endfor %}
+</ul>
+
+<h2>Commandes</h2>
+<ul>
+    {% for order in orders %}
+        <li>
+            Commande #{{ order.id }} - Statut : {{ order.status }}
+            <a href="{{ path('admin_order_update', {id: order.id}) }}" class="btn btn-warning">Changer le statut</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+
+
+

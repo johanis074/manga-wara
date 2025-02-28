@@ -39,7 +39,7 @@
     
     <section class="book-show1">
         <div class="">
-         <p><a href="{{ path('app_home') }}">Acceuil</a>/<a href="{{ path('app_books') }}">Mangas</a>/{{ book.name }}<p>
+         <p><a href="{{ path('app_home') }}">Acceuil</a>/<a href="{{ path('books_index') }}">Mangas</a>/{{ book.name }}<p>
             <h1>{{ book.name }}</h1>
             <img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}"/>
         </div>

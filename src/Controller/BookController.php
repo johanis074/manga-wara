@@ -20,40 +20,35 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class BookController extends AbstractController
-{
-    #[Route('/books', name: 'books_index')]
-    public function index(EntityManagerInterface $em, Request $request, PaginatorInterface $paginator)
     {
-        $editor = $request->query->get('editor');
-        $category = $request->query->get('category');
+        #[Route('/books', name: 'books_index')]
+    public function index(Request $request, BookRepository $bookRepository, PaginatorInterface $paginator): Response
+    {
+        $sort = $request->query->get('sort', 'name_asc'); // Tri par défaut : Nom A-Z
+        $category = $request->query->get('category', null); // Filtrage par catégorie
+        $editor = $request->query->get('editor', null); // Filtrage par éditeur
 
-        $qb = $em->getRepository(Book::class)->createQueryBuilder('b');
+        $query = $bookRepository->findByFilters($sort, $category, $editor); // Applique les tris et filtres
 
-        if ($editor) {
-            $qb->andWhere('b.editor = :editor')
-               ->setParameter('editor', $editor);
-        }
-
-        if ($category) {
-            $qb->andWhere('b.category = :category')
-               ->setParameter('category', $category);
-        }
-
-        $query = $qb->getQuery();
-
-        // Pagination
         $pagination = $paginator->paginate(
-            $query, 
+            $query,
             $request->query->getInt('page', 1),
             10
         );
 
         return $this->render('book/index.html.twig', [
             'pagination' => $pagination,
-            'editors' => Editor::cases(), // Récupère dynamiquement les éditeurs
-            'categories' => CategoryManga::cases() // Récupère dynamiquement les catégories
+            'current_sort' => $sort,
+            'current_category' => $category,
+            'current_editor' => $editor,
+            'categories' => CategoryManga::cases(), // Récupère les catégories dynamiquement
+            'editors' => Editor::cases() // Récupère les éditeurs dynamiquement
         ]);
     }
+
+
+
+
     #[Route('/new', name: 'books_new', methods:['GET','POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {

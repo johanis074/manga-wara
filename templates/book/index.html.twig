@@ -19,6 +19,26 @@
             <button type="submit">Filtrer</button>
         </form>
 
+        <div class="filters">
+        <h4> Trier par :</h4>
+        <a href="{{ path('books_index', {'sort': 'name_asc', 'category': current_category}) }}">🔼 Nom (A-Z)</a>
+        <a href="{{ path('books_index', {'sort': 'name_desc', 'category': current_category}) }}">🔽 Nom (Z-A)</a>
+        <a href="{{ path('books_index', {'sort': 'price_asc', 'category': current_category}) }}">💲 Prix Croissant</a>
+        <a href="{{ path('books_index', {'sort': 'price_desc', 'category': current_category}) }}">💰 Prix Décroissant</a>
+        <a href="{{ path('books_index', {'sort': 'date_new', 'category': current_category}) }}">🆕 Nouveautés</a>
+        <a href="{{ path('books_index', {'sort': 'date_old', 'category': current_category}) }}">📜 Anciens</a>
+        <a href="{{ path('books_index', {'sort': 'popularity', 'category': current_category}) }}">🔥 Populaires</a>
+        <a href="{{ path('books_index', {'sort': 'best_sellers', 'category': current_category}) }}">🏆 Meilleures ventes</a>
+    </div>
+
+<script>
+    document.getElementById('sortSelect').addEventListener('change', function() {
+        document.getElementById('sortForm').submit();
+    });
+</script>
+
+
+
         {# Liste des livres filtrés #}
         <ul class="cards-container">
             {% for book in pagination %}
