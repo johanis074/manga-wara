@@ -54,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const resultsContainer = document.getElementById("search-results");
     const booksContainer = document.querySelector(".cards-container");
 
+    // Lorsqu'on tape dans la barre de recherche
     input.addEventListener("input", function () {
         const query = input.value.trim();
         
@@ -62,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // Requête pour récupérer les résultats en direct
         fetch(`/search?q=${encodeURIComponent(query)}`)
             .then(response => response.json())
             .then(data => {
@@ -73,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+                // Affichage des résultats dynamiques (live search)
                 data.forEach(book => {
                     const bookElement = document.createElement("li");
                     bookElement.classList.add("card");
@@ -93,7 +96,27 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => console.error("Erreur lors de la recherche :", error));
     });
+
+    // Gérer la touche Entrée pour rediriger vers la page de résultats
+    input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            const query = input.value.trim();
+            if (query.length > 0) {
+                window.location.href = `/search/results?q=${encodeURIComponent(query)}`; // Rediriger vers la page de résultats
+            }
+        }
+    });
+
+    // Gérer la fermeture des résultats de recherche si on clique à l'extérieur
+    document.addEventListener('click', (e) => {
+        if (resultsContainer && !document.getElementById('search-container').contains(e.target)) {
+            resultsContainer.style.display = 'none';
+        }
+    });
 });
+
+
+
 
 document.addEventListener("DOMContentLoaded", function () {
     let dropdownTrigger = document.querySelector(".dropdown-trigger");
@@ -109,6 +132,41 @@ document.addEventListener("DOMContentLoaded", function () {
             dropdownMenu.classList.remove("show");
         }
     });
+});
+
+
+//Show book description and details
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const btnDescription = document.getElementById("btn-description");
+    const btnDetails = document.getElementById("btn-details");
+    const contentContainer = document.getElementById("content-container");
+
+    // Récupération des données du JSON injecté dans le DOM
+    const bookData = JSON.parse(document.getElementById("book-data").textContent);
+
+    function showDescription() {
+        contentContainer.innerHTML = `<p>${bookData.synopsis}</p>`;
+    }
+
+    function showDetails() {
+        contentContainer.innerHTML = `
+            <p>Éditeur: ${bookData.editor}</p>
+            <p>Catégorie: ${bookData.category}</p>
+            <p>Référence: ${bookData.reference}</p>
+            <p>ISBN: ${bookData.isbn}</p>
+            <p>EAN: ${bookData.ean}</p>
+            <p>Prix: ${bookData.price} €</p>
+        `;
+    }
+
+    // Afficher la description par défaut
+    showDescription();
+
+    // Écouteurs d'événements pour changer le contenu
+    btnDescription.addEventListener("click", showDescription);
+    btnDetails.addEventListener("click", showDetails);
 });
 
 

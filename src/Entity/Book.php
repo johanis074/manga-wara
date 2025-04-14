@@ -31,10 +31,11 @@ class Book extends Product
 
     public function __construct()
     {
-        parent::__construct(); // Appel au constructeur parent (si besoin)
+        parent::__construct('book'); // Définition du type
         $this->editor = Editor::KANA; // Valeur par défaut
         $this->category = CategoryManga::SHONEN; // Valeur par défaut
     }
+
 
     public function getReference(): ?int
     {

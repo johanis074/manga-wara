@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Form;
-
+use brand;
 use App\Entity\Figurine;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class FigurineType extends AbstractType
 {
@@ -13,9 +15,18 @@ class FigurineType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('picture')
+            ->add('picture', FileType::class, [
+                'label' => 'Image du manga (fichier)',
+                'attr' => ['class' => 'form-control'],
+                'required' => false,])
+                
             ->add('price')
-            ->add('brand')
+            ->add('brand',ChoiceType::class, [
+                'label' => 'Statut de la commande',
+                'choices' => brand::cases(),
+                'choice_label' => fn(brand $brand) => $brand->name,
+                'choice_value' => fn(brand $brand) => $brand->value
+            ])
             ->add('description')
             ->add('reference')
             ->add('height')

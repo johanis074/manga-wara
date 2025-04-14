@@ -3,50 +3,64 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
-    <h1>Bienvenue sur notre boutique</h1>
-
+    <h1>Bienvenue sur notre site de vente de produits dérivés</h1>
     <section>
         <h2>Nouveaux Produits</h2>
-        <div class="products">
+        <ul class="cards-container">
             {% for product in newProducts %}
-                <div class="product">
-                    <img src="{{ product.picture }}" alt="{{ product.name }}">
-                    <h3>{{ product.name }}</h3>
-                    <p>{{ product.price }} €</p>
-                </div>
-            {% else %}
-                <p>Aucun nouveau produit.</p>
+                <li class="card">
+                        {% set routeName = product.type ~ 's_show' %}
+                        <a href="{{ path(routeName, {'id': product.id}) }}">
+                            <h3>  {{ product.name }}</h3>
+                            <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                            <p> Prix: {{ product.price }} € </p>
+                        </a>
+                        <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
+                        ➕ Ajouter au panier
+                    </a>
+                    </li>
             {% endfor %}
-        </div>
+        </ul>
+        <a href="{{ path('app_view', { filter: 'new' }) }}" class="btn">Tout voir</a>
     </section>
-
+    
     <section>
         <h2>Produits Populaires</h2>
-        <div class="products">
+        <ul class="cards-container">
             {% for product in popularProducts %}
-                <div class="product">
-                    <img src="{{ product.picture }}" alt="{{ product.name }}">
-                    <h3>{{ product.name }}</h3>
-                    <p>{{ product.price }} €</p>
-                </div>
-            {% else %}
-                <p>Aucun produit populaire.</p>
+                <li class="card">
+                        {% set routeName = product.type ~ 's_show' %}
+                        <a href="{{ path(routeName, {'id': product.id}) }}">
+                            <h3>  {{ product.name }}</h3>
+                            <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                            <p> Prix: {{ product.price }} € </p>
+                        </a>
+                        <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
+                        ➕ Ajouter au panier
+                    </a>
+                    </li>
             {% endfor %}
         </div>
+        <a href="{{ path('app_view', { filter: 'popular' }) }}" class="btn">Tout voir</a>
     </section>
 
     <section>
         <h2>Meilleures Ventes</h2>
-        <div class="products">
+        <ul class="cards-container">
             {% for product in bestSellers %}
-                <div class="product">
-                    <img src="{{ product.picture }}" alt="{{ product.name }}">
-                    <h3>{{ product.name }}</h3>
-                    <p>{{ product.price }} €</p>
-                </div>
-            {% else %}
-                <p>Aucune meilleure vente.</p>
+                <li class="card">
+                        {% set routeName = product.type ~ 's_show' %}
+                        <a href="{{ path(routeName, {'id': product.id}) }}">
+                            <h3>  {{ product.name }}</h3>
+                            <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                            <p> Prix: {{ product.price }} € </p>
+                        </a>
+                        <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
+                        ➕ Ajouter au panier
+                    </a>
+                    </li>
             {% endfor %}
         </div>
+        <a href="{{ path('app_view', { filter: 'best' }) }}" class="btn">Tout voir</a>
     </section>
 {% endblock %}

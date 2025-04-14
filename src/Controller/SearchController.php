@@ -1,11 +1,14 @@
 <?php
+// src/Controller/SearchController.php
+
 namespace App\Controller;
 
 use App\Repository\ProductRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SearchController extends AbstractController
 {
@@ -17,4 +20,18 @@ class SearchController extends AbstractController
 
         return $this->json($products);
     }
+
+    #[Route('/search/results', name: 'app_search_results', methods: ['GET'])]
+    public function results(Request $request, ProductRepository $productRepository): Response
+    {
+        $query = $request->query->get('q', '');
+        $products = $productRepository->findBySearchQuery($query);
+
+        return $this->render('search/results.html.twig', [
+            'query' => $query,
+            'products' => $products,
+        ]);
+    }
 }
+
+

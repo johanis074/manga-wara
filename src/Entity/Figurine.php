@@ -2,14 +2,17 @@
 
 namespace App\Entity;
 
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use brand;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\FigurineRepository;
 
 #[ORM\Entity(repositoryClass: FigurineRepository::class)]
 class Figurine extends Product
 {
-    #[ORM\Column(length: 255)]
-    private ?string $brand = null;
+
 
     #[ORM\Column(type: "text")]
     private ?string $description = null;
@@ -20,16 +23,22 @@ class Figurine extends Product
     #[ORM\Column]
     private ?float $height = null;
 
-    public function getBrand(): ?string
+    #[ORM\Column(enumType: brand::class)]
+    private ?brand $brand = null;
+
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'figurine')]
+    private Collection $comments;
+
+    public function __construct()
     {
-        return $this->brand;
+        parent::__construct('figurine'); // Définition du type
+        $this->brand = brand::BANDAI; // Valeur par défaut
+        $this->comments = new ArrayCollection();
     }
 
-    public function setBrand(string $brand): static
-    {
-        $this->brand = $brand;
-        return $this;
-    }
 
     public function getDescription(): ?string
     {
@@ -61,6 +70,48 @@ class Figurine extends Product
     public function setHeight(float $height): static
     {
         $this->height = $height;
+        return $this;
+    }
+
+    public function getBrand(): ?brand
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(brand $brand): static
+    {
+        $this->brand = $brand;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setFigurine($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getFigurine() === $this) {
+                $comment->setFigurine(null);
+            }
+        }
+
         return $this;
     }
 }

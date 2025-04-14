@@ -8,11 +8,11 @@ books_show:
     controller: App\Controller\BookController::books_show
 # config/routes.yaml
 cart_add:
-    path: /cart/add/{id}
+    path: /cart/add/{type}/{id}
     controller: App\Controller\CartController::add
 
 cart_remove:
-    path: /cart/remove/{id}
+    path: /cart/remove/{type}/{id}
     controller: App\Controller\CartController::remove
 
 cart_index:

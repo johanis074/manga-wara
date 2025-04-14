@@ -34,7 +34,10 @@ services:
     App\Twig\AppExtension:
         tags: ['twig.extension']
 
-
+    App\Repository\ProductRepository:
+        arguments:
+            $bookRepository: '@App\Repository\BookRepository'
+            $figurineRepository: '@App\Repository\FigurineRepository'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 

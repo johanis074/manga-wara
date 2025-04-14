@@ -1,24 +1,24 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ book.name }}
+    {{ figurine.name }}
 {% endblock %}
 
 {% block body %}
-    <main class="container-books">
+    <main class="container-figurines">
     
-        <section class="book-show1">
+        <section class="figurine-show1">
             <div>
                 <p>
                     <a href="{{ path('app_home') }}">Accueil</a> /
-                    <a href="{{ path('books_index') }}">Mangas</a> /
-                    {{ book.name }}
+                    <a href="{{ path('figurines_index') }}">Figurines</a> /
+                    {{ figurine.name }}
                 </p>
-                <img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}"/>
+                <img src="{{ asset('uploads/pictureProduct/' ~ figurine.picture) }}" alt="{{ figurine.name }}"/>
             </div>
 
             <div>
-                <h2>{{ book.name }}</h2>
+                <h2>{{ figurine.name }}</h2>
 
                 <!-- Boutons pour afficher la description ou les détails -->
                 <button id="btn-description">Description</button>
@@ -28,27 +28,24 @@
                 <div id="content-container"></div>
 
                 <!-- Bouton "Ajouter au panier" -->
-                <a href="{{ path('cart_add', {type: book.type, id: book.id}) }}" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
+                <a href="{{ path('cart_add', {type: figurine.type, id: figurine.id}) }}" class="add-to-cart" data-id="{{ figurine.id }}" data-type="{{ figurine.type }}">
                         ➕ Ajouter au panier
                     </a>
             </div>
         </section>
 
         <!-- Injection des données sous forme de JSON dans un élément caché -->
-        <script type="application/json" id="book-data">
+        <script type="application/json" id="figurine-data">
             {
-                "synopsis": "{{ book.synopsis|e('js') }}",
-                "editor": "{{ book.editor.name|e('js') }}",
-                "category": "{{ book.category.name|e('js') }}",
-                "reference": "{{ book.reference|e('js') }}",
-                "isbn": "{{ book.isbn|e('js') }}",
-                "ean": "{{ book.ean|e('js') }}",
-                "price": "{{ book.price }}"
+                "description": "{{ figurine.description|e('js') }}",
+                "brand": "{{ figurine.brand.name|e('js') }}",
+                "reference": "{{ figurine.reference|e('js') }}",
+                "price": "{{ figurine.price }}"
             }
         </script>
 
         
-    <section class="book-show2">
+    <section class="figurine-show2">
     {# Formulaire pour ajouter un commentaire #}
         {{ form_start(form) }}
             {{ form_row(form.content) }}
@@ -59,7 +56,6 @@
         <ul>
             {% for comment in pagination %}
                 <li>
-                    
                     <p>Posté par: <img src="{{ asset('uploads/pictureUser/' ~ comment.user.pictureUser) }}" alt="image du profil"></img> {{ comment.user.pseudo }}</p>
                     <p>Posté le: {{ comment.date|date('d/m/Y H:i') }}</p>
                     <p>{{ comment.content }}</p>

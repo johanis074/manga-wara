@@ -17,7 +17,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class BookController extends AbstractController
     {
@@ -49,7 +48,7 @@ class BookController extends AbstractController
 
 
 
-    #[Route('/new', name: 'books_new', methods:['GET','POST'])]
+    #[Route('/books/new', name: 'books_new', methods:['GET','POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $book = new Book();
@@ -119,42 +118,53 @@ class BookController extends AbstractController
         return $destinationPath;
     }
 
-    #[Route('/books/{id}', name: 'books_show', methods: ['GET', 'POST'])]
-    public function books_show(int $id, BookRepository $bookRepository, EntityManagerInterface $entityManager, Request $request, PaginatorInterface $paginator): Response
-    {
+        #[Route('/books/{id}', name: 'books_show', methods: ['GET', 'POST'])]
+    public function books_show(
+        int $id, 
+        BookRepository $bookRepository, 
+        EntityManagerInterface $entityManager, 
+        Request $request, 
+        PaginatorInterface $paginator
+    ): Response {
         $book = $bookRepository->find($id);
         if (!$book) {
             throw $this->createNotFoundException('Livre non trouvé');
         }
-    
+
+        // ✅ Incrémentation des vues
+        $book->setViews($book->getViews() + 1);
+        $entityManager->persist($book);
+        $entityManager->flush();
+
         $query = $entityManager->getRepository(Comment::class)
             ->createQueryBuilder('c')
             ->where('c.book = :book')
             ->setParameter('book', $book)
             ->orderBy('c.date', 'DESC')
             ->getQuery();
-    
+
         $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
-    
+
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setBook($book);
             $comment->setUser($this->getUser());
             $comment->setDate(new \DateTimeImmutable());
-    
+
             $entityManager->persist($comment);
             $entityManager->flush();
-    
+
             return $this->redirectToRoute('books_show', ['id' => $id]);
         }
-    
+
         return $this->render('book/show.html.twig', [
             'book' => $book,
             'form' => $form->createView(),
             'pagination' => $pagination,
         ]);
     }
+
 }

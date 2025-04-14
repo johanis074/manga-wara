@@ -29,8 +29,8 @@
                     <td>{{ item.quantity }}</td>
                     <td>{{ item.product.price * item.quantity }}€</td>
                     <td>
-                        <a href="{{ path('cart_add', {id: item.product.id}) }}">➕</a>
-                        <a href="{{ path('cart_remove', {id: item.product.id}) }}">❌</a>
+                        <a href="{{ path('cart_add', {type: item.product.type, id: item.product.id}) }}">➕</a>
+                        <a href="{{ path('cart_remove', {type: item.product.type,id: item.product.id}) }}">❌</a>
                     </td>
                 </tr>
             {% endfor %}

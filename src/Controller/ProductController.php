@@ -56,25 +56,4 @@ final class ProductController extends AbstractController
 
         return new Response('Aucun livre ou produit trouvé.');
 }
-
-#[Route('/product/link-test', name: 'app_product_link_test')]
-public function linkTest(EntityManagerInterface $entityManager): Response
-{
-    $bookRepository = $entityManager->getRepository(Book::class);
-    $productRepository = $entityManager->getRepository(ProductRepository::class);
-
-    $book = $bookRepository->findOneBy([]); // Prend un livre existant
-    $product = $productRepository->findOneBy([]); // Prend un produit existant
-
-    if (!$book || !$product) {
-        return new Response('Aucun livre ou produit trouvé.');
-    }
-
-    // Lier le livre au produit
-    $product->addBook($book);
-    $entityManager->persist($product); // Assure la persistance
-    $entityManager->flush();
-
-    return new Response('Livre lié au produit avec succès !');
-}
 }

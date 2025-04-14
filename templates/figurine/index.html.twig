@@ -1,20 +1,64 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello FigurineController!{% endblock %}
+{% block body %} 
+    <main>
+        {# Formulaire de filtres #}
+        <form method="get" action="{{ path('figurines_index') }}" class="filter-form">
+            <label for="brand">Éditeur :</label>
+            <select name="brand" id="brand">
+                <option value="">Tous</option>
+                {% for brand in brands %}
+                    <option value="{{ brand.name }}" {% if app.request.query.get('brand') == brand.name %}selected{% endif %}>
+                        {{ brand.name }}
+                    </option>
+                {% endfor %}
+            </select>
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+            <button type="submit">Filtrer</button>
+        </form>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <div class="filters">
+            <h4> Trier par :</h4>
+            <a href="{{ path('figurines_index', {'sort': 'name_asc', 'brand': current_brand}) }}">🔼 Nom (A-Z)</a>
+            <a href="{{ path('figurines_index', {'sort': 'name_desc', 'brand': current_brand}) }}">🔽 Nom (Z-A)</a>
+            <a href="{{ path('figurines_index', {'sort': 'price_asc', 'brand': current_brand}) }}">💲 Prix Croissant</a>
+            <a href="{{ path('figurines_index', {'sort': 'price_desc', 'brand': current_brand}) }}">💰 Prix Décroissant</a>
+            <a href="{{ path('figurines_index', {'sort': 'date_new', 'brand': current_brand}) }}">🆕 Nouveautés</a>
+            <a href="{{ path('figurines_index', {'sort': 'date_old', 'brand': current_brand}) }}">📜 Anciens</a>
+            <a href="{{ path('figurines_index', {'sort': 'popularity', 'brand': current_brand}) }}">🔥 Populaires</a>
+            <a href="{{ path('figurines_index', {'sort': 'best_sellers', 'brand': current_brand}) }}">🏆 Meilleures ventes</a>
+        </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/wamp64/www/manga-wara/src/Controller/FigurineController.php</code></li>
-        <li>Your template at <code>C:/wamp64/www/manga-wara/templates/figurine/index.html.twig</code></li>
-    </ul>
-</div>
+        <script>
+            document.getElementById('sortSelect').addEventListener('change', function() {
+                document.getElementById('sortForm').submit();
+            });
+        </script>
+
+        {# Liste des figurines filtrées #}
+        <ul class="cards-container">
+            {% for figurine in pagination %}
+                <li class="card">
+                    <a href="{{ path('figurines_show', {'id': figurine.id}) }}">
+                        <h3>  {{ figurine.name }}</h3>
+                        <img src="{{ asset('uploads/pictureProduct/' ~ figurine.picture) }}" alt="{{ figurine.name }}">
+                        <p> Prix: {{ figurine.price }} € </p>
+                    </a>
+                    <a href="{{ path('cart_add', {type: figurine.type, id: figurine.id}) }}" class="add-to-cart" data-id="{{ figurine.id }}" data-type="{{ figurine.type }}">
+                        ➕ Ajouter au panier
+                    </a>
+                </li>
+            {% else %}
+                <p>Aucune figurine trouvée pour ces filtres.</p>
+            {% endfor %}
+        </ul>
+
+        {# Pagination #}
+        <div class="pagination">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
+        <br>
+        <a href="{{ path('figurines_new') }}">Nouvelle figurine</a>
+    </main>
 {% endblock %}

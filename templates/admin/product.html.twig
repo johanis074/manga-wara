@@ -1,0 +1,106 @@
+{# templates/admin/edit_figurine.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Product{% endblock %}
+
+{% block body %}
+    {% block header %}{% endblock %}
+    <div class="admin-container">
+    <nav>
+        <a href="{{ path('app_home') }}"><img src="{{ asset('uploads/logo.webp') }}" alt=""></a>
+        <a href="{{ path('app_logout') }}">Se déconnecter</a>
+        <ul>
+            <li><a href="{{ path('admin_dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ path('admin_products') }}">Produits</a></li>
+            <li><a href="{{ path('admin_orders') }}">Commandes</a></li>
+            <li><a href="{{ path('admin_users') }}">Utilisateurs</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h1>Tous les produits</h1>
+
+        <section class="switch-buttons">
+            <button onclick="showSection('figurines')">Figurines</button>
+            <button onclick="showSection('mangas')">Mangas</button>
+        </section>
+
+        <section class="sections">
+            <div id="figurines" class="section active">
+                <h2>Figurines</h2>
+                <a href="" class="">Ajouter une Figurine</a>
+                  <ul>
+                    {% for figurine in figurines %}
+                        <li>
+                            {{ figurine.name }}
+                            <a href="{{ path('admin_product_edit', {id: figurine.id, type: 'figurine'}) }}">Modifier</a>
+                            <a href="{{ path('admin_figurine_delete', {id: figurine.id}) }}" onclick="return confirm('Supprimer cette figurine ?');">Supprimer</a>
+                        </li>
+                    {% else %}
+                        <p>Aucune figurine disponible.</p>
+                    {% endfor %}
+                </ul>
+                {{ knp_pagination_render(books) }}
+            </div>
+
+            <div id="mangas" class="section">
+                <h2>Mangas</h2>
+                <a href="{{ path('books_new') }}" class="">Ajouter un Manga</a>
+                <ul>
+                    {% for book in books %}
+                        <li>
+                            {{ book.name }}
+                            <a href="{{ path('admin_product_edit', {id: book.id, type: 'book'}) }}">Modifier</a>
+                            <a href="{{ path('admin_book_delete', {id: book.id}) }}" onclick="return confirm('Supprimer ce manga ?');">Supprimer</a>
+                        </li>
+                    {% else %}
+                        <p>Aucun manga disponible.</p>
+                    {% endfor %}
+                </ul>
+                {{ knp_pagination_render(figurines) }}
+            </div>
+        </section>
+    </main>
+</div>
+
+    <script>
+        function showSection(section) {
+            document.getElementById('figurines').classList.remove('active');
+            document.getElementById('mangas').classList.remove('active');
+            document.getElementById(section).classList.add('active');
+        }
+    </script>
+
+    <style>
+        .sections {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+
+        .section {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: white;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            z-index: 0;
+        }
+
+        .section.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .switch-buttons {
+            margin-bottom: 10px;
+        }
+
+        .switch-buttons button {
+            margin-right: 10px;
+        }
+    </style>
+{% endblock %}

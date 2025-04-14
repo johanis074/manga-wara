@@ -27,5 +27,38 @@ class HomeController extends AbstractController
             ),
         ]);
     }
-}
 
+
+
+#[Route('/view/{filter}', name: 'app_view')]
+public function viewProducts(string $filter, BookRepository $bookRepository, FigurineRepository $figurineRepository)
+{
+    $products = [];
+
+    switch ($filter) {
+        case 'new':
+            $products = array_merge(
+                $bookRepository->findNewBooks(20),
+                $figurineRepository->findNewFigurines(20)
+            );
+            break;
+        case 'popular':
+            $products = array_merge(
+                $bookRepository->findPopularBooks(20),
+                $figurineRepository->findPopularFigurines(20)
+            );
+            break;
+        case 'best':
+            $products = array_merge(
+                $bookRepository->findBestSellingBooks(20),
+                $figurineRepository->findBestSellingFigurines(20)
+            );
+            break;
+    }
+
+    return $this->render('view.html.twig', [
+        'products' => $products,
+        'filter' => $filter,
+    ]);
+}
+}

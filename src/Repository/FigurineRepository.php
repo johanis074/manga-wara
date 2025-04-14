@@ -16,7 +16,7 @@ class FigurineRepository extends ServiceEntityRepository
         parent::__construct($registry, Figurine::class);
     }
 
-        // src/Repository/FigurineRepository.php
+    // src/Repository/FigurineRepository.php
     public function findNewFigurines(int $limit = 5): array
     {
         return $this->createQueryBuilder('f')
@@ -35,14 +35,57 @@ class FigurineRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findBestSellingFigurines(int $limit = 5): array
+    public function findBestSellingFigurines(int $limit = 10): array
     {
         return $this->createQueryBuilder('f')
-            ->orderBy('f.sales', 'DESC')
-            ->setMaxResults($limit)
+            ->orderBy('f.sales', 'DESC')  // Trier par nombre de ventes (le plus vendu en premier)
+            ->setMaxResults($limit)       // Limite le nombre de résultats
             ->getQuery()
             ->getResult();
     }
+
+    public function findByFilters(?string $sort = 'name_asc', ?string $category = null)
+    {
+        $qb = $this->createQueryBuilder('f');
+
+        // Filtrer par catégorie (si sélectionnée)
+        if ($category) {
+            $qb->andWhere('f.category = :category')
+               ->setParameter('category', $category);
+        }
+
+        // Gestion des tris
+        switch ($sort) {
+            case 'name_desc':
+                $qb->orderBy('f.name', 'DESC');
+                break;
+            case 'price_asc':
+                $qb->orderBy('f.price', 'ASC');
+                break;
+            case 'price_desc':
+                $qb->orderBy('f.price', 'DESC');
+                break;
+            case 'date_new':
+                $qb->orderBy('f.createdAt', 'DESC');
+                break;
+            case 'date_old':
+                $qb->orderBy('f.createdAt', 'ASC');
+                break;
+            case 'popularity':
+                $qb->orderBy('f.views', 'DESC');
+                break;
+            case 'best_sellers':
+                $qb->orderBy('f.sales', 'DESC');
+                break;
+            default: // 'name_asc' par défaut
+                $qb->orderBy('f.name', 'ASC');
+                break;
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+}
+
 
 
     //    /**
@@ -69,4 +112,4 @@ class FigurineRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-}
+

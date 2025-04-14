@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 class Comment
-{
+    {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -17,14 +17,16 @@ class Comment
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'comments')]
     private ?User $user = null;
 
-    
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
     #[ORM\ManyToOne(targetEntity: Book::class, inversedBy: 'comments')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Book $book = null;
+
+    #[ORM\ManyToOne(targetEntity: Figurine::class, inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Figurine $figurine = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
@@ -60,10 +62,28 @@ class Comment
     {
         return $this->book;
     }
-
     public function setBook(?Book $book): static
+        {
+            if ($book !== null && $this->figurine !== null) {
+                throw new \LogicException("Un commentaire ne peut être attaché qu'à un seul produit (Book ou Figurine).");
+            }
+            $this->book = $book;
+            return $this;
+        }
+
+    public function getFigurine(): ?Figurine
     {
-        $this->book = $book;
+        return $this->figurine;
+    }
+
+    
+    
+    public function setFigurine(?Figurine $figurine): static
+    {
+        if ($figurine !== null && $this->book !== null) {
+            throw new \LogicException("Un commentaire ne peut être attaché qu'à un seul produit (Book ou Figurine).");
+        }
+        $this->figurine = $figurine;
         return $this;
     }
 
@@ -75,7 +95,7 @@ class Comment
     public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
-
         return $this;
     }
 }
+

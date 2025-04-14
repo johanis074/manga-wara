@@ -1,0 +1,29 @@
+{# templates/search/results.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultats de recherche{% endblock %}
+
+{% block body %}
+    <h1>Résultats pour : "{{ query }}"</h1>
+
+    {% if products is empty %}
+        <p>Aucun résultat trouvé.</p>
+    {% else %}
+        <div class="product-list">
+            {% for product in products %}
+                <div class="product-item">
+                     {% set routeName = product.type ~ 's_show' %}
+                        <a href="{{ path(routeName, {'id': product.id}) }}">
+                        <h3>{{ product.name }}</h3>
+                        <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                        <p>Prix: {{ product.price }} €</p>
+                    </a>
+                    <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
+                        ➕ Ajouter au panier
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

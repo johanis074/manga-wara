@@ -456,3 +456,59 @@ nav a {
 .dropdown-menu a:hover {
   background-color: #f4f4f4;
 }
+
+
+/* Menu Admin */
+.admin_container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin_container nav {
+  width: 220px;
+  background-color: #2c3e50;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.admin_container nav img {
+  max-width: 100%;
+  margin-bottom: 2rem;
+}
+
+.admin_container nav a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.admin_container nav a:hover {
+  color: #1abc9c;
+}
+
+.admin_container nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.admin_container nav li {
+  margin-bottom: 10px;
+}
+
+.admin_container main {
+  flex: 1;
+  padding: 2rem;
+  background-color: #f4f4f4;
+}
+
+.admin_container main section {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}

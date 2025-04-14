@@ -2,7 +2,7 @@
 {# templates/admin/edit_book.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier {{ Type == 'book' ? 'Manga' : 'Figurine' }}{% endblock %}
+{% block title %}Modifier {{ productType == 'book' ? 'Manga' : 'Figurine' }}{% endblock %}
 
 {% block body %}
 <h1>Modifier {{ productType == 'book' ? 'le Manga' : 'la Figurine' }}</h1>

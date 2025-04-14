@@ -1,0 +1,9 @@
+<h2>Commandes</h2>
+<ul>
+    {% for order in orders %}
+        <li>
+            Commande #{{ order.id }} - Statut : {{ order.status }}
+            <a href="{{ path('admin_order_update', {id: order.id}) }}" class="btn btn-warning">Changer le statut</a>
+        </li>
+    {% endfor %}
+</ul>

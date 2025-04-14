@@ -22,6 +22,9 @@ abstract class Product
     #[ORM\Column]
     protected ?float $price = null;
 
+    #[ORM\Column(length: 20)]
+    protected ?string $type = null; // Ajout du champ type
+
     #[ORM\Column(type: 'datetime_immutable')]
     protected ?DateTimeImmutable $createdAt = null;
 
@@ -31,9 +34,10 @@ abstract class Product
     #[ORM\Column(type: 'integer')]
     protected int $sales = 0;
 
-    public function __construct()
+        public function __construct(string $type)
     {
-        $this->createdAt = new DateTimeImmutable();
+        $this->type = $type;
+        $this->createdAt = new \DateTimeImmutable(); // Optionnel si tu veux l'initialiser ici
     }
 
     public function getId(): ?int
@@ -74,26 +78,28 @@ abstract class Product
         return $this;
     }
 
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    protected function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
     public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
-
-    public function setCreatedAt(DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function getViews(): int
-    {
-        return $this->views;
-    }
-
     public function setViews(int $views): static
     {
         $this->views = $views;
         return $this;
+    }
+    public function getViews(): int
+    {
+        return $this->views;
     }
 
     public function incrementViews(): static
@@ -105,12 +111,6 @@ abstract class Product
     public function getSales(): int
     {
         return $this->sales;
-    }
-
-    public function setSales(int $sales): static
-    {
-        $this->sales = $sales;
-        return $this;
     }
 
     public function incrementSales(): static
