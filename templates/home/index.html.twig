@@ -4,43 +4,58 @@
 
 {% block body %}
     <h1>Bienvenue sur notre site de vente de produits dérivés</h1>
+
+    {# === CARROUSEL === #}
+    <section class="carousel">
+        <div class="slides">
+            <img src="{{ asset('uploads/banners/banner1.jpg') }}" alt="Bannière 1">
+            <img src="{{ asset('uploads/banners/banner2.jpg') }}" alt="Bannière 2">
+            <img src="{{ asset('uploads/banners/banner3.jpg') }}" alt="Bannière 3">
+        </div>
+        <div class="buttons">
+            <button id="prev">&#10094;</button>
+            <button id="next">&#10095;</button>
+        </div>
+        <div class="indicators" id="indicators"></div>
+    </section>
+
     <section>
         <h2>Nouveaux Produits</h2>
         <ul class="cards-container">
             {% for product in newProducts %}
                 <li class="card">
-                        {% set routeName = product.type ~ 's_show' %}
-                        <a href="{{ path(routeName, {'id': product.id}) }}">
-                            <h3>  {{ product.name }}</h3>
-                            <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
-                            <p> Prix: {{ product.price }} € </p>
-                        </a>
-                        <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
+                    {% set routeName = product.type ~ 's_show' %}
+                    <a href="{{ path(routeName, {'id': product.id}) }}">
+                        <h3>{{ product.name }}</h3>
+                        <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                        <p> Prix: {{ product.price }} € </p>
+                    </a>
+                    <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart">
                         ➕ Ajouter au panier
                     </a>
-                    </li>
+                </li>
             {% endfor %}
         </ul>
         <a href="{{ path('app_view', { filter: 'new' }) }}" class="btn">Tout voir</a>
     </section>
-    
+
     <section>
         <h2>Produits Populaires</h2>
         <ul class="cards-container">
             {% for product in popularProducts %}
                 <li class="card">
-                        {% set routeName = product.type ~ 's_show' %}
-                        <a href="{{ path(routeName, {'id': product.id}) }}">
-                            <h3>  {{ product.name }}</h3>
-                            <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
-                            <p> Prix: {{ product.price }} € </p>
-                        </a>
-                        <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
+                    {% set routeName = product.type ~ 's_show' %}
+                    <a href="{{ path(routeName, {'id': product.id}) }}">
+                        <h3>{{ product.name }}</h3>
+                        <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                        <p> Prix: {{ product.price }} € </p>
+                    </a>
+                    <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart">
                         ➕ Ajouter au panier
                     </a>
-                    </li>
+                </li>
             {% endfor %}
-        </div>
+        </ul>
         <a href="{{ path('app_view', { filter: 'popular' }) }}" class="btn">Tout voir</a>
     </section>
 
@@ -49,18 +64,74 @@
         <ul class="cards-container">
             {% for product in bestSellers %}
                 <li class="card">
-                        {% set routeName = product.type ~ 's_show' %}
-                        <a href="{{ path(routeName, {'id': product.id}) }}">
-                            <h3>  {{ product.name }}</h3>
-                            <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
-                            <p> Prix: {{ product.price }} € </p>
-                        </a>
-                        <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
+                    {% set routeName = product.type ~ 's_show' %}
+                    <a href="{{ path(routeName, {'id': product.id}) }}">
+                        <h3>{{ product.name }}</h3>
+                        <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                        <p> Prix: {{ product.price }} € </p>
+                    </a>
+                    <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart">
                         ➕ Ajouter au panier
                     </a>
-                    </li>
+                </li>
             {% endfor %}
-        </div>
+        </ul>
         <a href="{{ path('app_view', { filter: 'best' }) }}" class="btn">Tout voir</a>
     </section>
+
+    {# === CARROUSEL SCRIPT === #}
+    <script>
+        const slides = document.querySelector('.carousel .slides');
+        const images = document.querySelectorAll('.carousel .slides img');
+        const indicatorsContainer = document.getElementById('indicators');
+        const totalSlides = images.length;
+        let index = 0;
+        let interval;
+
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('span');
+            dot.classList.add('indicator');
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => {
+                index = i;
+                updateCarousel();
+                resetInterval();
+            });
+            indicatorsContainer.appendChild(dot);
+        }
+
+        function updateCarousel() {
+            slides.style.transform = `translateX(-${index * 100}%)`;
+            document.querySelectorAll('.indicator').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        document.getElementById('next').addEventListener('click', () => {
+            index = (index + 1) % totalSlides;
+            updateCarousel();
+            resetInterval();
+        });
+
+        document.getElementById('prev').addEventListener('click', () => {
+            index = (index - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+            resetInterval();
+        });
+
+        function startAutoSlide() {
+            interval = setInterval(() => {
+                index = (index + 1) % totalSlides;
+                updateCarousel();
+            }, 3000);
+        }
+
+        function resetInterval() {
+            clearInterval(interval);
+            startAutoSlide();
+        }
+
+        startAutoSlide();
+    </script>
 {% endblock %}
+

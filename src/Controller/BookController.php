@@ -148,6 +148,9 @@ class BookController extends AbstractController
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
+        $collectionName = $book->getCollectionName();
+        $relatedBooks = $bookRepository->findByCollectionNameExcludingId($collectionName, $book->getId());
+
 
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setBook($book);
@@ -164,6 +167,7 @@ class BookController extends AbstractController
             'book' => $book,
             'form' => $form->createView(),
             'pagination' => $pagination,
+            'relatedBooks' => $relatedBooks,
         ]);
     }
 

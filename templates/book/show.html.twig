@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <main class="container-books">
+    <main class="container-books vue">
     
         <section class="book-show1">
             <div>
@@ -47,7 +47,25 @@
             }
         </script>
 
-        
+        <section class="collection">
+            <h2>Dans la même collection</h2>
+
+            {% if relatedBooks is not empty %}
+                <div class="related-books cards-container">
+                    {% for related in relatedBooks %}
+                        <div class="related-book-card card">
+                            <a href="{{ path('books_show', { id: related.id }) }}">
+                                <img src="{{ asset('uploads/pictureProduct/' ~ related.picture) }}" alt="{{ related.name }}" />
+                                <h3>{{ related.name }}</h3>
+                                <p>{{ related.price }} €</p>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Aucun autre produit dans cette collection.</p>
+            {% endif %}
+        </section>
     <section class="book-show2">
     {# Formulaire pour ajouter un commentaire #}
         {{ form_start(form) }}

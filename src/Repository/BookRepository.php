@@ -85,6 +85,20 @@ class BookRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    // src/Repository/BookRepository.php
+
+    public function findByCollectionNameExcludingId(string $collectionName, int $excludedId): array
+{
+    return $this->createQueryBuilder('b')
+        ->andWhere('LOWER(b.name) LIKE :name')
+        ->andWhere('b.id != :excludedId')
+        ->setParameter('name', '%' . strtolower($collectionName) . '%')
+        ->setParameter('excludedId', $excludedId)
+        ->getQuery()
+        ->getResult();
+}
+
+
 
 
 

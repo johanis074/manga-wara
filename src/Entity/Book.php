@@ -36,6 +36,10 @@ class Book extends Product
         $this->category = CategoryManga::SHONEN; // Valeur par défaut
     }
 
+        public function getCollectionName(): string
+    {
+        return preg_replace('/\s*[Tt]ome\s*\d+/', '', $this->name);
+    }
 
     public function getReference(): ?int
     {
