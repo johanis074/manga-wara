@@ -10,20 +10,20 @@
     {% if products is empty %}
         <p>Aucun résultat trouvé.</p>
     {% else %}
-        <div class="product-list">
+        <ul class="cards-container">
             {% for product in products %}
-                <div class="product-item">
-                     {% set routeName = product.type ~ 's_show' %}
-                        <a href="{{ path(routeName, {'id': product.id}) }}">
+                <li class="card">
+                    {% set routeName = product.type ~ 's_show' %}
+                    <a href="{{ path(routeName, {'id': product.id}) }}">
                         <h3>{{ product.name }}</h3>
                         <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
-                        <p>Prix: {{ product.price }} €</p>
+                        <p> Prix: {{ product.price }} € </p>
                     </a>
-                    <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
+                    <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart">
                         ➕ Ajouter au panier
                     </a>
-                </div>
+                </li>
             {% endfor %}
-        </div>
+        </ul>
     {% endif %}
 {% endblock %}

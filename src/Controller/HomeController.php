@@ -56,7 +56,7 @@ public function viewProducts(string $filter, BookRepository $bookRepository, Fig
             break;
     }
 
-    return $this->render('view.html.twig', [
+    return $this->render('home/view.html.twig', [
         'products' => $products,
         'filter' => $filter,
     ]);

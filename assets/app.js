@@ -152,12 +152,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function showDetails() {
         contentContainer.innerHTML = `
+        <div class="details">
             <p>Éditeur: ${bookData.editor}</p>
             <p>Catégorie: ${bookData.category}</p>
             <p>Référence: ${bookData.reference}</p>
             <p>ISBN: ${bookData.isbn}</p>
             <p>EAN: ${bookData.ean}</p>
-            <p>Prix: ${bookData.price} €</p>
+        </div>
         `;
     }
 
@@ -169,4 +170,11 @@ document.addEventListener("DOMContentLoaded", function () {
     btnDetails.addEventListener("click", showDetails);
 });
 
+
+function showSection(sectionId) {
+    document.querySelectorAll('.content-section').forEach(function (section) {
+        section.classList.remove('active');
+    });
+    document.getElementById(sectionId).classList.add('active');
+}
 

@@ -17,6 +17,7 @@ class CommentType extends AbstractType
                 'label' => 'Votre commentaire',
                 'required' => true,
                 'attr' => [
+                    'class' => 'input-comment',
                     'placeholder' => 'Écrivez votre commentaire ici...',
                     'rows' => 5,
                 ]
