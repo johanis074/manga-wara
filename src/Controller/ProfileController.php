@@ -1,111 +1,117 @@
 <?php
+// src/Controller/AccountController.php
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Order;
 use App\Form\ProfileType;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Form\EmailType;
+use App\Form\PasswordType;
+use App\Form\AddressType;
+use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordHasherInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface as HasherUserPasswordHasherInterface;
 
 class ProfileController extends AbstractController
 {
-    #[Route('/profile', name: 'app_profile')]
-    public function profile(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $user = $this->getUser();
-        $form = $this->createForm(ProfileType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Update the pseudo if provided
-            $pseudo = $form->get('pseudo')->getData();
-            if ($pseudo) {
-                $user->setPseudo($pseudo);  // Correction ici : utilise setPseudo() pour modifier l'attribut
-            }
-
-            $entityManager->flush();
-            $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
-
-            return $this->redirectToRoute('app_profile');
-        }
-
-        return $this->render('profile/index.html.twig', [
-            'profileForm' => $form->createView(),
-        ]);
-    }
-
-    #[Route('/security', name: 'app_security')]
-    public function security(
+    #[Route('/mon-compte', name: 'app_profile')]
+    public function index(
         Request $request,
-        UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        HasherUserPasswordHasherInterface $hasher,
+        PaginatorInterface $paginator
     ): Response {
         $user = $this->getUser();
 
-        if (!$user) {
-            throw $this->createAccessDeniedException('Accès refusé');
-        }
+        // === Formulaire profil ===
+        $profileForm = $this->createForm(ProfileType::class, $user);
+        $profileForm->handleRequest($request);
 
-        // Formulaire pour modifier l'email
-        $emailForm = $this->createFormBuilder($user)
-            ->add('email', EmailType::class, [
-                'label' => 'Email'
-            ])
-            ->getForm();
-
-        // Formulaire pour modifier le mot de passe
-        $passwordForm = $this->createFormBuilder()
-            ->add('current_password', PasswordType::class, [
-                'label' => 'Mot de passe actuel'
-            ])
-            ->add('new_password', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'first_options'  => ['label' => 'Nouveau mot de passe'],
-                'second_options' => ['label' => 'Confirmer le nouveau mot de passe'],
-                'invalid_message' => 'Les mots de passe ne correspondent pas.',
-            ])
-            ->getForm();
-
-        // Traitement du formulaire email
-        $emailForm->handleRequest($request);
-        if ($emailForm->isSubmitted() && $emailForm->isValid()) {
-            $newEmail = $emailForm->get('email')->getData();
-            $user->setEmail($newEmail);
+        if ($profileForm->isSubmitted() && $profileForm->isValid()) {
+            // Gestion de l'image
+            $picture = $profileForm->get('pictureUser')->getData();
+            if ($picture) {
+                $fileName = uniqid().'.'.$picture->guessExtension();
+                $picture->move($this->getParameter('user_pictures_directory'), $fileName);
+                $user->setPictureUser($fileName);
+            }
             $em->flush();
-
-            $this->addFlash('success', 'Email mis à jour avec succès.');
+            $this->addFlash('success', 'Profil mis à jour.');
+            return $this->redirectToRoute('app_account');
         }
 
-        // Traitement du formulaire mot de passe
-        $passwordForm->handleRequest($request);
-        if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
-            $currentPassword = $passwordForm->get('current_password')->getData();
-            $newPassword = $passwordForm->get('new_password')->getData();
+        // === Formulaire email ===
+        $emailForm = $this->createForm(EmailType::class, $user);
+        $emailForm->handleRequest($request);
 
-            // Vérification du mot de passe actuel
-            if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
+        if ($emailForm->isSubmitted() && $emailForm->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Email modifié.');
+            return $this->redirectToRoute('app_account');
+        }
+
+        // === Formulaire mot de passe ===
+        $passwordForm = $this->createForm(PasswordType::class);
+        $passwordForm->handleRequest($request);
+
+        if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
+            $current = $passwordForm->get('current_password')->getData();
+            $new = $passwordForm->get('new_password')->getData();
+
+            if (!$hasher->isPasswordValid($user, $current)) {
                 $this->addFlash('error', 'Mot de passe actuel incorrect.');
             } else {
-                // Mise à jour du mot de passe
-                $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
+                $user->setPassword($hasher->hashPassword($user, $new));
                 $em->flush();
-
-                $this->addFlash('success', 'Mot de passe mis à jour avec succès.');
+                $this->addFlash('success', 'Mot de passe mis à jour.');
+                return $this->redirectToRoute('app_account');
             }
         }
 
-        return $this->render('profile/index.html.twig', [
+        // === Formulaire adresses ===
+        $addressForm = $this->createForm(AddressType::class);
+        $addressForm->handleRequest($request);
+
+        if ($addressForm->isSubmitted() && $addressForm->isValid()) {
+            if (!$addressForm->get('deliveryDifferent')->getData()) {
+                $user->setDeliveryAddress(null); // vide si non cochée
+            }
+            $em->flush();
+            $this->addFlash('success', 'Adresses mises à jour.');
+            return $this->redirectToRoute('app_account');
+        }
+        // === Récupération des commandes (3 derniers mois) ===
+        $threeMonthsAgo = new \DateTimeImmutable('-3 months');
+
+        $query = $em->getRepository(Order::class)->createQueryBuilder('o')
+            ->where('o.user = :user')
+            ->andWhere('o.createdAt >= :date')
+            ->setParameter('user', $user)
+            ->setParameter('date', $threeMonthsAgo)
+            ->orderBy('o.createdAt', 'DESC')
+            ->getQuery();
+
+        $orders = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            5
+        );
+
+        return $this->render('account/dashboard.html.twig', [
+            'profileForm' => $profileForm->createView(),
             'emailForm' => $emailForm->createView(),
             'passwordForm' => $passwordForm->createView(),
+            'addressForm' => $addressForm->createView(),
+            'orders' => $orders,
         ]);
     }
 }
+
 
 
 

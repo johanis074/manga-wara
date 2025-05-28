@@ -49,11 +49,43 @@ nav a {
     font-weight: 500;
     padding: 10px;
 }
+.bg{
+    background-color: #E2938A;
+    width: 80%;
+    margin: 0 auto;
+    padding-top: 3%;
+}
+.home h2{
+    color: #257EB5;
+    font-size: 2rem;
+    text-align: center;
+}
+.home .btn{
+    background-color: #257EB5;
+    color: white;
+    border: none;
+    padding: 1px 2px;
+    font-size: 1.5rem;
+    text-decoration: none;
+    width: 20%;
+    margin: 0 auto;
+}
+.home .btn:hover{
+    background-color: #E8DCCA;
+    color: #257EB5;
+}
+.home .btn:active{
+    transform: scale(0.9);
+}
+.home section .bg{
+  padding-bottom: 1rem;
+  margin-bottom: 2%;
+}
 .cards-container{
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    padding: 3% 1%;
+    padding: 3% 0%;
     gap: 50px;
     width: 70%;
     margin: 0 auto;
@@ -61,15 +93,25 @@ nav a {
 
 }
 .card {
-    width: 10%;
+    width: 15%;
     background: #fff;
     position: relative;
-    padding: 0.5rem 3rem;
+    padding: 0.5rem 2rem;
     /* border: 2px solid #c3c6ce; */
     transition: 0.5s ease-out;
     overflow: visible;
     list-style-type: none;
+
    }
+
+   .truncate-title {
+    white-space: nowrap;        /* Empêche le texte de passer à la ligne */
+    overflow: hidden;           /* Cache le dépassement du contenu */
+    text-overflow: ellipsis;    /* Ajoute les "..." */
+    max-width: 100%;            /* Ou une largeur fixe ex: 300px */
+    display: block;             /* S'assurer que ça s'applique correctement */
+  }
+  
    
    .card-details {
     color: black;
@@ -91,7 +133,7 @@ nav a {
     margin: 0px 0px 20px 0px;
    }
    .card h3 {
-    font-size: 1.5rem;
+    font-size: 0.8rem;
     margin: 0;
     text-align: center;
     margin-bottom: 10px;
@@ -112,23 +154,32 @@ nav a {
     border-color: #257EB5;
     box-shadow: 0 14px 28px 0 rgba(0, 0, 0, .7);
    }
-    .card:hover h3, .card:hover p{
-      color: #257EB5;
-    }
    .card:hover img{
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
    }
 
     .card:hover p{
-      margin-top: 10px;
       font-size: 1.2rem;
     }
-
-    .card:hover{
-     width: 18%;
+    
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .pagination a {
+      margin: 0 5px;
+      padding: 10px 15px;
+      background-color: #257EB5;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .pagination a:hover {
+      background-color: #1a6f9b;
     }
     
-
+  
 
    /*connexion*/
    .form {
@@ -205,89 +256,6 @@ nav a {
     color: #E8DCCA;
     font-weight: 400;
   }
-
-
-/* Customize the label (the checkbox-btn) */
-.checkbox-btn {
-    display: block;
-    position: relative;
-    padding-left: 30px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    color: #E8DCCA;
-  }
-  
-  /* Hide the browser's default checkbox */
-  .checkbox-btn input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-  }
-  
-  .checkbox-btn label {
-    cursor: pointer;
-    font-size: 14px;
-  }
-  /* Create a custom checkbox */
-  .checkmark {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 15px;
-    width: 15px;
-    border: 2.5px solid #E8DCCA;
-    transition: .2s linear;
-  }
-  .checkbox-btn input:checked ~ .checkmark {
-    background-color: transparent;
-  }
-  
-  /* Create the checkmark/indicator (hidden when not checked) */
-  .checkmark:after {
-    content: "";
-    position: absolute;
-    visibility: hidden;
-    opacity: 0;
-    left: 50%;
-    top: 40%;
-    width: 10px;
-    height: 14px;
-    border: 2px solid #257EB5;
-    filter: drop-shadow(0px 0px 10px #257EB5);
-    border-width: 0 2.5px 2.5px 0;
-    transition: .2s linear;
-    transform: translate(-50%, -50%) rotate(-90deg) scale(0.2);
-  }
-  
-  /* Show the checkmark when checked */
-  .checkbox-btn input:checked ~ .checkmark:after {
-    visibility: visible;
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate(0deg) scale(1);
-    animation: pulse 1s ease-in;
-  }
-  
-  .checkbox-btn input:checked ~ .checkmark {
-    transform: rotate(45deg);
-    border: none;
-  }
-  
-  @keyframes pulse {
-    0%,
-    100% {
-      transform: translate(-50%, -50%) rotate(0deg) scale(1);
-    }
-    50% {
-      transform: translate(-50%, -50%) rotate(0deg) scale(1.6);
-    }
-  }
-
   .form p{
     color: #E8DCCA;
   }
@@ -639,6 +607,20 @@ nav a {
     color: #257EB5;
     margin: 0;
   }
+  .details{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .details ul{
+    border-left:solid 2px black ;
+  }
+  .details li{
+    list-style: none;
+    margin: 5% 0;
+    padding: 0;
+  }
+
   .book-bg{
     width: auto 80%;
     margin: 0 0 0 15%;
@@ -651,7 +633,7 @@ nav a {
     text-align: left;
   }
 
-  .book-bg button{
+  .book-bg button, .cart .button{
     color: #fff;
     padding: 10px 20px;
     border: none;
@@ -659,11 +641,11 @@ nav a {
     cursor: pointer;
     font-size: 1.2rem;
   }
-  .book-bg button:hover{
+  .book-bg button:hover, .cart .button:hover{
     background: #E8DCCA;
     color: #257EB5;
   }
-  .book-bg button:active{
+  .book-bg button:active, .cart .button:active{
     transform: scale(0.9);
   }
   .book-details details{
@@ -674,12 +656,13 @@ nav a {
     padding: 2%;
     background-color: #E8DCCA;
     border-radius: 10px;
-    width: 30%;
+    width: 50%;
     margin: 0 auto;
   }
   .book-show2 ul{
     border : 5px solid #257EB5;
-    width: 100%;
+    width: 90%;
+    
   }
 
   .book-show2 li{
@@ -694,6 +677,7 @@ nav a {
     color: #257EB5;
     text-align: left;
     margin: 0;
+    
   }
   .book-show2 p{
     font-size: 1.2rem;
@@ -701,14 +685,12 @@ nav a {
     margin: 0;
   }
   .book-show2 .input-comment{
-    width: 100%;
     border : 2px solid #257EB5;
     resize: none;
   }
   .comment-user{
     display: flex;
     align-items: center;
-    gap: 10px;
   }
   .book-show2 img{
     width:60px;
@@ -786,4 +768,29 @@ nav a {
 
 .content-section.active {
     display: block;
+}
+
+/*cart*/
+.cart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.cart th{
+    background-color: #257EB5;
+    color: #E8DCCA;
+    padding: 10px;
+    border-left: 2px solid #E8DCCA;
+    border-right: 2px solid #E8DCCA;
+    text-align: center;
+}
+
+.cart td{
+    padding: 10px;
+    text-align: center;
+    border-left: 2px solid #E8DCCA;
+    border-right: 2px solid #E8DCCA;
 }

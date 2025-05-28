@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block body %}
-    <main class="container-figurines">
+    <main class="bg">
     
-        <section class="figurine-show1">
+        <section class="book-show1">
             <div>
                 <p>
                     <a href="{{ path('app_home') }}">Accueil</a> /
@@ -17,60 +17,103 @@
                 <img src="{{ asset('uploads/pictureProduct/' ~ figurine.picture) }}" alt="{{ figurine.name }}"/>
             </div>
 
-            <div>
+            <div class="book-bg">
                 <h2>{{ figurine.name }}</h2>
-
-                <!-- Boutons pour afficher la description ou les détails -->
-                <button id="btn-description">Description</button>
-                <button id="btn-details">Détails</button>
-
-                <!-- Conteneur qui recevra le contenu -->
-                <div id="content-container"></div>
-
-                <!-- Bouton "Ajouter au panier" -->
-                <a href="{{ path('cart_add', {type: figurine.type, id: figurine.id}) }}" class="add-to-cart" data-id="{{ figurine.id }}" data-type="{{ figurine.type }}">
+                <p>Prix: {{ figurine.price }} €</p>
+                <h3>Synopsis</h3>
+                <p>{{figurine.description}}</p>
+                <h3>Details</h3>
+                <div class="details">
+                    <a href="{{ path('cart_add', {type: figurine.type, id: figurine.id}) }}" class="add-to-cart" data-id="{{ figurine.id }}" data-type="{{ figurine.type }}">
                         ➕ Ajouter au panier
                     </a>
+                    <ul>
+                        <li>Marque: {{figurine.brand.name}}</li>
+                        <li>Référence: {{figurine.reference}}</li>
+                        <li>Hauteur: {{figurine.height}}</li>
+                    </ul>
             </div>
         </section>
+         <section class="collection">
+            <h2>Dans la même collection</h2>
 
-        <!-- Injection des données sous forme de JSON dans un élément caché -->
-        <script type="application/json" id="figurine-data">
-            {
-                "description": "{{ figurine.description|e('js') }}",
-                "brand": "{{ figurine.brand.name|e('js') }}",
-                "reference": "{{ figurine.reference|e('js') }}",
-                "price": "{{ figurine.price }}"
-            }
-        </script>
-
-        
-    <section class="figurine-show2">
-    {# Formulaire pour ajouter un commentaire #}
-        {{ form_start(form) }}
-            {{ form_row(form.content) }}
-            <button type="submit" class="btn btn-success">Envoyer</button>
-        {{ form_end(form) }}
-
-    {# Affichage des commentaires #}
-        <ul>
-            {% for comment in pagination %}
-                <li>
-                    <p>Posté par: <img src="{{ asset('uploads/pictureUser/' ~ comment.user.pictureUser) }}" alt="image du profil"></img> {{ comment.user.pseudo }}</p>
-                    <p>Posté le: {{ comment.date|date('d/m/Y H:i') }}</p>
-                    <p>{{ comment.content }}</p>
-                </li>
+            {% if relatedFigurines is not empty %}
+                <div class="related-books cards-container">
+                    {% for related in relatedFigurines %}
+                        <div class="related-book-card card">
+                            
+                            <a href="{{ path('figurines_show', { id: related.id }) }}">
+                                <div class="card-header">
+                                <h3 class="figurine-name">{{ related.name }}</h3>
+                                <p class="figurine-brand">{{ related.brand }}</p>
+                            </div>
+                                <img src="{{ asset('uploads/pictureProduct/' ~ related.picture) }}" alt="{{ related.name }}" />
+                                <p>{{ related.price }} €</p>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
             {% else %}
-                <p>Aucun commentaire pour le moment.</p>
-            {% endfor %}
-        </ul>
+                <p>Aucun autre produit dans cette collection.</p>
+            {% endif %}
+        </section>
 
-    {# Pagination #}
-        <div class="pagination">
-            {{ knp_pagination_render(pagination) }}
-        </div>
-    </section>
-    {# Lien de retour #}
+        <section class="book-show2">
+        <h2>Ajouter un commentaire</h2>
+            {% if app.user %}
+                {{ form_start(form) }}
+                <span>{{ form_row(form.content) }}</span>
+                <button type="submit" class="btn btn-success">Envoyer</button>
+                {{ form_end(form) }}
+            {% else %}
+                <p>Vous devez être connecté pour laisser un commentaire.</p>
+            {% endif %}
+
+            {# Affichage du formulaire #}
+            {% if form is not empty %}
+                <h3>Votre commentaire</h3>
+            {% endif %}
+            
+
+        {# Affichage des commentaires #}
+            <ul>
+                {% for comment in pagination %}
+                    {#<div class="comment-header">
+                            {% if app.user and app.user.id == comment.user.id %}
+                                <a href="{{ path('comment_delete', {id: comment.id}) }}" class="btn btn-danger">Supprimer</a>
+                            {% endif %}
+                            {% if app.user and app.user.id == comment.user.id %}
+                                <a href="{{ path('comment_edit', {id: comment.id}) }}" class="btn btn-primary">Modifier</a>
+                            {% endif %}
+                    </div>#}
+                    <li class="comment">
+                        {# Affichage de l'image de profil de l'utilisateur #}
+                        
+                    <li>
+                        {% if comment.user.pictureUser is not null %}
+                            <img src="{{ asset('uploads/pictureUser/' ~ comment.user.pictureUser) }}" alt="image du profil"></img>
+                        {% else %}
+                            <img src="{{ asset('uploads/pictureUser/default.png') }}" alt="image du profil"></img>
+                        {% endif %}
+                        
+                        <div>
+                            <div class="comment-user">
+                                <p>Posté par: {{ comment.user.pseudo }} le: {{ comment.date|date('d/m/Y') }} à {{ comment.date|date('H:i') }}</p>
+                            </div>
+                                <p class="comment-text">{{ comment.content }}</p>
+                            </div>
+                    </li>
+                {% else %}
+                    <p>Aucun commentaire pour le moment.</p>
+                {% endfor %}
+            </ul>
+
+        {# Pagination #}
+            <div class="pagination">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        </section>
+        {# Lien de retour #}
     
     </main>
 {% endblock %}

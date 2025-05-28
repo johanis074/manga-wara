@@ -42,6 +42,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $pictureUser = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $billingAddress = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $deliveryAddress = null;    
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -150,6 +157,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->pictureUser = $pictureUser;
 
+        return $this;
+    }
+
+    public function getBillingAddress(): ?string
+    {
+        return $this->billingAddress;
+    }
+
+    public function setBillingAddress(?string $billingAddress): static
+    {
+        $this->billingAddress = $billingAddress;
+        return $this;
+    }
+
+    public function getDeliveryAddress(): ?string
+    {
+        return $this->deliveryAddress;
+    }
+
+    public function setDeliveryAddress(?string $deliveryAddress): static
+    {
+        $this->deliveryAddress = $deliveryAddress;
         return $this;
     }
 }

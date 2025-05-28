@@ -107,4 +107,9 @@ private function calculateTotal(array $cart): float
         }
         return $total;
     }
+
+        public function clear(): void
+    {
+        $this->session->remove('cart');
+    }
 }

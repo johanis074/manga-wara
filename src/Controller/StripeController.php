@@ -1,47 +1,92 @@
 <?php
 
-// namespace App\Controller;
+namespace App\Controller;
 
-// use App\Service\StripeService;
-// use Symfony\Component\HttpFoundation\Request;
-// use Symfony\Component\HttpFoundation\Response;
-// use Symfony\Component\Routing\Annotation\Route;
-// use Symfony\Component\HttpFoundation\JsonResponse;
-// use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\StripeService;
+use App\Service\CartService;
+use App\Service\OrderService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-// class StripeController extends AbstractController
-// {
-//     #[Route('/checkout', name: 'stripe_checkout', methods: ['POST'])]
-//     public function checkout(StripeService $stripeService, Request $request): JsonResponse
-//     {
-//         $data = json_decode($request->getContent(), true);
+class StripeController extends AbstractController
+{
+    #[Route('/create-checkout-session', name: 'stripe_checkout', methods: ['POST'])]
+    public function checkout(
+        StripeService $stripe,
+        CartService $cartService,
+        Request $request
+    ): JsonResponse {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Non autorisé'], Response::HTTP_UNAUTHORIZED);
+        }
 
-//         $session = $stripeService->createCheckoutSession([
-//             'price_data' => [
-//                 'currency' => 'eur',
-//                 'product_data' => ['name' => $data['product_name']],
-//                 'unit_amount' => $data['price'] * 100, // Convertir en centimes
-//             ],
-//             'quantity' => $data['quantity'],
-//         ]);
+        $cartItems = $cartService->getCart();
+        if (empty($cartItems)) {
+            return new JsonResponse(['error' => 'Panier vide'], 400);
+        }
 
-//         return new JsonResponse(['id' => $session->id]);
-//     }
-//     #[Route('/payment/status', name: 'payment_status')]
-//     public function paymentStatus(Request $request, StripeService $stripeService): Response
-//     {
-//         $sessionId = $request->query->get('session_id');
+        $session = $stripe->createCartCheckoutSession(
+            $cartItems,
+            $this->generateUrl('payment_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            $this->generateUrl('payment_cancel', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            $user
+        );
 
-//         if (!$sessionId) {
-//             return $this->render('payment/status.html.twig', ['status' => 'error']);
-//         }
+        // Stocker l'ID de session Stripe côté serveur (en session PHP)
+        $request->getSession()->set('stripe_session_id', $session->id);
 
-//         $session = $stripeService->retrieveSession($sessionId);
+        return new JsonResponse(['url' => $session->url]);
+    }
 
-//         return $this->render('payment/status.html.twig', [
-//             'status' => $session->payment_status === 'paid' ? 'success' : 'error',
-//             'amount' => $session->amount_total / 100, // Convertir en euros
-//             'currency' => strtoupper($session->currency),
-//     ]);
-// }
-// } 
+    #[Route('/paiement/success', name: 'payment_success')]
+    public function success(
+        Request $request,
+        OrderService $orderService,
+        EntityManagerInterface $em
+    ): Response {
+        $sessionId = $request->getSession()->get('stripe_session_id');
+
+        if (!$sessionId) {
+            return new Response('Session Stripe introuvable (non stockée)', 400);
+        }
+
+        \Stripe\Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+
+        try {
+            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+        } catch (\Exception $e) {
+            return new Response('Session Stripe invalide : ' . $e->getMessage(), 400);
+        }
+
+        $user = $this->getUser();
+        if (!$user) {
+            return new Response('Utilisateur non connecté', 401);
+        }
+
+        $order = $em->getRepository(\App\Entity\Order::class)->findOneBy([
+            'stripeSessionId' => $sessionId,
+        ]);
+
+        if (!$order) {
+            $order = $orderService->createFromStripeSession($session, $user);
+        }
+
+        $this->addFlash('success', 'Commande enregistrée avec succès.');
+
+        return $this->render('checkout/index.html.twig', [
+            'order' => $order,
+        ]);
+    }
+
+    #[Route('/paiement/cancel', name: 'payment_cancel')]
+    public function cancel(): Response
+    {
+        return $this->render('payment/cancel.html.twig');
+    }
+}

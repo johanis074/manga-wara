@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 
-use brand;
+use App\Enum\Brand;
 use App\Entity\Figurine;
 use App\Form\FigurineType;
 use App\Entity\Comment;
@@ -39,7 +39,7 @@ class FigurineController extends AbstractController
             'pagination' => $pagination,
             'current_sort' => $sort,
             'current_brand' => $brand,
-            'brands' => brand::cases(), // Récupère les catégories dynamiquement
+            'brands' => Brand::cases(), // Récupère les catégories dynamiquement
         ]);
     }
 
@@ -155,10 +155,16 @@ class FigurineController extends AbstractController
             return $this->redirectToRoute('figurines_show', ['id' => $id]);
         }
 
+        $relatedFigurines = $figurineRepository->findByTitleAndBrandExcludingId(
+            $figurine->getName(),
+            $figurine->getBrand(),
+            $figurine->getId());
+
         return $this->render('figurine/show.html.twig', [
             'figurine' => $figurine,
             'form' => $form->createView(),
             'pagination' => $pagination,
+            'relatedFigurines' => $relatedFigurines,
         ]);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Form;
-use brand;
+use App\Enum\Brand;
 use App\Entity\Figurine;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,9 +23,9 @@ class FigurineType extends AbstractType
             ->add('price')
             ->add('brand',ChoiceType::class, [
                 'label' => 'Statut de la commande',
-                'choices' => brand::cases(),
-                'choice_label' => fn(brand $brand) => $brand->name,
-                'choice_value' => fn(brand $brand) => $brand->value
+                'choices' => Brand::cases(),
+                'choice_label' => fn(Brand $brand) => $brand->name,
+                'choice_value' => fn(Brand $brand) => $brand->value
             ])
             ->add('description')
             ->add('reference')

@@ -1,12 +1,13 @@
 <?php
-enum brand: string
+namespace App\Enum;
+
+enum Brand: string
 {
     case FUNKOPOP = 'funko-pop';
     case BANDAI = 'bandai';
     case BANPRESTO = 'banpresto';
-    case KOTOBUKiYA = 'kotobukiya';
+    case KOTOBUKIYA = 'kotobukiya';
     case SEGA = 'sega';
     case OTHER = 'other';
-
 }
 ?>

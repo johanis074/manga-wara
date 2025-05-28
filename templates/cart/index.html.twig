@@ -3,46 +3,64 @@
 {% block title %} Mon Panier {% endblock %}
 
 {% block body %}
-<h1>Mon Panier</h1>
-<a href="{{ path('books_index') }}">Retour aux livres</a>
-{% if cart is empty %}
-    <p>Votre panier est vide.</p>
-{% else %}
-    {# <a href="{{ path('cart_empty') }}">Vider le panier</a> #}
-    <table>
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Nom</th>
-                <th>Prix</th>
-                <th>Quantité</th>
-                <th>Total</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart %}
+<main class="bg cart">
+    <h2>Mon Panier</h2>
+    <a href="{{ path('books_index') }}">Retour aux livres</a>
+    {% if cart is empty %}
+        <p>Votre panier est vide.</p>
+    {% else %}
+        {# <a href="{{ path('cart_empty') }}">Vider le panier</a> #}
+        <table>
+            <thead>
                 <tr>
-                    <td><img src="{{ asset('uploads/' ~ item.product.picture) }}" width="50"></td>
-                    <td>{{ item.product.name }}</td>
-                    <td>{{ item.product.price }}€</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.product.price * item.quantity }}€</td>
-                    <td>
-                        <a href="{{ path('cart_add', {type: item.product.type, id: item.product.id}) }}">➕</a>
-                        <a href="{{ path('cart_remove', {type: item.product.type,id: item.product.id}) }}">❌</a>
-                    </td>
+                    <th>Image</th>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Quantité</th>
+                    <th>Total</th>
+                    <th>Actions</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <h3>Total : {{ total }}€</h3>
-{% endif %}
-<a href="{{ path('cart_pdf') }}" class="btn btn-primary">Télécharger le bon de commande (PDF)</a>
-{# <form action="{{ path('cart_checkout') }}" method="POST">
-    <button type="submit" class="btn btn-primary">Payer avec Stripe</button>
-</form> #}
+            </thead>
+            <tbody>
+                {% for item in cart %}
+                    <tr>
+                        <td><img src="{{ asset('uploads/pictureProduct/' ~ item.product.picture) }}" alt="Image du produit" width="25"></td>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.product.price }}€</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.product.price * item.quantity }}€</td>
+                        <td>
+                            <a href="{{ path('cart_add', {type: item.product.type, id: item.product.id}) }}">➕</a>
+                            <a href="{{ path('cart_remove', {type: item.product.type,id: item.product.id}) }}">❌</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h3>Total : {{ total }}€</h3>
 
-{# <a href="{{ path('cart') }}">Commander</a> #}
+    <button id="checkout-button">Payer avec Stripe</button>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <button id="checkout-button">Payer avec Stripe</button>
+
+<script>
+    document.querySelector('#checkout-button').addEventListener('click', () => {
+        fetch("{{ path('stripe_checkout') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                alert("Erreur : URL Stripe non reçue.");
+            }
+        });
+    });
+</script>
 
 {% endblock %}

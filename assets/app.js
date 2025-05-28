@@ -48,6 +48,25 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+// Fonction pour ajouter un produit au panier
+// Cette fonction est appelée lorsque l'utilisateur clique sur le bouton "Ajouter au panier"
+function addToCart(id, type) {
+    fetch(`/cart/add/${type}/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Produit ajouté ! Total articles : " + data.totalItems);
+                // ici, tu peux aussi mettre à jour un compteur dans le header
+            } else {
+                alert("Erreur : " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de l’ajout au panier :', error);
+        });
+}
+
+
 
 document.addEventListener("DOMContentLoaded", function () {
     const input = document.getElementById("search-input");
@@ -134,47 +153,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+//stripe
+const stripe = Stripe('pk_test_xxxxxxxxxxxxxxxxxxx');
 
-//Show book description and details
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    const btnDescription = document.getElementById("btn-description");
-    const btnDetails = document.getElementById("btn-details");
-    const contentContainer = document.getElementById("content-container");
-
-    // Récupération des données du JSON injecté dans le DOM
-    const bookData = JSON.parse(document.getElementById("book-data").textContent);
-
-    function showDescription() {
-        contentContainer.innerHTML = `<p>${bookData.synopsis}</p>`;
-    }
-
-    function showDetails() {
-        contentContainer.innerHTML = `
-        <div class="details">
-            <p>Éditeur: ${bookData.editor}</p>
-            <p>Catégorie: ${bookData.category}</p>
-            <p>Référence: ${bookData.reference}</p>
-            <p>ISBN: ${bookData.isbn}</p>
-            <p>EAN: ${bookData.ean}</p>
-        </div>
-        `;
-    }
-
-    // Afficher la description par défaut
-    showDescription();
-
-    // Écouteurs d'événements pour changer le contenu
-    btnDescription.addEventListener("click", showDescription);
-    btnDetails.addEventListener("click", showDetails);
+document.querySelector("#pay-button").addEventListener("click", () => {
+    fetch('/create-checkout-session', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => stripe.redirectToCheckout({ sessionId: data.id }));
 });
-
-
-function showSection(sectionId) {
-    document.querySelectorAll('.content-section').forEach(function (section) {
-        section.classList.remove('active');
-    });
-    document.getElementById(sectionId).classList.add('active');
-}
 

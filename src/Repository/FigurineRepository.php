@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Figurine;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Enum\Brand;
 
 /**
  * @extends ServiceEntityRepository<Figurine>
@@ -84,6 +85,20 @@ class FigurineRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findByTitleAndBrandExcludingId(string $title, Brand $brand, int $excludedId): array
+    {
+        return $this->createQueryBuilder('f')
+            ->where('f.name = :title')
+            ->andWhere('f.brand = :brand')
+            ->andWhere('f.id != :excludedId')
+            ->setParameter('title', $title)
+            ->setParameter('brand', $brand)
+            ->setParameter('excludedId', $excludedId)
+            ->getQuery()
+            ->getResult();
+    }
+
 }
 
 

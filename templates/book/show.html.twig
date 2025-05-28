@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <main class="container-books vue">
+    <main class="bg">
     
         <section class="book-show1">
             <div>
@@ -16,60 +16,53 @@
                 </p>
                 <img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}"/>
             </div>
-            <div class="book-bg">
-                <h2>{{ book.name }}</h2>
-                <p>Prix: {{ book.price }} €</p>
-                <button id="btn-description">Description</button>
-                <button id="btn-details">Détails</button>
-                <div class="book-details">
-                    
-                    <!-- Boutons pour afficher la description ou les détails -->
-                    
-
-                    <!-- Conteneur qui recevra le contenu -->
-                    <div id="content-container"></div>
+                <div class="book-bg">
+                    <h2>{{ book.name }}</h2>
+                    <p>Prix: {{ book.price }} €</p>
+                    <h3>Synopsis</h3>
+                    <p>{{book.synopsis}}</p>
+                    <h3>Details</h3>
+                    <div class="details">
+                        <a href="{{ path('cart_add', {type: book.type, id: book.id}) }}" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
+                        ➕ Ajouter au panier
+                        </a>
+                        <ul >
+                            <li>Éditeur: {{book.editor.name}}</li>
+                            <li>Catégorie: {{book.category.name}}</li>
+                            <li>Référence: {{book.reference}}</li>
+                            <li>ISBN: {{book.isbn}}</li>
+                            <li>EAN: {{book.ean}}</li>
+                        </ul>
+                        
+                    </div>
+                </div>
 
                     <!-- Bouton "Ajouter au panier" -->
                     
                 </div>
-                <a href="{{ path('cart_add', {type: book.type, id: book.id}) }}" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
-                            ➕ Ajouter au panier
-                </a>
+                
             </div>
         </section>
 
-        <!-- Injection des données sous forme de JSON dans un élément caché -->
-        <script type="application/json" id="book-data">
-            {
-                "synopsis": "{{ book.synopsis|e('js') }}",
-                "editor": "{{ book.editor.name|e('js') }}",
-                "category": "{{ book.category.name|e('js') }}",
-                "reference": "{{ book.reference|e('js') }}",
-                "isbn": "{{ book.isbn|e('js') }}",
-                "ean": "{{ book.ean|e('js') }}"
-            }
-        </script>
+            <section class="collection">
+        <h2>Dans la même collection</h2>
 
-        <section class="collection">
-            <h2>Dans la même collection</h2>
-
-            {% if relatedBooks is not empty %}
-                <div class="related-books cards-container">
-                    {% for related in relatedBooks %}
-                        <div class="related-book-card card">
-                            
-                            <a href="{{ path('books_show', { id: related.id }) }}">
-                                <h3>{{ related.name }}</h3>
-                                <img src="{{ asset('uploads/pictureProduct/' ~ related.picture) }}" alt="{{ related.name }}" />
-                                <p>{{ related.price }} €</p>
-                            </a>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p>Aucun autre produit dans cette collection.</p>
-            {% endif %}
-        </section>
+        {% if relatedBooks is not empty %}
+            <div class="related-books cards-container">
+                {% for related in relatedBooks %}
+                    <div class="related-book-card card">
+                        <a href="{{ path('books_show', { id: related.id }) }}">
+                            <h3>{{ related.name }}</h3>
+                            <img src="{{ asset('uploads/pictureProduct/' ~ related.picture) }}" alt="{{ related.name }}" />
+                            <p>{{ related.price }} €</p>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Aucun autre produit dans cette collection.</p>
+        {% endif %}
+    </section>
     <section class="book-show2">
     {# Formulaire pour ajouter un commentaire #}
         <h2>Ajouter un commentaire</h2>

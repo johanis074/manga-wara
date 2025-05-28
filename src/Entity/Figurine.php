@@ -5,7 +5,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use brand;
+use App\Enum\Brand;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\FigurineRepository;
 
@@ -23,8 +23,8 @@ class Figurine extends Product
     #[ORM\Column]
     private ?float $height = null;
 
-    #[ORM\Column(enumType: brand::class)]
-    private ?brand $brand = null;
+    #[ORM\Column(enumType: Brand::class)]
+    private ?Brand $brand = null;
 
     /**
      * @var Collection<int, Comment>
@@ -35,7 +35,7 @@ class Figurine extends Product
     public function __construct()
     {
         parent::__construct('figurine'); // Définition du type
-        $this->brand = brand::BANDAI; // Valeur par défaut
+        $this->brand = Brand::BANDAI; // Valeur par défaut
         $this->comments = new ArrayCollection();
     }
 
@@ -73,12 +73,12 @@ class Figurine extends Product
         return $this;
     }
 
-    public function getBrand(): ?brand
+    public function getBrand(): ?Brand
     {
         return $this->brand;
     }
 
-    public function setBrand(brand $brand): static
+    public function setBrand(Brand $brand): static
     {
         $this->brand = $brand;
 

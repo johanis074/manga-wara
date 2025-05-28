@@ -1,9 +1,11 @@
 <?php
+// src/Form/PasswordType.php
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType as PasswordInput;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType as Pwd;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PasswordType extends AbstractType
@@ -11,17 +13,16 @@ class PasswordType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('current_password', PasswordInput::class, [
+            ->add('current_password', Pwd::class, [
                 'label' => 'Mot de passe actuel',
-                'mapped' => false,
+                'mapped' => false
             ])
-            ->add('new_password', PasswordInput::class, [
-                'label' => 'Nouveau mot de passe',
+            ->add('new_password', RepeatedType::class, [
+                'type' => Pwd::class,
                 'mapped' => false,
-            ])
-            ->add('repeat_password', PasswordInput::class, [
-                'label' => 'Confirmer le nouveau mot de passe',
-                'mapped' => false,
+                'first_options' => ['label' => 'Nouveau mot de passe'],
+                'second_options' => ['label' => 'Confirmer le nouveau mot de passe'],
+                'invalid_message' => 'Les mots de passe ne correspondent pas.',
             ]);
     }
 
@@ -30,3 +31,4 @@ class PasswordType extends AbstractType
         $resolver->setDefaults([]);
     }
 }
+

@@ -3,81 +3,88 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
-    <h1>Bienvenue sur notre site de vente de produits dérivés</h1>
-
     {# === CARROUSEL === #}
-    <section class="carousel">
-        <div class="slides">
-            <img src="{{ asset('uploads/banners/banner1.jpg') }}" alt="Bannière 1">
-            <img src="{{ asset('uploads/banners/banner2.jpg') }}" alt="Bannière 2">
-            <img src="{{ asset('uploads/banners/banner3.jpg') }}" alt="Bannière 3">
-        </div>
-        <div class="buttons">
-            <button id="prev">&#10094;</button>
-            <button id="next">&#10095;</button>
-        </div>
-        <div class="indicators" id="indicators"></div>
-    </section>
+    <main class="home">
+        
+        <section class="carousel ">
+            <div class="slides">
+                <img src="{{ asset('uploads/banners/banner1.webp') }}" alt="Bannière 1">
+                <img src="{{ asset('uploads/banners/banner2.webp') }}" alt="Bannière 2">
+                <img src="{{ asset('uploads/banners/banner3.webp') }}" alt="Bannière 3">
+            </div>
+            <div class="buttons">
+                <button id="prev">&#10094;</button>
+                <button id="next">&#10095;</button>
+            </div>
+            <div class="indicators" id="indicators"></div>
+        </section>
 
-    <section>
-        <h2>Nouveaux Produits</h2>
-        <ul class="cards-container">
-            {% for product in newProducts %}
-                <li class="card">
-                    {% set routeName = product.type ~ 's_show' %}
-                    <a href="{{ path(routeName, {'id': product.id}) }}">
-                        <h3>{{ product.name }}</h3>
-                        <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
-                        <p> Prix: {{ product.price }} € </p>
-                    </a>
-                    <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart">
-                        ➕ Ajouter au panier
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-        <a href="{{ path('app_view', { filter: 'new' }) }}" class="btn">Tout voir</a>
-    </section>
+        <section>
+            <h2>Nouveaux Produits</h2>
+            <div class="bg">
+                <ul class="cards-container bg">
+                    {% for product in newProducts %}
+                        <li class="card">
+                            {% set routeName = product.type ~ 's_show' %}
+                            <a href="{{ path(routeName, {'id': product.id}) }}">
+                                <h3 class="truncate-title">{{ product.name }}</h3>
+                                <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                                <p> Prix: {{ product.price }} € </p>
+                            </a>
+                            <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart">
+                                ➕ Ajouter au panier
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ path('app_view', { filter: 'new' }) }}" class="btn">Tout voir</a>
+            </div>
+        </section>
 
-    <section>
-        <h2>Produits Populaires</h2>
-        <ul class="cards-container">
-            {% for product in popularProducts %}
-                <li class="card">
-                    {% set routeName = product.type ~ 's_show' %}
-                    <a href="{{ path(routeName, {'id': product.id}) }}">
-                        <h3>{{ product.name }}</h3>
-                        <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
-                        <p> Prix: {{ product.price }} € </p>
-                    </a>
-                    <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart">
-                        ➕ Ajouter au panier
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-        <a href="{{ path('app_view', { filter: 'popular' }) }}" class="btn">Tout voir</a>
-    </section>
+        <section>
+            <h2>Produits Populaires</h2>
+            <div class="bg">
+                <ul class="cards-container bg">
+                    {% for product in popularProducts %}
+                        <li class="card">
+                            {% set routeName = product.type ~ 's_show' %}
+                            <a href="{{ path(routeName, {'id': product.id}) }}">
+                                <h3 class="truncate-title" >{{ product.name }}</h3>
+                                <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                                <p> Prix: {{ product.price }} € </p>
+                            </a>
+                            <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart">
+                                ➕ Ajouter au panier
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ path('app_view', { filter: 'popular' }) }}" class="btn">Tout voir</a>
+            </div>
+        </section>
 
-    <section>
-        <h2>Meilleures Ventes</h2>
-        <ul class="cards-container">
-            {% for product in bestSellers %}
-                <li class="card">
-                    {% set routeName = product.type ~ 's_show' %}
-                    <a href="{{ path(routeName, {'id': product.id}) }}">
-                        <h3>{{ product.name }}</h3>
-                        <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
-                        <p> Prix: {{ product.price }} € </p>
-                    </a>
-                    <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart">
-                        ➕ Ajouter au panier
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-        <a href="{{ path('app_view', { filter: 'best' }) }}" class="btn">Tout voir</a>
-    </section>
+        <section >
+            <h2>Meilleures Ventes</h2>
+            <div class="bg">
+                <ul class="cards-container bg">
+                    {% for product in bestSellers %}
+                        <li class="card">
+                            {% set routeName = product.type ~ 's_show' %}
+                            <a href="{{ path(routeName, {'id': product.id}) }}">
+                                <h3 class="truncate-title">{{ product.name }}</h3>
+                                <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                                <p> Prix: {{ product.price }} € </p>
+                            </a>
+                            <a href="{{ path('cart_add', {type: product.type, id: product.id}) }}" class="add-to-cart">
+                                ➕ Ajouter au panier
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ path('app_view', { filter: 'best' }) }}" class="btn">Tout voir</a>
+            </div>
+        </section>
+    </main>
 
     {# === CARROUSEL SCRIPT === #}
     <script>

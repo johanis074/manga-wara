@@ -1,20 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CheckoutController!{% endblock %}
+{% block title %}Paiement réussi{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/wamp64/www/manga-wara/src/Controller/CheckoutController.php</code></li>
-        <li>Your template at <code>C:/wamp64/www/manga-wara/templates/checkout/index.html.twig</code></li>
-    </ul>
-</div>
+    <div style="max-width: 600px; margin: 50px auto; padding: 30px; border-radius: 12px; background-color: #f0fff4; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.1);">
+        <h1 style="color: #38a169;">Paiement réussi !</h1>
+        <p style="font-size: 18px; margin-top: 10px;">
+            Merci pour votre commande 🛒<br>
+            Une confirmation vous a été envoyée par email.
+            Votre commande sera expédiée sous peu.
+            {# votre numéro de commande est : <strong>{{ order.id }}</strong>. #}
+            allez dans votre espace client pour suivre l'état de votre commande.
+        </p>
+        <a href="{{ path('cart_index') }}" style="display: inline-block; margin-top: 30px; padding: 10px 20px; background-color: #38a169; color: white; border-radius: 8px; text-decoration: none;">
+            Retour à la boutique
+        </a>
+    </div>
 {% endblock %}

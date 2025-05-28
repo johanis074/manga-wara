@@ -1,32 +1,95 @@
-{% block title %}Admin Dashboard{% endblock %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+{% endblock %}
 
 {% block body %}
-    <div class="admin_container">
-        <nav>
-            <div>
-                <a href="{{ path('admin_dashboard') }}">
-                    <img src="{{ asset('uploads/logo.webp') }}" alt="Logo">
-                </a>
-                <ul>
-                     <li><a href="{#{{ path('admin_dashboard') }}#}">Dashboard</a></li> 
-                    <li><a href="{#{{ path('admin_products') }}#}">Produits</a></li>
-                    <li><a href="{#{{ path('admin_orders') }}#}">Commandes</a></li>
-                    <li><a href="{#{{ path('admin_users') }}#}">Utilisateurs</a></li>
-                </ul>
-            </div>
-            <div>
-                <a href="{{ path('app_logout') }}">Se déconnecter</a>
-            </div>
-        </nav>
+<main class="admin-container">
+    <h1 class="admin-title">Tableau de bord Admin</h1>
 
-        <main>
-            <section>
-                <h1>Admin Dashboard</h1>
-                <h2>Bienvenue administrateur {{ app.user.pseudo }}</h2>
-            </section>
-        </main>
-    </div>
+    <section class="admin-section">
+        <!-- Ajouter un admin -->
+        <form action="{{ path('admin_register') }}" method="post" class="admin-box half">
+            <button type="submit" class="btn-blue">
+                ➕ Ajouter un admin
+            </button>
+        </form>
+
+        <!-- Derniers mangas -->
+        <div class="admin-box half">
+            <h2>📚 5 derniers mangas</h2>
+            <ul>
+                {% for book in books %}
+                    <li><strong>{{ book.name }}</strong> - {{ book.editor.name }}</li>
+                {% else %}
+                    <li>Aucun manga trouvé.</li>
+                {% endfor %}
+            </ul>
+            <a href="" class="btn-blue">Voir tous les livres</a>
+        </div>
+
+        <!-- Dernières figurines -->
+        <div class="admin-box half">
+            <h2>🧸 5 dernières figurines</h2>
+            <ul>
+                {% for figurine in figurines %}
+                    <li><strong>{{ figurine.name }}</strong> - {{ figurine.brand.name }}</li>
+                {% else %}
+                    <li>Aucune figurine trouvée.</li>
+                {% endfor %}
+            </ul>
+            <a href="" class="btn-blue">Voir toutes les figurines</a>
+        </div>
+
+        <!-- Derniers utilisateurs -->
+        <div class="admin-box half">
+            <h2>🧑‍💻 5 derniers utilisateurs</h2>
+            <table class="admin-table">
+                <thead>
+                    <tr><th>ID</th><th>Pseudo</th><th>Email</th></tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr><td>{{ user.id }}</td><td>{{ user.pseudo }}</td><td>{{ user.email }}</td></tr>
+                    {% else %}
+                        <tr><td colspan="3">Aucun utilisateur</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ path('admin_users') }}" class="btn-blue">Voir tous les utilisateurs</a>
+        </div>
+
+        <!-- Dernières commandes -->
+        <div class="admin-box half">
+            <h2>🧾 10 dernières commandes</h2>
+            <table class="admin-table">
+                <thead>
+                    <tr><th>ID</th><th>Client</th><th>Statut</th><th>Date</th></tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.user ? order.user.pseudo : 'Invité' }}</td>
+                            <td>{{ order.status.value }}</td>
+                            <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="4">Aucune commande</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ path('admin_orders') }}" class="btn-blue">Voir toutes les commandes</a>
+        </div>
+    </section>
+</main>
 {% endblock %}
+
+
+
 
 
 

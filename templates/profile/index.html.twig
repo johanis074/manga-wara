@@ -1,73 +1,113 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ProfileController!{% endblock %}
+{% block title %}Mon compte{% endblock %}
 
 {% block body %}
-    <div class="profile-container">
-        <nav class="profile-nav">
-            <ul>
-                <li><a onclick="showSection('profil')">Profil</a></li>
-                <li><a onclick="showSection('securite')">Sécurité</a></li>
-                <li><a onclick="showSection('adresse')">Adresse</a></li>
-                <li><a onclick="showSection('commande')">Commande</a></li>
-            </ul>
-        </nav>
+<div class="dashboard-container">
 
-        <div class="profile-content">
-            <!-- Section Profil -->
-            <div id="profil" class="content-section active">
-                <a href="{{ path('app_home') }}"><button>Retour</button></a>
-                <h1>Profil</h1>
-                <h2>Votre image de profil:</h2>
-                <img src="{{ asset('uploads/pictureUser/' ~ app.user.pictureUser) }}" alt="Image de profil" style="max-width: 150px;" />
-                <h2>Votre pseudonyme:</h2>
-                <p>{{ app.user.pseudo }}</p>
-                {{ form_start(profileForm, {'action': path('app_profile'), 'method': 'POST'}) }}
-                    {{ form_row(profileForm.pseudo, {'label': 'Pseudo'}) }}
-                    <button class="btn btn-lg btn-primary" type="submit">Modifier son pseudo</button>
-                {{ form_end(profileForm) }}
-            </div>
+    <nav class="dashboard-nav">
+        <ul>
+            <li><a href="#profil">Profil</a></li>
+            <li><a href="#securite">Sécurité</a></li>
+            <li><a href="#adresse">Adresses</a></li>
+            <li><a href="#commandes">Commandes</a></li>
+        </ul>
+    </nav>
 
-            <!-- Section Sécurité -->
-            <div id="securite" class="content-section">
-                <h1>Sécurité</h1>
+    <div class="dashboard-content">
 
-            <h2>Modifier votre email</h2>
+        <!-- Section Profil -->
+        <section id="profil">
+            <h2>Profil</h2>
+            {{ form_start(profileForm) }}
+                {{ form_row(profileForm.pseudo) }}
+                {{ form_row(profileForm.pictureUser) }}
+                <button type="submit" class="btn">Modifier</button>
+            {{ form_end(profileForm) }}
+        </section>
+
+        <!-- Section Sécurité -->
+        <section id="securite">
+            <h2>Sécurité</h2>
             {{ form_start(emailForm) }}
                 {{ form_row(emailForm.email) }}
-                <button class="btn btn-primary">Mettre à jour l'email</button>
+                <button type="submit" class="btn">Modifier l'e-mail</button>
             {{ form_end(emailForm) }}
 
             <hr>
 
-            <h2>Modifier votre mot de passe</h2>
             {{ form_start(passwordForm) }}
                 {{ form_row(passwordForm.current_password) }}
                 {{ form_row(passwordForm.new_password.first) }}
                 {{ form_row(passwordForm.new_password.second) }}
-                <button class="btn btn-warning">Mettre à jour le mot de passe</button>
+                <button type="submit" class="btn">Changer le mot de passe</button>
             {{ form_end(passwordForm) }}
-            </div>
+        </section>
 
-            <!-- Section Adresse -->
-            <div id="adresse" class="content-section">
-                <h1>Adresse</h1>
-                <p>Adresse de livraison, de facturation, etc.</p>
-            </div>
+        <!-- Section Adresse -->
+        <section id="adresse">
+            <h2>Adresses</h2>
+            {{ form_start(addressForm) }}
+                <h3>Adresse de facturation</h3>
+                {{ form_row(addressForm.billing_address) }}
 
-            <!-- Section Commande -->
-            <div id="commande" class="content-section">
-                <h1>Commandes</h1>
-                <p>Historique de vos commandes.</p>
-            </div>
-        </div>
+                <div>
+                    {{ form_widget(addressForm.delivery_different) }} 
+                    {{ form_label(addressForm.delivery_different) }}
+                </div>
+
+                <div id="deliveryAddress" style="display: none;">
+                    <h3>Adresse de livraison</h3>
+                    {{ form_row(addressForm.delivery_address) }}
+                </div>
+
+                <button type="submit" class="btn">Enregistrer</button>
+            {{ form_end(addressForm) }}
+        </section>
+
+        <!-- Section Commandes -->
+        <section id="commandes">
+            <h2>Vos commandes (3 derniers mois)</h2>
+            {% if orders|length > 0 %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Numéro</th>
+                            <th>Total</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>{{ order.createdAt|date('d/m/Y') }}</td>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.total }} €</td>
+                                <td>{{ order.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="pagination-container">
+                    {{ knp_pagination_render(orders) }}
+                </div>
+            {% else %}
+                <p>Aucune commande récente.</p>
+            {% endif %}
+        </section>
+
     </div>
-    <script>
-    function showSection(sectionId) {
-    document.querySelectorAll('.content-section').forEach(function (section) {
-        section.classList.remove('active');
+</div>
+
+<script>
+    // Affichage conditionnel adresse de livraison
+    const checkbox = document.querySelector('[name="address_form[delivery_different]"]');
+    const deliverySection = document.getElementById('deliveryAddress');
+    checkbox.addEventListener('change', function () {
+        deliverySection.style.display = this.checked ? 'block' : 'none';
     });
-    document.getElementById(sectionId).classList.add('active');
-}
+</script>
 {% endblock %}
 
