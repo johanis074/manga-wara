@@ -86,6 +86,115 @@
         </div>
     </section>
 </main>
+<style>
+/* Conteneur principal */
+.admin-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #f5f7fa;
+    border-radius: 12px;
+}
+
+/* Titre principal */
+.admin-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #2c3e50;
+    text-align: center;
+}
+
+/* Section */
+.admin-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+/* Boîte admin */
+.admin-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    flex: 1 1 48%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 220px;
+}
+
+.admin-box h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #34495e;
+}
+
+/* Liste */
+.admin-box ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 15px;
+}
+
+.admin-box li {
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+}
+
+/* Tableau */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.admin-table th,
+.admin-table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.95rem;
+}
+
+.admin-table th {
+    background-color: #ecf0f1;
+    font-weight: bold;
+}
+
+/* Bouton */
+.btn-blue {
+    align-self: flex-start;
+    background-color: #3498db;
+    color: white;
+    padding: 10px 16px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-blue:hover {
+    background-color: #2980b9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-box {
+        flex: 1 1 100%;
+    }
+
+    .admin-title {
+        font-size: 1.6rem;
+    }
+}
+
 {% endblock %}
 
 

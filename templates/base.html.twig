@@ -4,69 +4,66 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
-
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% block stylesheets %}{% endblock %}
     </head>
     <body>
-    
-    <div id="cart-popup" class="hidden">
-    <p>Article ajouté au panier !</p>
-    <p>Total articles : <span id="popup-total-items">0</span></p>
-    <p>Total : <span id="popup-total-price">0</span> €</p>
-    <a href="{{ path('cart_index') }}">Voir le panier</a>
-    </div>
+        <div id="cart-popup" style="display: none;">
+            <p>Article ajouté au panier ✅</p>
+            <p>Total articles : <span id="popup-total-items">0</span></p>
+            <p>Total : <span id="popup-total-price">0</span> €</p>
+            <a href="{{ path('cart_index') }}">Voir le panier</a>
+        </div>
 
         <header>
             {% block header %}
                 <section>
                     <a href="{{ path('app_home') }}">
-                    <img src="{{ asset('uploads/logo.webp') }}" alt="Logo MangaWara"></a>
-                    
+                        <img src="{{ asset('uploads/logo.webp') }}" alt="Logo MangaWara">
+                    </a>
+
                     <div id="search-container">
                         <input type="text" id="search-input" placeholder="Rechercher..." autocomplete="off">
                         <ul id="search-results"></ul>
                     </div>
-                        <div>
-                            <a href="{{ path('cart_index') }}">
-                                Panier </a>
-                            {% if not app.user %}
-                            <a href="{{ path('app_register') }}">
-                                S'inscrire
-                            </a>
-                            <a href="{{ path('app_login') }}">
-                                Se connecter
-                            </a>
-                            {% else %}
-                            <a href="{{ path('app_profile') }}">
-                                Mon compte
-                            </a>
-                            <a href="{{ path('app_logout') }}">
-                                Déconnexion
-                            </a>
-                            {% endif %}
-                        </div>
-                    </section>
+
+                    <div>
+                        <a href="{{ path('cart_index') }}">Panier</a>
+                        {% if not app.user %}
+                            <a href="{{ path('app_register') }}">S'inscrire</a>
+                            <a href="{{ path('app_login') }}">Se connecter</a>
+                        {% else %}
+                            <a href="{{ path('app_profile') }}">Mon compte</a>
+                            <a href="{{ path('app_logout') }}">Déconnexion</a>
+                        {% endif %}
+                    </div>
+                </section>
+
                 <nav> 
                     <div class="dropdown">
-                        <span class="dropdown-trigger">Manga </span>
+                        <span class="dropdown-trigger">Manga</span>
                         <div class="dropdown-menu">
-                        <a href="{{ path('books_index') }}">Toutes</a>
-                        {% for category in categories %}
-                            <a href="{{ path('books_index', {'category': category.name}) }}">{{ category.name }}</a>
-                        {% endfor %}
+                            <a href="{{ path('books_index') }}">Toutes</a>
+                            {% for category in categories %}
+                                <a href="{{ path('books_index', {'category': category.name}) }}">{{ category.name }}</a>
+                            {% endfor %}
                         </div>
-                        </div>
+                    </div>
                     <a href="{{ path('figurines_index') }}">Figurines</a>
                     <a href="#">Bon plan</a>
-                    
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {# Contenu réservé à l'admin #}
+                        <a href="{{ path('admin_dashboard') }}">Admin</a>
+                    {% endif %}
                 </nav>
             {% endblock %}
         </header>
+
         {% block body %}{% endblock %}
-    <script src="{{ asset('js/script.js') }}"></script>
-    </body> 
+
+        {% block javascript %}
+            <script src="{{ asset('js/script.js') }}"></script>
+            <script src="{{ asset('js/cart.js') }}"></script>
+        {% endblock %}
+    </body>
 </html>

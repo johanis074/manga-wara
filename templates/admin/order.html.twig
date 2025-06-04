@@ -41,6 +41,9 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token('next_status_' ~ order.id) }}">
                                 <button type="submit" style="padding: 5px 10px;">➡️ Étape suivante</button>
                             </form>
+                            <a href="{{ path('order_pdf', {id: order.id}) }}" target="_blank">
+    🧾 PDF
+</a>
                         {% else %}
                             ✅ Terminé
                         {% endif %}

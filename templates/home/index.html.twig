@@ -87,58 +87,9 @@
     </main>
 
     {# === CARROUSEL SCRIPT === #}
-    <script>
-        const slides = document.querySelector('.carousel .slides');
-        const images = document.querySelectorAll('.carousel .slides img');
-        const indicatorsContainer = document.getElementById('indicators');
-        const totalSlides = images.length;
-        let index = 0;
-        let interval;
-
-        for (let i = 0; i < totalSlides; i++) {
-            const dot = document.createElement('span');
-            dot.classList.add('indicator');
-            if (i === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => {
-                index = i;
-                updateCarousel();
-                resetInterval();
-            });
-            indicatorsContainer.appendChild(dot);
-        }
-
-        function updateCarousel() {
-            slides.style.transform = `translateX(-${index * 100}%)`;
-            document.querySelectorAll('.indicator').forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
-        }
-
-        document.getElementById('next').addEventListener('click', () => {
-            index = (index + 1) % totalSlides;
-            updateCarousel();
-            resetInterval();
-        });
-
-        document.getElementById('prev').addEventListener('click', () => {
-            index = (index - 1 + totalSlides) % totalSlides;
-            updateCarousel();
-            resetInterval();
-        });
-
-        function startAutoSlide() {
-            interval = setInterval(() => {
-                index = (index + 1) % totalSlides;
-                updateCarousel();
-            }, 3000);
-        }
-
-        function resetInterval() {
-            clearInterval(interval);
-            startAutoSlide();
-        }
-
-        startAutoSlide();
-    </script>
+    
 {% endblock %}
-
+{% block javascript %}
+    {{ parent() }}
+            <script src="{{ asset('js/carrousel.js') }}"></script>
+{% endblock %}

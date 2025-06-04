@@ -7,8 +7,10 @@
     <form method="post" class="form">
         <h2>S'inscrire</h2>
 
-        {% for flash_error in app.flashes('verify_email_error') %}
-            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% for label, messages in app.flashes %}
+            {% for messages in messages %}
+                <div class="flash-message alert alert-{{ label }}">{{ message }}</div>
+            {% endfor %}
         {% endfor %}
 
         {{ form_start(registrationForm) }}

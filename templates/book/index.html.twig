@@ -48,9 +48,9 @@
                         <img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}">
                         <p> Prix: {{ book.price }} € </p>
                     </a>
-                    <a href="{{ path('cart_add', {type: book.type, id: book.id}) }}" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
-                        ➕ Ajouter au panier
-                    </a>
+                    <button type="button" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
+                ➕ Ajouter au panier
+            </button>
                 </li>
             {% else %}
                 <p>Aucun livre trouvé pour ces filtres.</p>
@@ -65,4 +65,9 @@
         <br>
         <a href="{{ path('books_new') }}">Nouveau titre</a>
     </main>
+
+{% endblock %}
+{% block javascript %}
+    {{ parent() }}
+    {# <script src="{{ asset('js/cart.js') }}?v={{ "now"|date("U") }}"></script>#}
 {% endblock %}

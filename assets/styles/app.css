@@ -8,6 +8,7 @@ header {
     color: white;
     font-size: 1.5rem;
     padding: 3px;
+    margin-bottom: 3%;
 }
 header section {
     display: flex;
@@ -21,7 +22,7 @@ header img {
     height: 160px;
 }
 header input{
-    width: 60rem;
+    width: 25rem;
     height: 3rem;
     border-radius: 10px;
     border: none;
@@ -555,34 +556,6 @@ nav a {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .carousel {
-      aspect-ratio: 16 / 10;
-  }
-
-  .carousel .buttons button {
-      font-size: 1.2rem;
-      padding: 6px;
-  }
-
-  .carousel .indicator {
-      width: 8px;
-      height: 8px;
-      margin: 0 3px;
-  }
-}
-
-@media (max-width: 480px) {
-  .carousel {
-      aspect-ratio: 4 / 3;
-  }
-
-  .carousel .buttons button {
-      font-size: 1rem;
-      padding: 5px;
-  }
-}
-
 
 
 /* view */
@@ -794,3 +767,85 @@ nav a {
     border-left: 2px solid #E8DCCA;
     border-right: 2px solid #E8DCCA;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cards-container {
+    padding: 5%;
+    margin: ;
+    width: 100%;
+  }
+
+  .card {
+    width: 60%;
+  }
+
+  .home .btn {
+    width: 80%;
+    text-align: center;
+  }
+
+  .admin_container,
+  .book-show1,
+  .book-show2 {
+    flex-direction: column;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel {
+      aspect-ratio: 16 / 10;
+  }
+
+  .carousel .buttons button {
+      font-size: 1.2rem;
+      padding: 6px;
+  }
+
+  .carousel .indicator {
+      width: 8px;
+      height: 8px;
+      margin: 0 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel {
+      aspect-ratio: 4 / 3;
+  }
+
+  .carousel .buttons button {
+      font-size: 1rem;
+      padding: 5px;
+  }
+}
+
+/* @media (max-width: 600px) {
+  .card {
+    width: 80%;
+  }
+
+  .carousel {
+    aspect-ratio: 4 / 3;
+  }
+
+  header img {
+    width: 70%;
+    height: auto;
+  }
+
+  .profile-nav {
+    width: 100%;
+    position: static;
+    padding: 10px 0;
+  }
+
+  .profile-content {
+    padding: 1rem;
+  } */
+}
+
+
+
+

@@ -48,25 +48,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-// Fonction pour ajouter un produit au panier
-// Cette fonction est appelée lorsque l'utilisateur clique sur le bouton "Ajouter au panier"
-function addToCart(id, type) {
-    fetch(`/cart/add/${type}/${id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Produit ajouté ! Total articles : " + data.totalItems);
-                // ici, tu peux aussi mettre à jour un compteur dans le header
-            } else {
-                alert("Erreur : " + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Erreur lors de l’ajout au panier :', error);
-        });
-}
-
-
 
 document.addEventListener("DOMContentLoaded", function () {
     const input = document.getElementById("search-input");

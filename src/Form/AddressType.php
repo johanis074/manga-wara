@@ -14,15 +14,6 @@ class AddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('billingAddress', TextareaType::class, [
-                'label' => 'Adresse de facturation',
-                'required' => true,
-            ])
-            ->add('deliveryDifferent', CheckboxType::class, [
-                'label' => 'Adresse de livraison différente ?',
-                'mapped' => false,
-                'required' => false,
-            ])
             ->add('deliveryAddress', TextareaType::class, [
                 'label' => 'Adresse de livraison',
                 'required' => false,

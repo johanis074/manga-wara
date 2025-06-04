@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Mon Panier {% endblock %}
+{% block title %}Mon Panier{% endblock %}
 
 {% block body %}
 <main class="bg cart">
     <h2>Mon Panier</h2>
-    <a href="{{ path('books_index') }}">Retour aux livres</a>
+    <a href="{{ path('books_index') }}">← Retour aux livres</a>
+
     {% if cart is empty %}
         <p>Votre panier est vide.</p>
     {% else %}
-        {# <a href="{{ path('cart_empty') }}">Vider le panier</a> #}
         <table>
             <thead>
                 <tr>
@@ -24,43 +24,48 @@
             <tbody>
                 {% for item in cart %}
                     <tr>
-                        <td><img src="{{ asset('uploads/pictureProduct/' ~ item.product.picture) }}" alt="Image du produit" width="25"></td>
+                        <td><img src="{{ asset('uploads/pictureProduct/' ~ item.product.picture) }}" alt="Image du produit" width="40"></td>
                         <td>{{ item.product.name }}</td>
-                        <td>{{ item.product.price }}€</td>
+                        <td>{{ item.product.price }} €</td>
                         <td>{{ item.quantity }}</td>
-                        <td>{{ item.product.price * item.quantity }}€</td>
+                        <td>{{ (item.product.price * item.quantity)|number_format(2, '.', ',') }} €</td>
                         <td>
-                            <a href="{{ path('cart_add', {type: item.product.type, id: item.product.id}) }}">➕</a>
-                            <a href="{{ path('cart_remove', {type: item.product.type,id: item.product.id}) }}">❌</a>
+                            <a href="{{ path('cart_add', {type: item.product.type, id: item.product.id}) }}" class="cart-action">➕</a>
+                            <a href="{{ path('cart_remove', {type: item.product.type, id: item.product.id}) }}" class="cart-action">❌</a>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <h3>Total : {{ total }}€</h3>
 
-    <button id="checkout-button">Payer avec Stripe</button>
+        <h3>Total : {{ total|number_format(2, '.', ',') }} €</h3>
 
-    <script src="https://js.stripe.com/v3/"></script>
-    <button id="checkout-button">Payer avec Stripe</button>
+        <button id="checkout-button">Payer avec Stripe</button>
 
-<script>
-    document.querySelector('#checkout-button').addEventListener('click', () => {
-        fetch("{{ path('stripe_checkout') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.url) {
-                window.location.href = data.url;
-            } else {
-                alert("Erreur : URL Stripe non reçue.");
-            }
-        });
-    });
-</script>
-
+        <script src="https://js.stripe.com/v3/"></script>
+        <script>
+            document.querySelector('#checkout-button').addEventListener('click', () => {
+                fetch("{{ path('stripe_checkout') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.url) {
+                        window.location.href = data.url;
+                    } else {
+                        alert("Erreur : URL Stripe non reçue.");
+                    }
+                })
+                .catch(err => console.error("Erreur Stripe :", err));
+            });
+        </script>
+    {% endif %}
+</main>
 {% endblock %}
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}
+
