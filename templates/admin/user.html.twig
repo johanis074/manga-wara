@@ -24,6 +24,8 @@
                     <td style="padding: 10px; border: 1px solid #ccc;">{{ user.email }}</td>
                     <td style="padding: 10px; border: 1px solid #ccc;">{{ user.roles | join(', ') }}</td>
                     <td style="padding: 10px; border: 1px solid #ccc;">
+                        <a href="{{ path('admin_user_edit', { id: user.id }) }}"
+                           style="color: blue; text-decoration: none; margin-right: 10px;">Modifier</a>
                         <form method="post"
                               action="{{ path('admin_user_delete', { id: user.id }) }}"
                               onsubmit="return confirm('Supprimer l’utilisateur {{ user.pseudo }} ?');">

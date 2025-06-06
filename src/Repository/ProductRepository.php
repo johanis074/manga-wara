@@ -24,14 +24,14 @@ class ProductRepository extends ServiceEntityRepository
         $books = $this->bookRepository->createQueryBuilder('b')
             ->where('b.name LIKE :query')
             ->setParameter('query', '%' . $query . '%')
-            ->setMaxResults(10)
+            ->setMaxResults(6)
             ->getQuery()
             ->getResult();
 
         $figurines = $this->figurineRepository->createQueryBuilder('f')
             ->where('f.name LIKE :query')
             ->setParameter('query', '%' . $query . '%')
-            ->setMaxResults(10)
+            ->setMaxResults(6)
             ->getQuery()
             ->getResult();
 
@@ -39,7 +39,7 @@ class ProductRepository extends ServiceEntityRepository
     }
 
 
-    public function findPopularProducts(int $limit = 5): array
+    public function findPopularProducts(int $limit = 6): array
     {
         return array_merge(
             $this->bookRepository->createQueryBuilder('b')
@@ -56,41 +56,43 @@ class ProductRepository extends ServiceEntityRepository
         );
     }
 
-    public function findBestSellers(int $limit = 5): array
+        public function findBestSellers(int $limit = 6): array
     {
-        return array_merge(
-            $this->bookRepository->createQueryBuilder('b')
-                ->orderBy('b.sales', 'DESC')
-                ->setMaxResults($limit)
-                ->getQuery()
-                ->getResult(),
+        $books = $this->bookRepository->createQueryBuilder('b')
+            ->orderBy('b.sales', 'DESC')
+            ->getQuery()
+            ->getResult();
 
-            $this->figurineRepository->createQueryBuilder('f')
-                ->orderBy('f.sales', 'DESC')
-                ->setMaxResults($limit)
-                ->getQuery()
-                ->getResult()
-        );
+        $figurines = $this->figurineRepository->createQueryBuilder('f')
+            ->orderBy('f.sales', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        $all = array_merge($books, $figurines);
+
+        usort($all, function ($a, $b) {
+            return $b->getSales() <=> $a->getSales();
+        });
+
+        return array_slice($all, 0, $limit); // limite finale
     }
 
-        // src/Repository/ProductRepository.php
-    // src/Repository/ProductRepository.php
 
-        public function findByTypeAndId(string $type, int $id)
-        {
-            // Si le type est 'book', on interroge la table des livres
-            if ($type === 'book') {
-                return $this->bookRepository->find($id); // Récupérer un livre par son ID
-            }
-
-            // Si le type est 'figurine', on interroge la table des figurines
-            if ($type === 'figurine') {
-                return $this->figurineRepository->find($id); // Récupérer une figurine par son ID
-            }
-
-            // Si le type ne correspond à aucun produit, on retourne null
-            return null;
+    public function findByTypeAndId(string $type, int $id)
+    {
+        // Si le type est 'book', on interroge la table des livres
+        if ($type === 'book') {
+            return $this->bookRepository->find($id); // Récupérer un livre par son ID
         }
+
+        // Si le type est 'figurine', on interroge la table des figurines
+        if ($type === 'figurine') {
+            return $this->figurineRepository->find($id); // Récupérer une figurine par son ID
+        }
+
+        // Si le type ne correspond à aucun produit, on retourne null
+        return null;
+    }
 
 
 }

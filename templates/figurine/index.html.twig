@@ -36,6 +36,9 @@
         </script>
 
         {# Liste des figurines filtrées #}
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('figurines_new') }}" class="btn">➕ Ajouter un livre </a>
+        {% endif %}
         <ul class="cards-container">
             {% for figurine in pagination %}
                 <li class="card">
@@ -44,9 +47,13 @@
                         <img src="{{ asset('uploads/pictureProduct/' ~ figurine.picture) }}" alt="{{ figurine.name }}">
                         <p> Prix: {{ figurine.price }} € </p>
                     </a>
-                    <a href="{{ path('cart_add', {type: figurine.type, id: figurine.id}) }}" class="add-to-cart" data-id="{{ figurine.id }}" data-type="{{ figurine.type }}">
+                    <button type="button" class="add-to-cart" data-id= "{{ figurine.id }}"  data-type= "{{ figurine.type }}">
                         ➕ Ajouter au panier
-                    </a>
+                    </button>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('product_edit', {'type': figurine.type, 'id': figurine.id, 'redirect': app.request.uri}) }}" class="btn-edit">✏️ Modifier</a>
+                        <a href="{{ path('product_delete', {'type': figurine.type, 'id': figurine.id, 'redirect': app.request.uri}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');">🗑 Supprimer</a>
+                    {% endif %}
                 </li>
             {% else %}
                 <p>Aucune figurine trouvée pour ces filtres.</p>
@@ -59,7 +66,7 @@
         </div>
 
         <br>
-        <a href="{{ path('figurines_new') }}">Nouvelle figurine</a>
+        
     </main>
 {% endblock %}
 {% block javascript %}

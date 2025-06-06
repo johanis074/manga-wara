@@ -38,20 +38,20 @@ public function viewProducts(string $filter, BookRepository $bookRepository, Fig
     switch ($filter) {
         case 'new':
             $products = array_merge(
-                $bookRepository->findNewBooks(20),
-                $figurineRepository->findNewFigurines(20)
+                $bookRepository->findNewBooks(6),
+                $figurineRepository->findNewFigurines(6)
             );
             break;
         case 'popular':
             $products = array_merge(
-                $bookRepository->findPopularBooks(20),
-                $figurineRepository->findPopularFigurines(20)
+                $bookRepository->findPopularBooks(6),
+                $figurineRepository->findPopularFigurines(6)
             );
             break;
         case 'best':
             $products = array_merge(
-                $bookRepository->findBestSellingBooks(20),
-                $figurineRepository->findBestSellingFigurines(20)
+                $bookRepository->findBestSellingBooks(6),
+                $figurineRepository->findBestSellingFigurines(6)
             );
             break;
     }

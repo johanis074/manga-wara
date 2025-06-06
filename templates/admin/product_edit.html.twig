@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le produit{% endblock %}
+
+{% block body %}
+    <h1>Modifier le produit</h1>
+
+    <div class="form-container">
+        {{ form_start(form) }}
+
+            {{ form_row(form.name) }}
+            {{ form_row(form.price) }}
+            {{ form_row(form.picture) }}
+
+            {% if form.synopsis is defined %}
+                {{ form_row(form.synopsis) }}
+            {% elseif form.description is defined %}
+                {{ form_row(form.description) }}
+            {% endif %}
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+
+        {{ form_end(form) }}
+    </div>
+
+    <a href="{{ app.request.headers.get('referer') ?: path('admin_dashboard') }}" class="btn btn-secondary">Annuler</a>
+{% endblock %}

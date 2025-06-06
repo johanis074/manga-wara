@@ -5,17 +5,22 @@ namespace App\Controller;
 use App\Entity\Book;
 use App\Entity\User;
 use App\Entity\Order;
-use App\Entity\Figurine;
-use App\Enum\OrderStatus;
 use App\Form\BookType;
 use App\Form\UserType;
+use App\Entity\Comment;
+use App\Entity\Product;
+use App\Entity\Figurine;
+use App\Enum\OrderStatus;
+use App\Form\ProductType;
 use App\Form\FigurineType;
 use App\Form\RegistrationFormType;
+use App\Repository\BookRepository;
+use App\Repository\FigurineRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
@@ -83,7 +88,7 @@ class AdminController extends AbstractController
         for ($i = 0; $i < 10; $i++) {
             $randomString .= $characters[random_int(0, strlen($characters) - 1)];
         }
-        return 'admin' . $randomString;
+        return 'admi' . $randomString;
     }
 
     #[Route('/admin/users', name: 'admin_users')]
@@ -157,4 +162,102 @@ class AdminController extends AbstractController
 
         return $this->redirectToRoute('admin_orders');
     }
+
+        #[Route('/admin/utilisateur/{id}', name: 'admin_user_edit')]
+    public function editUser(User $user, Request $request, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Utilisateur mis à jour avec succès.');
+            return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
+        }
+
+        $comments = $user->getComments(); // relation User -> Commentaire
+
+        return $this->render('admin/user_edit.html.twig', [
+            'user' => $user,
+            'form' => $form->createView(),
+            'comments' => $comments,
+        ]);
+    }
+
+        #[Route('/admin/commentaire/{id}/supprimer', name: 'admin_comment_delete', methods: ['POST'])]
+    public function deleteComment(Comment $comment, Request $request, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $userId = $comment->getUser()->getId();
+
+        if ($this->isCsrfTokenValid('delete-comment-' . $comment->getId(), $request->request->get('_token'))) {
+            $em->remove($comment);
+            $em->flush();
+            $this->addFlash('success', 'Commentaire supprimé.');
+        }
+
+        return $this->redirectToRoute('admin_user_edit', ['id' => $userId]);
+    }
+
+        #[Route('/admin/product/{type}/{id}/edit', name: 'product_edit')]
+    public function editProduct(
+        string $type,
+        int $id,
+        Request $request,
+        EntityManagerInterface $em,
+        BookRepository $bookRepository,
+        FigurineRepository $figurineRepository
+    ): Response {
+        $product = $type === 'book'
+            ? $bookRepository->find($id)
+            : $figurineRepository->find($id);
+
+        if (!$product) {
+            throw $this->createNotFoundException('Produit non trouvé.');
+        }
+
+        $form = $this->createForm(ProductType::class, $product, [
+            'data_class' => get_class($product),
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Produit modifié avec succès.');
+            $redirectUrl = $request->query->get('redirect') ?? $this->generateUrl('admin_dashboard');
+            return $this->redirect($redirectUrl);
+        }
+
+        return $this->render('admin/product_edit.html.twig', [
+            'form' => $form->createView(),
+            'product' => $product,
+        ]);
+    }
+
+
+    #[Route('/admin/product/{type}/{id}/delete', name: 'product_delete', methods: ['POST', 'GET'])]
+    public function deleteProduct(string $type, int $id, BookRepository $bookRepo, FigurineRepository $figRepo, EntityManagerInterface $em, Request $request): Response
+    {
+        if ($type === 'book') {
+            $book = $bookRepo->find($id);
+            if ($book) {
+                $em->remove($book);
+            }
+        } elseif ($type === 'figurine') {
+            $figurine = $figRepo->find($id);
+            if ($figurine) {
+                $em->remove($figurine);
+            }
+        }
+
+        $em->flush();
+
+        $this->addFlash('success', 'Produit supprimé avec succès.');
+            $redirectUrl = $request->query->get('redirect') ?? $this->generateUrl('admin_dashboard');
+        return $this->redirect($redirectUrl);
+    }
+
+
+
 }

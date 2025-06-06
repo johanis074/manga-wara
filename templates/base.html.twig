@@ -60,10 +60,22 @@
         </header>
 
         {% block body %}{% endblock %}
+        <footer>
+            {% block footer %}
+                <p>&copy; 2024 MangaWara. Tous droits réservés.</p>
+                <ul>
+                    <li><a href="{{ path('cgu') }}" class="hover:underline">Conditions Générales d’Utilisation</a></li>
+                    <li><a href="{{ path('cgv') }}" class="hover:underline">Conditions Générales de Vente</a></li>
+                    <li><a href="{{ path('mentions_legales') }}" class="hover:underline">Mentions légales</a></li>
+                    <li><a href="{{ path('politique_confidentialite') }}" class="hover:underline">Politique de confidentialité</a></li>
+                </ul>
+            {% endblock %}
 
         {% block javascript %}
             <script src="{{ asset('js/script.js') }}"></script>
             <script src="{{ asset('js/cart.js') }}"></script>
         {% endblock %}
+
     </body>
+
 </html>

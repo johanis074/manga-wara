@@ -1,0 +1,156 @@
+/* Dashboard Container */
+		.dashboard-container {
+			max-width: 1000px;
+			margin: 40px auto;
+			padding: 20px;
+			background: #E2938A;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+			color: #E8DCCA;
+		}
+
+		/* Content Layout */
+		.dashboard-content {
+			display: flex;
+			flex-direction: column;
+            margin: 0 20%;
+			gap: 40px;
+		}
+
+		/* Sections */
+		.dashboard-content section {
+			padding: 24px;
+		}
+
+		.dashboard-content h2 {
+			margin-bottom: 20px;
+			font-size: 1.6rem;
+		}
+
+		/* Buttons */
+		.btn {
+			display: inline-block;
+			padding: 10px 18px;
+			margin-top: 12px;
+			background-color: #257EB5;
+			color: white;
+			border: none;
+			cursor: pointer;
+			transition: background 0.3s ease;
+		}
+
+		.btn:hover {
+			background-color: #E8DCCA;
+			color: #257EB5;
+		}
+
+		/* Forms */
+		form div {
+			margin-bottom: 12px;
+		}
+
+		form label {
+			display: block;
+			margin-bottom: 6px;
+			font-weight: bold;
+		}
+
+		form input,
+		form select,
+		form textarea {
+			width: 100%;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			font-size: 1rem;
+		}
+
+		/* Table */
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 12px;
+		}
+
+		table th,
+		table td {
+			padding: 12px;
+			text-align: left;
+			border-bottom: 1px solid #E8DCCA;
+		}
+
+		table th {
+			background-color: #E8DCCA;
+			font-weight: bold;
+		}
+
+		/* Pagination */
+		.pagination-container {
+			margin-top: 20px;
+			text-align: center;
+		}
+
+		.pagination-container nav {
+			display: inline-block;
+		}
+
+		.pagination-container a,
+		.pagination-container span {
+			margin: 0 6px;
+			padding: 6px 12px;
+			border-radius: 6px;
+			text-decoration: none;
+			color: #E8DCCA;
+			border: 1px solid #ddd;
+			transition: background 0.3s;
+		}
+
+		.pagination-container a:hover {
+			background-color: #E8DCCA;
+		}
+
+		.pagination-container .current {
+			background-color: #257EB5;
+			color: white;
+			font-weight: bold;
+			border: 1px solid #257EB5;
+		}
+
+		/* Responsive */
+		@media(max-width: 768px) {
+			.dashboard-container {
+				padding: 10px;
+			}
+
+			.dashboard-content section {
+				padding: 16px;
+			}
+
+			.dashboard-content h2 {
+				font-size: 1.3rem;
+			}
+		}
+
+		/* Avatar Selection */
+		.avatar-selection {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 1rem;
+			margin-top: 10px;
+		}
+
+		.avatar-option input {
+			display: none;
+		}
+
+		.avatar-option img {
+			width: 80px;
+			height: 80px;
+			border-radius: 50%;
+			border: 2px solid transparent;
+			cursor: pointer;
+			transition: border 0.3s ease;
+		}
+
+		.avatar-option input:checked + img {
+			border-color: #257EB5;
+		}

@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mentions légales{% endblock %}
+{% block body %}
+<section class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md mt-6 leading-relaxed text-gray-800">
+  <h1 class="text-3xl font-bold mb-6">Mentions légales</h1>
+
+  <p>Conformément aux dispositions de la loi n°2004-575 du 21 juin 2004 pour la confiance dans l’économie numérique, il est précisé aux utilisateurs du site {{ app.request.getHost }} l’identité des différents intervenants dans le cadre de sa réalisation et de son suivi.</p>
+
+  <h2 class="text-xl font-semibold mt-6">Éditeur du site</h2>
+  <p>
+    Raison sociale : Manga_wara<br>
+    Forme juridique : SARL<br>
+    Responsable de la publication : Johanis FRANCOISE<br>
+    Adresse : [Adresse postale complète]<br>
+    Email : contact@manga-wara.com<br>
+    Téléphone : [Numéro de téléphone]<br>
+    {# Numéro SIRET : [SIRET ou RCS]<br> #}
+    TVA intracommunautaire : 5%
+  </p>
+
+  <h2 class="text-xl font-semibold mt-6">Hébergement</h2>
+  <p>
+   Site hébergé par : En Local<br>
+    {# Hébergeur : [Nom de l'hébergeur, ex. : OVHcloud, Infomaniak, Scaleway...]<br>
+    Adresse : [Adresse de l'hébergeur]<br>
+    Téléphone : [Téléphone de l’hébergeur]<br>
+    Site : <a href="https://www.[hebergeur].com" class="text-blue-600 hover:underline">www.[hebergeur].com</a> #}
+  </p>
+
+  <h2 class="text-xl font-semibold mt-6">Propriété intellectuelle</h2>
+  <p>
+    Tous les éléments du site (textes, images, logo, vidéos, structure, design, base de données…) sont protégés par le droit d’auteur et la législation sur la propriété intellectuelle.
+    Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site est interdite, sauf autorisation écrite préalable de l’éditeur.
+  </p>
+
+  <h2 class="text-xl font-semibold mt-6">Conditions d’utilisation</h2>
+  <p>
+    L’utilisation du site {{ app.request.getHost }} implique l’acceptation pleine et entière des conditions générales d’utilisation (CGU) disponibles sur le site. Ces conditions sont susceptibles d’être modifiées à tout moment.
+  </p>
+
+  <h2 class="text-xl font-semibold mt-6">Limitations de responsabilité</h2>
+  <p>
+    L’éditeur du site ne pourra être tenu responsable des dommages directs ou indirects causés au matériel de l’utilisateur lors de l’accès au site.  
+    Il ne saurait non plus être tenu responsable des interruptions ou bugs du site, ni de tout dommage résultant d’une intrusion frauduleuse d’un tiers.
+  </p>
+
+  <h2 class="text-xl font-semibold mt-6">Gestion des données personnelles</h2>
+  <p>
+    L’utilisateur est informé que ses données personnelles sont collectées notamment lors de la navigation, la création de compte, et la commande.  
+    Ces données sont traitées conformément à notre <a href="{{ path('politique_confidentialite') }}" class="text-blue-600 hover:underline">politique de confidentialité</a> en accord avec le Règlement Général sur la Protection des Données (RGPD).
+  </p>
+
+  <h2 class="text-xl font-semibold mt-6">Droit applicable</h2>
+  <p>
+    Tout litige en relation avec l’utilisation du site {{ app.request.getHost }} est soumis au droit français. Il est fait attribution exclusive de juridiction aux tribunaux compétents.
+  </p>
+</section>
+{% endblock %}
+

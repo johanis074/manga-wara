@@ -12,7 +12,7 @@
 
     <section class="admin-section">
         <!-- Ajouter un admin -->
-        <form action="{{ path('admin_register') }}" method="post" class="admin-box half">
+        <form action="{{ path('admin_register') }}" method="post" class="admin-boutton">
             <button type="submit" class="btn-blue">
                 ➕ Ajouter un admin
             </button>
@@ -92,44 +92,41 @@
     max-width: 1200px;
     margin: 40px auto;
     padding: 20px;
-    background: #f5f7fa;
+    background: #E2938A;
     border-radius: 12px;
 }
 
+.form {
+    margin-bottom: -5%;
+}
 /* Titre principal */
 .admin-title {
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 30px;
-    color: #2c3e50;
+    color: #257EB5;
     text-align: center;
 }
 
 /* Section */
 .admin-section {
-    display: flex;
-    flex-wrap: wrap;
+    margin: 0 20%;
     gap: 20px;
     justify-content: space-between;
 }
 
 /* Boîte admin */
 .admin-box {
-    background: #fff;
-    border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-    flex: 1 1 48%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    margin: 5% 0;
+    background: #E8DCCA;
     min-height: 220px;
 }
 
 .admin-box h2 {
     font-size: 1.2rem;
     margin-bottom: 15px;
-    color: #34495e;
+    color: #257EB5;
 }
 
 /* Liste */
@@ -143,6 +140,7 @@
     padding: 6px 0;
     border-bottom: 1px solid #eee;
     font-size: 0.95rem;
+    color: #257EB5;
 }
 
 /* Tableau */
@@ -154,6 +152,7 @@
 
 .admin-table th,
 .admin-table td {
+    color: #257EB5;
     text-align: left;
     padding: 10px;
     border-bottom: 1px solid #ddd;
@@ -161,7 +160,6 @@
 }
 
 .admin-table th {
-    background-color: #ecf0f1;
     font-weight: bold;
 }
 

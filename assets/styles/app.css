@@ -3,14 +3,14 @@ body {
     margin: 0;
     padding: 0;
 }
-header {
+header{
     background-color: #257EB5;
     color: white;
     font-size: 1.5rem;
     padding: 3px;
     margin-bottom: 3%;
 }
-header section {
+header section, footer {
     display: flex;
     align-items: center;
     margin: 0 1%;
@@ -767,12 +767,33 @@ nav a {
     border-left: 2px solid #E8DCCA;
     border-right: 2px solid #E8DCCA;
 }
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #257EB5;
+    color: white;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
 
+footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+footer li {
+    margin: 0 15px;
+    
+}
 /* Responsive */
 @media (max-width: 768px) {
   .cards-container {
     padding: 5%;
-    margin: ;
+    margin: 0;
     width: 100%;
   }
 
@@ -844,7 +865,7 @@ nav a {
   .profile-content {
     padding: 1rem;
   } */
-}
+
 
 
 

@@ -38,7 +38,16 @@
 </script>
 
 
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('books_new') }}" class="btn">➕ Ajouter un livre</a>
+        {% endif %}
 
+        {# Affichage du titre de la catégorie actuelle #}
+        {% if current_category %}
+            <h2>Livres dans la catégorie : {{ current_category.name }}</h2>
+        {% else %}
+            <h2>Liste des livres</h2>
+        {% endif %}
         {# Liste des livres filtrés #}
         <ul class="cards-container">
             {% for book in pagination %}
@@ -51,6 +60,10 @@
                     <button type="button" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
                 ➕ Ajouter au panier
             </button>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('product_edit', {'type': book.type, 'id': book.id, 'redirect': app.request.uri}) }}" class="btn-edit">✏️ Modifier</a>
+                <a href="{{ path('product_delete', {'type': book.type, 'id': book.id, 'redirect': app.request.uri}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');">🗑 Supprimer</a>
+            {% endif %}
                 </li>
             {% else %}
                 <p>Aucun livre trouvé pour ces filtres.</p>

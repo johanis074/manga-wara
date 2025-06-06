@@ -8,13 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 class Comment
-    {
+{
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -62,22 +63,21 @@ class Comment
     {
         return $this->book;
     }
+
     public function setBook(?Book $book): static
-        {
-            if ($book !== null && $this->figurine !== null) {
-                throw new \LogicException("Un commentaire ne peut être attaché qu'à un seul produit (Book ou Figurine).");
-            }
-            $this->book = $book;
-            return $this;
+    {
+        if ($book !== null && $this->figurine !== null) {
+            throw new \LogicException("Un commentaire ne peut être attaché qu'à un seul produit (Book ou Figurine).");
         }
+        $this->book = $book;
+        return $this;
+    }
 
     public function getFigurine(): ?Figurine
     {
         return $this->figurine;
     }
 
-    
-    
     public function setFigurine(?Figurine $figurine): static
     {
         if ($figurine !== null && $this->book !== null) {

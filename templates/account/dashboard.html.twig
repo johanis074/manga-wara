@@ -1,237 +1,112 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon compte{% endblock %}
-
-{% block body %}
-<div class="dashboard-container">
-    <div class="dashboard-content">
-
-        <!-- Section Profil -->
-        <section id="profil">
-            <h2>Profil</h2>
-            {{ form_start(profileForm) }}
-                {{ form_row(profileForm.pseudo) }}
-                {{ form_row(profileForm.pictureUser) }}
-                <button type="submit" class="btn">Modifier</button>
-            {{ form_end(profileForm) }}
-        </section>
-
-        <!-- Section Sécurité -->
-        <section id="securite">
-            <h2>Sécurité</h2>
-            {{ form_start(emailForm) }}
-                {{ form_row(emailForm.email) }}
-                <button type="submit" class="btn">Modifier l'e-mail</button>
-            {{ form_end(emailForm) }}
-
-            <hr>
-
-            {{ form_start(passwordForm) }}
-                {{ form_row(passwordForm.current_password) }}
-                {{ form_row(passwordForm.new_password.first) }}
-                {{ form_row(passwordForm.new_password.second) }}
-                <button type="submit" class="btn">Changer le mot de passe</button>
-            {{ form_end(passwordForm) }}
-        </section>
-
-        <!-- Section Adresse -->
-        <section id="adresse">
-            <h2>Adresses</h2>
-            {{ form_start(addressForm) }}
-                <div id="deliveryAddress" style="display: none;">
-                    <h3>Adresse de livraison</h3>
-                    {{ form_row(addressForm.deliveryAddress) }}
-                </div>
-
-                <button type="submit" class="btn">Enregistrer</button>
-            {{ form_end(addressForm) }}
-        </section>
-
-        <!-- Section Commandes -->
-        <section id="commandes">
-            <h2>Vos commandes (3 derniers mois)</h2>
-            {% if orders|length > 0 %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Numéro</th>
-                            <th>Total</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for order in orders %}
-                            <tr>
-                                <td>{{ order.createdAt|date('d/m/Y') }}</td>
-                                <td>#{{ order.id }}</td>
-                                <td>{{ order.total }} €</td>
-                                <td>{{ order.status.name }}</td>
-                                <td>
-                                <a href="{{ path('account_order_pdf', {'id': order.id}) }}" target="_blank">
-                                📄 PDF
-                            </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-
-                <div class="pagination-container">
-                    {{ knp_pagination_render(orders) }}
-                </div>
-            {% else %}
-                <p>Aucune commande récente.</p>
-            {% endif %}
-        </section>
-
-    </div>
-</div>
-
-<script>
-    // Affichage conditionnel adresse de livraison
-    const checkbox = document.querySelector('[name="address_form[delivery_different]"]');
-    const deliverySection = document.getElementById('deliveryAddress');
-    checkbox.addEventListener('change', function () {
-        deliverySection.style.display = this.checked ? 'block' : 'none';
-    });
-</script>
-<style>
-/* Dashboard Container */
-.dashboard-container {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Content Layout */
-.dashboard-content {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
-/* Sections */
-.dashboard-content section {
-    background: #fff;
-    padding: 24px;
-    border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-}
-
-.dashboard-content h2 {
-    margin-bottom: 20px;
-    font-size: 1.6rem;
-    color: #333;
-}
-
-/* Buttons */
-.btn {
-    display: inline-block;
-    padding: 10px 18px;
-    margin-top: 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.btn:hover {
-    background-color: #0056b3;
-}
-
-/* Forms */
-form div {
-    margin-bottom: 12px;
-}
-
-form label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
-}
-
-form input,
-form select,
-form textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1rem;
-}
-
-/* Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 12px;
-}
-
-table th,
-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
-
-/* Pagination */
-.pagination-container {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.pagination-container nav {
-    display: inline-block;
-}
-
-.pagination-container a,
-.pagination-container span {
-    margin: 0 6px;
-    padding: 6px 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    color: #007bff;
-    border: 1px solid #ddd;
-    transition: background 0.3s;
-}
-
-.pagination-container a:hover {
-    background-color: #e9ecef;
-}
-
-.pagination-container .current {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-    border: 1px solid #007bff;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .dashboard-container {
-        padding: 10px;
-    }
-
-    .dashboard-content section {
-        padding: 16px;
-    }
-
-    .dashboard-content h2 {
-        font-size: 1.3rem;
-    }
-}
-
+{% block title %}Mon compte
+{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 {% endblock %}
 
+{% block body %}
+	<div class="dashboard-container">
+		<div class="dashboard-content">
+			{% for message in app.flashes('success') %}
+				<div class="flash-success">{{ message }}</div>
+			{% endfor %}
+
+			{% for message in app.flashes('error') %}
+				<div class="flash-error">{{ message }}</div>
+			{% endfor %}
+			<!-- Section Profil -->
+			<section id="profil">
+				<h2>Profil</h2>
+				{{ form_start(profileForm) }}
+				{{ form_row(profileForm.pseudo) }}
+
+				<div class="avatar-selection">
+					{% for choice in profileForm.pictureUser %}
+						<label class="avatar-option">
+							{{ form_widget(choice) }}
+							<img src="{{ asset('uploads/pictureUser/' ~ choice.vars.value) }}" alt="{{ choice.vars.label }}">
+						</label>
+					{% endfor %}
+					{{ form_errors(profileForm.pictureUser) }}
+				</div>
+
+				<button type="submit" class="btn">Modifier</button>
+				{{ form_end(profileForm) }}
+			</section>
+
+			<!-- Section Sécurité -->
+			<section id="securite">
+				<h2>Sécurité</h2>
+				{{ form_start(emailForm) }}
+				{{ form_row(emailForm.email) }}
+				<button type="submit" class="btn">Modifier l'e-mail</button>
+				{{ form_end(emailForm) }}
+
+				<hr>
+
+				{{ form_start(passwordForm) }}
+				{{ form_row(passwordForm.current_password) }}
+				{{ form_row(passwordForm.new_password.first) }}
+				{{ form_row(passwordForm.new_password.second) }}
+				<button type="submit" class="btn">Changer le mot de passe</button>
+				{{ form_end(passwordForm) }}
+			</section>
+
+			<!-- Section Adresse -->
+			<section id="adresse">
+				<h2>Adresses</h2>
+				{{ form_start(addressForm) }}
+				<div id="deliveryAddress" style="display: none;">
+					<h3>Adresse de livraison</h3>
+					{{ form_row(addressForm.deliveryAddress) }}
+				</div>
+
+				<button type="submit" class="btn">Enregistrer</button>
+				{{ form_end(addressForm) }}
+			</section>
+
+			<!-- Section Commandes -->
+			<section id="commandes">
+				<h2>Vos commandes (3 derniers mois)</h2>
+				{% if orders|length > 0 %}
+					<table>
+						<thead>
+							<tr>
+								<th>Date</th>
+								<th>Numéro</th>
+								<th>Total</th>
+								<th>Statut</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for order in orders %}
+								<tr>
+									<td>{{ order.createdAt|date('d/m/Y') }}</td>
+									<td>#{{ order.id }}</td>
+									<td>{{ order.total }}
+										€</td>
+									<td>{{ order.status.name }}</td>
+									<td>
+										<a href="{{ path('account_order_pdf', {'id': order.id}) }}" target="_blank">
+											📄 PDF
+										</a>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+
+					<div class="pagination-container">
+						{{ knp_pagination_render(orders) }}
+					</div>
+				{% else %}
+					<p>Aucune commande récente.</p>
+				{% endif %}
+			</section>
+
+		</div>
+	</div>
+{% endblock %}

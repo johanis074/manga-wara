@@ -33,9 +33,7 @@ class ProfileController extends AbstractController
         if ($profileForm->isSubmitted() && $profileForm->isValid()) {
             $picture = $profileForm->get('pictureUser')->getData();
             if ($picture) {
-                $fileName = uniqid().'.'.$picture->guessExtension();
-                $picture->move($this->getParameter('user_pictures_directory'), $fileName);
-                $user->setPictureUser($fileName);
+                $user->setPictureUser($picture); // c'est juste une string, pas besoin de traitement
             }
             $em->flush();
             $this->addFlash('success', 'Profil mis à jour.');
