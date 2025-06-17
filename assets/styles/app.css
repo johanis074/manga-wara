@@ -1,16 +1,19 @@
+*{
+
+}
 body {
     background-color:#E8DCCA;
     margin: 0;
     padding: 0;
+    
 }
 header{
     background-color: #257EB5;
-    color: white;
     font-size: 1.5rem;
     padding: 3px;
     margin-bottom: 3%;
 }
-header section, footer {
+header section{
     display: flex;
     align-items: center;
     margin: 0 1%;
@@ -29,9 +32,9 @@ header input{
     padding: 5px;
     
 }
-header div{
+header div, header span, header a{
     text-decoration: none;
-    color: white;
+    color: #E8DCCA;
     font-size: 1.2rem;
     font-weight: 500;
     padding: 10px;
@@ -45,7 +48,7 @@ nav{
 }
 nav a {
     text-decoration: none;
-    color: white;
+    color: #E8DCCA;
     font-size: 1.2rem;
     font-weight: 500;
     padding: 10px;
@@ -63,7 +66,7 @@ nav a {
 }
 .home .btn{
     background-color: #257EB5;
-    color: white;
+    color: #E8DCCA;
     border: none;
     padding: 1px 2px;
     font-size: 1.5rem;
@@ -489,7 +492,6 @@ nav a {
   margin: 30px auto;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -769,13 +771,13 @@ nav a {
 }
 footer {
     text-align: center;
-    padding: 20px;
     background-color: #257EB5;
-    color: white;
+    color: #E8DCCA !important;
     position: relative;
     bottom: 0;
     width: 100%;
 }
+
 
 footer ul {
     list-style: none;
@@ -791,14 +793,42 @@ footer li {
 }
 /* Responsive */
 @media (max-width: 768px) {
+  header section{
+    flex-wrap: wrap;
+  }
+    header img {
+      width: 132px;
+      height: 80px;
+  }
+
+  header input {
+      width: 25rem;
+      margin: 10px auto;
+  }
+  header section a{
+      order: 1;
+      padding: 5px;
+  }
+  header section .header-actions {
+      order: 2;
+  }
+  header section .search-container{
+      order: 3;
+  }
+  .bg{
+    background-color: #E2938A;
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 3%;
+}
   .cards-container {
-    padding: 5%;
+    padding: 0;
     margin: 0;
     width: 100%;
   }
 
   .card {
-    width: 60%;
+    width: 30%;
   }
 
   .home .btn {
@@ -812,9 +842,7 @@ footer li {
     flex-direction: column;
     padding: 1rem;
   }
-}
-
-@media (max-width: 768px) {
+ 
   .carousel {
       aspect-ratio: 16 / 10;
   }
@@ -829,8 +857,12 @@ footer li {
       height: 8px;
       margin: 0 3px;
   }
-}
 
+  footer ul{
+    display: flex;
+    flex-direction: column;
+  }
+}
 @media (max-width: 480px) {
   .carousel {
       aspect-ratio: 4 / 3;
@@ -840,6 +872,8 @@ footer li {
       font-size: 1rem;
       padding: 5px;
   }
+
+  
 }
 
 /* @media (max-width: 600px) {

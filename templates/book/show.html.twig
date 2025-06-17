@@ -23,9 +23,9 @@
                     <p>{{book.synopsis}}</p>
                     <h3>Details</h3>
                     <div class="details">
-                        <a href="{{ path('cart_add', {type: book.type, id: book.id}) }}" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
+                    <button type="button" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
                         ➕ Ajouter au panier
-                        </a>
+                    </button>
                         <ul >
                             <li>Éditeur: {{book.editor.name}}</li>
                             <li>Catégorie: {{book.category.name}}</li>

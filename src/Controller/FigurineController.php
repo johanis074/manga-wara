@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-
 use App\Enum\Brand;
 use App\Entity\Figurine;
 use App\Form\FigurineType;
@@ -24,27 +23,33 @@ class FigurineController extends AbstractController
     #[Route('/figurines', name: 'figurines_index')]
     public function index(Request $request, FigurineRepository $figurineRepository, PaginatorInterface $paginator): Response
     {
-        $sort = $request->query->get('sort', 'name_asc'); // Tri par défaut : Nom A-Z
-        $brand = $request->query->get('brand', null); // Filtrage par marque
+        try {
+            $sort = $request->query->get('sort', 'name_asc');
+            $brand = $request->query->get('brand', null);
 
-        $query = $figurineRepository->findByFilters($sort, $brand); // Applique les tris et filtres
+            $query = $figurineRepository->findByFilters($sort, $brand);
 
-        $pagination = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            10
-        );
+            $pagination = $paginator->paginate(
+                $query,
+                $request->query->getInt('page', 1),
+                10
+            );
 
-        return $this->render('figurine/index.html.twig', [
-            'pagination' => $pagination,
-            'current_sort' => $sort,
-            'current_brand' => $brand,
-            'brands' => Brand::cases(), // Récupère les catégories dynamiquement
-        ]);
+            return $this->render('figurine/index.html.twig', [
+                'pagination' => $pagination,
+                'current_sort' => $sort,
+                'current_brand' => $brand,
+                'brands' => Brand::cases(),
+            ]);
+        } catch (\Exception $e) {
+            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                'message' => 'Erreur chargement figurines : ' . $e->getMessage()
+            ]);
+        }
     }
 
     #[Route('/figurines/new', name: 'figurines_new', methods:['GET','POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $figurine = new Figurine();
         $form = $this->createForm(FigurineType::class, $figurine);
@@ -62,15 +67,20 @@ class FigurineController extends AbstractController
                     $uploadedFilePath = $this->convertImageToWebpAndSave($pictureFile, $newFilename);
                     $figurine->setPicture($newFilename);
                 } catch (\Exception $e) {
-                    $this->addFlash('error', 'Échec du téléchargement ou de la conversion de l\'image.');
+                    $this->addFlash('error', 'Erreur image : ' . $e->getMessage());
                     return $this->redirectToRoute('figurines_new');
                 }
             }
 
-            $entityManager->persist($figurine);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('figurines_index');
+            try {
+                $em->persist($figurine);
+                $em->flush();
+                return $this->redirectToRoute('figurines_index');
+            } catch (\Exception $e) {
+                return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                    'message' => 'Erreur création figurine : ' . $e->getMessage()
+                ]);
+            }
         }
 
         return $this->render('figurine/new.html.twig', [
@@ -82,7 +92,7 @@ class FigurineController extends AbstractController
     {
         $imageInfo = getimagesize($file->getPathname());
         if (!$imageInfo) {
-            throw new \RuntimeException('Impossible de lire l\'image.');
+            throw new \RuntimeException("Impossible de lire l'image.");
         }
 
         switch ($imageInfo[2]) {
@@ -99,11 +109,11 @@ class FigurineController extends AbstractController
                 imagesavealpha($image, true);
                 break;
             default:
-                throw new \RuntimeException('Format d\'image non pris en charge.');
+                throw new \RuntimeException("Format d'image non pris en charge.");
         }
 
         if (!$image) {
-            throw new \RuntimeException('Impossible de charger l\'image.');
+            throw new \RuntimeException("Impossible de charger l'image.");
         }
 
         $destinationPath = $this->getParameter('pictures_directory') . '/' . $newFilename;
@@ -114,59 +124,58 @@ class FigurineController extends AbstractController
     }
 
     #[Route('/figurines/{id}', name: 'figurines_show', methods: ['GET', 'POST'])]
-    public function show(
-        int $id,
-        FigurineRepository $figurineRepository,
-        EntityManagerInterface $entityManager,
-        Request $request,
-        PaginatorInterface $paginator
-    ): Response {
-        $figurine = $figurineRepository->find($id);
-        if (!$figurine) {
-            throw $this->createNotFoundException('Figurine non trouvée');
+    public function show(int $id, FigurineRepository $figurineRepository, EntityManagerInterface $em, Request $request, PaginatorInterface $paginator): Response
+    {
+        try {
+            $figurine = $figurineRepository->find($id);
+            if (!$figurine) {
+                throw $this->createNotFoundException('Figurine non trouvée');
+            }
+
+            $figurine->setViews($figurine->getViews() + 1);
+            $em->persist($figurine);
+            $em->flush();
+
+            $query = $em->getRepository(Comment::class)
+                ->createQueryBuilder('c')
+                ->where('c.figurine = :figurine')
+                ->setParameter('figurine', $figurine)
+                ->orderBy('c.date', 'DESC')
+                ->getQuery();
+
+            $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
+
+            $comment = new Comment();
+            $form = $this->createForm(CommentType::class, $comment);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $comment->setFigurine($figurine);
+                $comment->setUser($this->getUser());
+                $comment->setDate(new \DateTimeImmutable());
+
+                $em->persist($comment);
+                $em->flush();
+
+                return $this->redirectToRoute('figurines_show', ['id' => $id]);
+            }
+
+            $relatedFigurines = $figurineRepository->findByTitleAndBrandExcludingId(
+                $figurine->getName(),
+                $figurine->getBrand(),
+                $figurine->getId()
+            );
+
+            return $this->render('figurine/show.html.twig', [
+                'figurine' => $figurine,
+                'form' => $form->createView(),
+                'pagination' => $pagination,
+                'relatedFigurines' => $relatedFigurines,
+            ]);
+        } catch (\Exception $e) {
+            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                'message' => 'Erreur affichage figurine : ' . $e->getMessage()
+            ]);
         }
-
-        // ✅ Incrémentation des vues
-        $figurine->setViews($figurine->getViews() + 1);
-        $entityManager->persist($figurine);
-        $entityManager->flush();
-
-        $query = $entityManager->getRepository(Comment::class)
-            ->createQueryBuilder('c')
-            ->where('c.figurine = :figurine')
-            ->setParameter('figurine', $figurine)
-            ->orderBy('c.date', 'DESC')
-            ->getQuery();
-
-        $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
-
-        $comment = new Comment();
-        $form = $this->createForm(CommentType::class, $comment);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $comment->setFigurine($figurine);
-            $comment->setUser($this->getUser());
-            $comment->setDate(new \DateTimeImmutable());
-
-            $entityManager->persist($comment);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('figurines_show', ['id' => $id]);
-        }
-
-        $relatedFigurines = $figurineRepository->findByTitleAndBrandExcludingId(
-            $figurine->getName(),
-            $figurine->getBrand(),
-            $figurine->getId());
-
-        return $this->render('figurine/show.html.twig', [
-            'figurine' => $figurine,
-            'form' => $form->createView(),
-            'pagination' => $pagination,
-            'relatedFigurines' => $relatedFigurines,
-        ]);
     }
 }
-
-

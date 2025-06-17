@@ -15,45 +15,50 @@ final class ProductController extends AbstractController
     #[Route('/product', name: 'app_product')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        // Récupérer tous les livres
-        $bookRepository = $entityManager->getRepository(Book::class);
-        $books = $bookRepository->findAll();
+        try {
+            $bookRepository = $entityManager->getRepository(Book::class);
+            $books = $bookRepository->findAll();
 
-        // Récupérer tous les produits
-        $productRepository = $entityManager->getRepository(ProductRepository::class);
-        $products = $productRepository->findAll();
+            $productRepository = $entityManager->getRepository(ProductRepository::class);
+            $products = $productRepository->findAll();
 
-        foreach ($products as $product) {
-            foreach ($books as $book) {
-                $product->addBook($book);
+            foreach ($products as $product) {
+                foreach ($books as $book) {
+                    $product->addBook($book);
+                }
             }
+
+            $entityManager->flush();
+
+            return $this->render('product/index.html.twig', [
+                'controller_name' => 'ProductController',
+            ]);
+        } catch (\Exception $e) {
+            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                'message' => 'Erreur liaison produits : ' . $e->getMessage()
+            ]);
         }
-
-        // Sauvegarde en base de données
-        $entityManager->flush();
-
-        return $this->render('product/index.html.twig', [
-            'controller_name' => 'ProductController',
-        ]);
     }
 
     #[Route('/product/link-books', name: 'app_product_link_books')]
     public function linkBooksToProducts(EntityManagerInterface $entityManager): Response
     {
-        $bookRepository = $entityManager->getRepository(Book::class);
-        $productRepository = $entityManager->getRepository(ProductRepository::class);
+        try {
+            $bookRepository = $entityManager->getRepository(Book::class);
+            $productRepository = $entityManager->getRepository(ProductRepository::class);
 
-        // Récupérer un produit et un livre pour tester
-        $product = $productRepository->findOneBy([]);
-        $book = $bookRepository->findOneBy([]);
+            $product = $productRepository->findOneBy([]);
+            $book = $bookRepository->findOneBy([]);
 
-        if ($product && $book) {
-            $product->addBook($book);
-            $entityManager->flush();
+            if ($product && $book) {
+                $product->addBook($book);
+                $entityManager->flush();
+                return new Response('Livre lié au produit avec succès !');
+            }
 
-            return new Response('Livre lié au produit avec succès !');
+            return new Response('Aucun livre ou produit trouvé.');
+        } catch (\Exception $e) {
+            return new Response('Erreur lors de la liaison livre/produit : ' . $e->getMessage(), 500);
         }
-
-        return new Response('Aucun livre ou produit trouvé.');
-}
+    }
 }

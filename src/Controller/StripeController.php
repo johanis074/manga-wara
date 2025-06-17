@@ -21,72 +21,78 @@ class StripeController extends AbstractController
         CartService $cartService,
         Request $request
     ): JsonResponse {
-        $user = $this->getUser();
-        if (!$user) {
-            return new JsonResponse(['error' => 'Non autorisé'], Response::HTTP_UNAUTHORIZED);
+        try {
+            $user = $this->getUser();
+            if (!$user) {
+                return new JsonResponse(['error' => 'Non autorisé'], Response::HTTP_UNAUTHORIZED);
+            }
+
+            $cartItems = $cartService->getCart();
+            if (empty($cartItems)) {
+                return new JsonResponse(['error' => 'Panier vide'], 400);
+            }
+
+            $session = $stripe->createCartCheckoutSession(
+                $cartItems,
+                $this->generateUrl('payment_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                $this->generateUrl('payment_cancel', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                $user
+            );
+
+            $request->getSession()->set('stripe_session_id', $session->id);
+
+            return new JsonResponse(['url' => $session->url]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Erreur lors de la création de la session : ' . $e->getMessage()], 500);
         }
-
-        $cartItems = $cartService->getCart();
-        if (empty($cartItems)) {
-            return new JsonResponse(['error' => 'Panier vide'], 400);
-        }
-
-        $session = $stripe->createCartCheckoutSession(
-            $cartItems,
-            $this->generateUrl('payment_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
-            $this->generateUrl('payment_cancel', [], UrlGeneratorInterface::ABSOLUTE_URL),
-            $user
-        );
-
-        // Stocker l'ID de session Stripe côté serveur (en session PHP)
-        $request->getSession()->set('stripe_session_id', $session->id);
-
-        return new JsonResponse(['url' => $session->url]);
     }
 
     #[Route('/paiement/success', name: 'payment_success')]
-    public function success(
-        Request $request,
-        OrderService $orderService,
-        EntityManagerInterface $em
-    ): Response {
-        $sessionId = $request->getSession()->get('stripe_session_id');
-
-        if (!$sessionId) {
-            return new Response('Session Stripe introuvable (non stockée)', 400);
-        }
-
-        \Stripe\Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
-
+    public function success(Request $request, OrderService $orderService, EntityManagerInterface $em): Response
+    {
         try {
+            $sessionId = $request->getSession()->get('stripe_session_id');
+            if (!$sessionId) {
+                return new Response('Session Stripe introuvable (non stockée)', 400);
+            }
+
+            \Stripe\Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
             $session = \Stripe\Checkout\Session::retrieve($sessionId);
+
+            $user = $this->getUser();
+            if (!$user) {
+                return new Response('Utilisateur non connecté', 401);
+            }
+
+            $order = $em->getRepository(\App\Entity\Order::class)->findOneBy([
+                'stripeSessionId' => $sessionId,
+            ]);
+
+            if (!$order) {
+                $order = $orderService->createFromStripeSession($session, $user);
+            }
+
+            $this->addFlash('success', 'Commande enregistrée avec succès.');
+
+            return $this->render('checkout/index.html.twig', [
+                'order' => $order,
+            ]);
         } catch (\Exception $e) {
-            return new Response('Session Stripe invalide : ' . $e->getMessage(), 400);
+            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                'message' => 'Erreur traitement paiement : ' . $e->getMessage()
+            ]);
         }
-
-        $user = $this->getUser();
-        if (!$user) {
-            return new Response('Utilisateur non connecté', 401);
-        }
-
-        $order = $em->getRepository(\App\Entity\Order::class)->findOneBy([
-            'stripeSessionId' => $sessionId,
-        ]);
-
-        if (!$order) {
-            $order = $orderService->createFromStripeSession($session, $user);
-        }
-
-        $this->addFlash('success', 'Commande enregistrée avec succès.');
-
-        return $this->render('checkout/index.html.twig', [
-            'order' => $order,
-        ]);
     }
 
     #[Route('/paiement/cancel', name: 'payment_cancel')]
     public function cancel(): Response
     {
-        return $this->render('payment/cancel.html.twig');
+        try {
+            return $this->render('payment/cancel.html.twig');
+        } catch (\Exception $e) {
+            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                'message' => 'Erreur affichage page annulation : ' . $e->getMessage()
+            ]);
+        }
     }
 }

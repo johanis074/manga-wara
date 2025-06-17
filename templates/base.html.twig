@@ -3,6 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="MangaWara - Votre boutique en ligne de mangas et figurines">
+        <meta name="keywords" content="manga, figurines, boutique en ligne, achat manga, achat figurine">
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% block stylesheets %}{% endblock %}
@@ -22,12 +25,12 @@
                         <img src="{{ asset('uploads/logo.webp') }}" alt="Logo MangaWara">
                     </a>
 
-                    <div id="search-container">
+                    <div id="search-container" class="search-container">
                         <input type="text" id="search-input" placeholder="Rechercher..." autocomplete="off">
                         <ul id="search-results"></ul>
                     </div>
 
-                    <div>
+                    <div class="header-actions">
                         <a href="{{ path('cart_index') }}">Panier</a>
                         {% if not app.user %}
                             <a href="{{ path('app_register') }}">S'inscrire</a>
@@ -64,16 +67,19 @@
             {% block footer %}
                 <p>&copy; 2024 MangaWara. Tous droits réservés.</p>
                 <ul>
-                    <li><a href="{{ path('cgu') }}" class="hover:underline">Conditions Générales d’Utilisation</a></li>
-                    <li><a href="{{ path('cgv') }}" class="hover:underline">Conditions Générales de Vente</a></li>
-                    <li><a href="{{ path('mentions_legales') }}" class="hover:underline">Mentions légales</a></li>
-                    <li><a href="{{ path('politique_confidentialite') }}" class="hover:underline">Politique de confidentialité</a></li>
+                    <li><a href="{{ path('cgu', {'redirect': app.request.uri}) }}" class="hover:underline">Conditions Générales d’Utilisation</a></li>
+                    <li><a href="{{ path('cgv', {'redirect': app.request.uri}) }}" class="hover:underline">Conditions Générales de Vente</a></li>
+                    <li><a href="{{ path('mentions_legales', {'redirect': app.request.uri}) }}" class="hover:underline">Mentions légales</a></li>
+                    <li><a href="{{ path('politique_confidentialite', {'redirect': app.request.uri}) }}" class="hover:underline">Politique de confidentialité</a></li>
                 </ul>
             {% endblock %}
 
         {% block javascript %}
-            <script src="{{ asset('js/script.js') }}"></script>
+            <script src="{{ asset('js/main.js') }}"></script>
             <script src="{{ asset('js/cart.js') }}"></script>
+            <script src="{{ asset('js/search.js') }}"></script>
+            <script src="{{ asset('js/dropdown.js') }}"></script>
+            <script src="{{ asset('js/stripe.js') }}"></script>
         {% endblock %}
 
     </body>

@@ -19,34 +19,37 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BookController extends AbstractController
-    {
-        #[Route('/books', name: 'books_index')]
+{
+    #[Route('/books', name: 'books_index')]
     public function index(Request $request, BookRepository $bookRepository, PaginatorInterface $paginator): Response
     {
-        $sort = $request->query->get('sort', 'name_asc'); // Tri par défaut : Nom A-Z
-        $category = $request->query->get('category', null); // Filtrage par catégorie
-        $editor = $request->query->get('editor', null); // Filtrage par éditeur
+        try {
+            $sort = $request->query->get('sort', 'name_asc');
+            $category = $request->query->get('category', null);
+            $editor = $request->query->get('editor', null);
 
-        $query = $bookRepository->findByFilters($sort, $category, $editor); // Applique les tris et filtres
+            $query = $bookRepository->findByFilters($sort, $category, $editor);
 
-        $pagination = $paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            10
-        );
+            $pagination = $paginator->paginate(
+                $query,
+                $request->query->getInt('page', 1),
+                10
+            );
 
-        return $this->render('book/index.html.twig', [
-            'pagination' => $pagination,
-            'current_sort' => $sort,
-            'current_category' => $category,
-            'current_editor' => $editor,
-            'categories' => CategoryManga::cases(), // Récupère les catégories dynamiquement
-            'editors' => Editor::cases() // Récupère les éditeurs dynamiquement
-        ]);
+            return $this->render('book/index.html.twig', [
+                'pagination' => $pagination,
+                'current_sort' => $sort,
+                'current_category' => $category,
+                'current_editor' => $editor,
+                'categories' => CategoryManga::cases(),
+                'editors' => Editor::cases()
+            ]);
+        } catch (\Exception $e) {
+            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                'message' => 'Erreur chargement livres : ' . $e->getMessage()
+            ]);
+        }
     }
-
-
-
 
     #[Route('/books/new', name: 'books_new', methods:['GET','POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
@@ -54,30 +57,35 @@ class BookController extends AbstractController
         $book = new Book();
         $form = $this->createForm(BookType::class, $book);
         $form->handleRequest($request);
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
             $pictureFile = $form->get('picture')->getData();
-    
+
             if ($pictureFile) {
                 $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename . '-' . uniqid() . '.webp';
-    
+
                 try {
                     $uploadedFilePath = $this->convertImageToWebpAndSave($pictureFile, $newFilename);
                     $book->setPicture($newFilename);
                 } catch (\Exception $e) {
-                    $this->addFlash('error', 'Échec du téléchargement ou de la conversion de l\'image.');
+                    $this->addFlash('error', 'Erreur image : ' . $e->getMessage());
                     return $this->redirectToRoute('books_new');
                 }
             }
-    
-            $entityManager->persist($book);
-            $entityManager->flush();
-    
-            return $this->redirectToRoute('app_books');
+
+            try {
+                $entityManager->persist($book);
+                $entityManager->flush();
+                return $this->redirectToRoute('books_index');
+            } catch (\Exception $e) {
+                return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                    'message' => 'Erreur enregistrement livre : ' . $e->getMessage()
+                ]);
+            }
         }
-    
+
         return $this->render('book/new.html.twig', [
             'form' => $form->createView(),
         ]);
@@ -87,9 +95,9 @@ class BookController extends AbstractController
     {
         $imageInfo = getimagesize($file->getPathname());
         if (!$imageInfo) {
-            throw new \RuntimeException('Impossible de lire l\'image.');
+            throw new \RuntimeException("Impossible de lire l'image.");
         }
-    
+
         switch ($imageInfo[2]) {
             case IMAGETYPE_GIF:
                 $image = imagecreatefromgif($file->getPathname());
@@ -106,69 +114,69 @@ class BookController extends AbstractController
             default:
                 throw new \RuntimeException('Format d\'image non pris en charge.');
         }
-    
+
         if (!$image) {
-            throw new \RuntimeException('Impossible de charger l\'image.');
+            throw new \RuntimeException("Impossible de charger l'image.");
         }
-    
+
         $destinationPath = $this->getParameter('pictures_directory') . '/' . $newFilename;
         imagewebp($image, $destinationPath, 80);
         imagedestroy($image);
-    
+
         return $destinationPath;
     }
 
-        #[Route('/books/{id}', name: 'books_show', methods: ['GET', 'POST'])]
-    public function books_show(
-        int $id, 
-        BookRepository $bookRepository, 
-        EntityManagerInterface $entityManager, 
-        Request $request, 
-        PaginatorInterface $paginator
-    ): Response {
-        $book = $bookRepository->find($id);
-        if (!$book) {
-            throw $this->createNotFoundException('Livre non trouvé');
+    #[Route('/books/{id}', name: 'books_show', methods: ['GET', 'POST'])]
+    public function books_show(int $id, BookRepository $bookRepository, EntityManagerInterface $em, Request $request, PaginatorInterface $paginator): Response
+    {
+        try {
+            $book = $bookRepository->find($id);
+            if (!$book) {
+                throw $this->createNotFoundException('Livre non trouvé');
+            }
+
+            $book->setViews($book->getViews() + 1);
+            $em->persist($book);
+            $em->flush();
+
+            $query = $em->getRepository(Comment::class)
+                ->createQueryBuilder('c')
+                ->where('c.book = :book')
+                ->setParameter('book', $book)
+                ->orderBy('c.date', 'DESC')
+                ->getQuery();
+
+            $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
+
+            $comment = new Comment();
+            $form = $this->createForm(CommentType::class, $comment);
+            $form->handleRequest($request);
+
+            $collectionName = $book->getCollectionName();
+            $relatedBooks = $bookRepository->findByCollectionNameExcludingId($collectionName, $book->getId());
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $comment->setBook($book);
+                $comment->setUser($this->getUser());
+                $comment->setDate(new \DateTimeImmutable());
+
+                $em->persist($comment);
+                $em->flush();
+
+                return $this->redirectToRoute('books_show', ['id' => $id]);
+            }
+
+            return $this->render('book/show.html.twig', [
+                'book' => $book,
+                'form' => $form->createView(),
+                'pagination' => $pagination,
+                'relatedBooks' => $relatedBooks,
+            ]);
+        } catch (\Exception $e) {
+            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                'message' => 'Erreur d\'affichage du livre : ' . $e->getMessage()
+            ]);
         }
-
-        // ✅ Incrémentation des vues
-        $book->setViews($book->getViews() + 1);
-        $entityManager->persist($book);
-        $entityManager->flush();
-
-        $query = $entityManager->getRepository(Comment::class)
-            ->createQueryBuilder('c')
-            ->where('c.book = :book')
-            ->setParameter('book', $book)
-            ->orderBy('c.date', 'DESC')
-            ->getQuery();
-
-        $pagination = $paginator->paginate($query, $request->query->getInt('page', 1), 10);
-
-        $comment = new Comment();
-        $form = $this->createForm(CommentType::class, $comment);
-        $form->handleRequest($request);
-        $collectionName = $book->getCollectionName();
-        $relatedBooks = $bookRepository->findByCollectionNameExcludingId($collectionName, $book->getId());
-
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $comment->setBook($book);
-            $comment->setUser($this->getUser());
-            $comment->setDate(new \DateTimeImmutable());
-
-            $entityManager->persist($comment);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('books_show', ['id' => $id]);
-        }
-
-        return $this->render('book/show.html.twig', [
-            'book' => $book,
-            'form' => $form->createView(),
-            'pagination' => $pagination,
-            'relatedBooks' => $relatedBooks,
-        ]);
     }
-
 }
+

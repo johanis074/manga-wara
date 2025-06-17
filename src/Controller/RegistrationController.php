@@ -40,33 +40,33 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Encodage du mot de passe
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $form->get('plainPassword')->getData()
-            );
-            $user->setPassword($hashedPassword);
+            try {
+                $hashedPassword = $passwordHasher->hashPassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                );
+                $user->setPassword($hashedPassword);
+                $user->setPseudo($this->generateRandomPseudo());
+                $user->setPictureUser('default.webp');
+                $user->setRoles(['ROLE_CLIENT']);
 
-            // Définition des valeurs par défaut
-            $user->setPseudo($this->generateRandomPseudo());
-            $user->setPictureUser('default.webp');
-            $user->setRoles(['ROLE_CLIENT']);
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            // Persistance et sauvegarde en base
-            $entityManager->persist($user);
-            $entityManager->flush();
+                $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                    (new TemplatedEmail())
+                        ->from(new Address('francoise.johanis@gmail.com', 'Master'))
+                        ->to($user->getEmail())
+                        ->subject('Veuillez confirmer votre adresse e-mail')
+                        ->htmlTemplate('registration/confirmation_email.html.twig')
+                );
 
-            // Envoi de l'email de confirmation
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                (new TemplatedEmail())
-                    ->from(new Address('francoise.johanis@gmail.com', 'Master'))
-                    ->to($user->getEmail())
-                    ->subject('Veuillez confirmer votre adresse e-mail')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
-
-            // Authentification automatique
-            return $userAuthenticator->authenticateUser($user, $authenticator, $request);
+                return $userAuthenticator->authenticateUser($user, $authenticator, $request);
+            } catch (\Exception $e) {
+                return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                    'message' => 'Erreur lors de l\'inscription : ' . $e->getMessage()
+                ]);
+            }
         }
 
         return $this->render('registration/register.html.twig', [
@@ -84,12 +84,15 @@ class RegistrationController extends AbstractController
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
             return $this->redirectToRoute('app_register');
+        } catch (\Exception $e) {
+            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+                'message' => "Erreur lors de la vérification de l'e-mail : " . $e->getMessage()
+            ]);
         }
 
         $this->addFlash('success', 'Votre adresse e-mail a été vérifiée.');
         return $this->redirectToRoute('home');
     }
-
 
     private function generateRandomPseudo(): string
     {

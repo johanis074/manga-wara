@@ -1,86 +1,93 @@
 {% extends 'base.html.twig' %}
 
-{% block body %} 
-    <main class="bg">
-        {# Formulaire de filtres #}
-        <form method="get" action="{{ path('books_index') }}" class="filter-form">
-            <label for="editor">Éditeur :</label>
-            <select name="editor" id="editor">
-                <option value="">Tous</option>
-                {% for editor in editors %}
-                    <option value="{{ editor.name }}" {% if app.request.query.get('editor') == editor.name %}selected{% endif %}>
-                        {{ editor.name }}
-                    </option>
-                {% endfor %}
-            </select>
+{% block body %}
+	<main  class="bg">
+        <section>
+		{# Formulaire de filtres 
+            {# <form method="get" action="{{ path('books_index') }}" class="filter-form">
+                <label for="editor">Éditeur :</label>
+                <select name="editor" id="editor">
+                    <option value="">Tous</option>
+                    {% for editor in editors %}
+                        <option value="{{ editor.name }}" {% if app.request.query.get('editor') == editor.name %} selected {% endif %}>
+                            {{ editor.name }}
+                        </option>
+                    {% endfor %}
+                </select>
 
-            {# Menu déroulant au survol de "Manga" #}
-            
-            <button type="submit">Filtrer</button>
-        </form>
+                {# Menu déroulant au survol de "Manga" 
 
-        <div class="filters">
-        <h4> Trier par :</h4>
-        <a href="{{ path('books_index', {'sort': 'name_asc', 'category': current_category}) }}">🔼 Nom (A-Z)</a>
-        <a href="{{ path('books_index', {'sort': 'name_desc', 'category': current_category}) }}">🔽 Nom (Z-A)</a>
-        <a href="{{ path('books_index', {'sort': 'price_asc', 'category': current_category}) }}">💲 Prix Croissant</a>
-        <a href="{{ path('books_index', {'sort': 'price_desc', 'category': current_category}) }}">💰 Prix Décroissant</a>
-        <a href="{{ path('books_index', {'sort': 'date_new', 'category': current_category}) }}">🆕 Nouveautés</a>
-        <a href="{{ path('books_index', {'sort': 'date_old', 'category': current_category}) }}">📜 Anciens</a>
-        <a href="{{ path('books_index', {'sort': 'popularity', 'category': current_category}) }}">🔥 Populaires</a>
-        <a href="{{ path('books_index', {'sort': 'best_sellers', 'category': current_category}) }}">🏆 Meilleures ventes</a>
-    </div>
+                <button type="submit">Filtrer</button>
+            </form> #}
 
-<script>
-    document.getElementById('sortSelect').addEventListener('change', function() {
-        document.getElementById('sortForm').submit();
-    });
-</script>
+		<div class="filters">
+			<p>Trier par :</p>
+			<a href="{{ path('books_index', {'sort': 'name_asc', 'category': current_category}) }}">🔼 Nom (A-Z)</a>
+			<a href="{{ path('books_index', {'sort': 'name_desc', 'category': current_category}) }}">🔽 Nom (Z-A)</a>
+			<a href="{{ path('books_index', {'sort': 'price_asc', 'category': current_category}) }}">💲 Prix Croissant</a>
+			<a href="{{ path('books_index', {'sort': 'price_desc', 'category': current_category}) }}">💰 Prix Décroissant</a>
+			<a href="{{ path('books_index', {'sort': 'date_new', 'category': current_category}) }}">🆕 Nouveautés</a>
+			<a href="{{ path('books_index', {'sort': 'date_old', 'category': current_category}) }}">📜 Anciens</a>
+			<a href="{{ path('books_index', {'sort': 'popularity', 'category': current_category}) }}">🔥 Populaires</a>
+			<a href="{{ path('books_index', {'sort': 'best_sellers', 'category': current_category}) }}">🏆 Meilleures ventes</a>
+		</div>
+
+		<script>
+			document.getElementById('sortSelect').addEventListener('change', function () {
+            document.getElementById('sortForm').submit();
+            });
+		</script>
 
 
-        {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('books_new') }}" class="btn">➕ Ajouter un livre</a>
-        {% endif %}
+		{% if is_granted('ROLE_ADMIN') %}
+			<a href="{{ path('books_new') }}" class="btn">➕ Ajouter un livre</a>
+		{% endif %}
 
-        {# Affichage du titre de la catégorie actuelle #}
-        {% if current_category %}
-            <h2>Livres dans la catégorie : {{ current_category.name }}</h2>
-        {% else %}
-            <h2>Liste des livres</h2>
-        {% endif %}
-        {# Liste des livres filtrés #}
-        <ul class="cards-container">
-            {% for book in pagination %}
-                <li class="card">
-                    <a href="{{ path('books_show', {'id': book.id}) }}">
-                        <h3>  {{ book.name }}</h3>
-                        <img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}">
-                        <p> Prix: {{ book.price }} € </p>
-                    </a>
-                    <button type="button" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
-                ➕ Ajouter au panier
-            </button>
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('product_edit', {'type': book.type, 'id': book.id, 'redirect': app.request.uri}) }}" class="btn-edit">✏️ Modifier</a>
-                <a href="{{ path('product_delete', {'type': book.type, 'id': book.id, 'redirect': app.request.uri}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');">🗑 Supprimer</a>
-            {% endif %}
-                </li>
-            {% else %}
-                <p>Aucun livre trouvé pour ces filtres.</p>
-            {% endfor %}
-        </ul>
+		{# Affichage du titre de la catégorie actuelle #}
+		{% if current_category %}
+			<h2>Livres dans la catégorie :
+				{{ current_category.name }}</h2>
+		{% else %}
+			<h2>Liste des livres</h2>
+		{% endif %}
+		{# Liste des livres filtrés #}
+		<ul class="cards-container">
+			{% for book in pagination %}
+				<li class="card">
+					<a href="{{ path('books_show', {'id': book.id}) }}">
+						<h3>
+							{{ book.name }}</h3>
+						<img src="{{ asset('uploads/pictureProduct/' ~ book.picture) }}" alt="{{ book.name }}">
+						<p>
+							Prix:
+							{{ book.price }}
+							€
+						</p>
+					</a>
+					<button type="button" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
+						➕ Ajouter au panier
+					</button>
+					{% if is_granted('ROLE_ADMIN') %}
+						<a href="{{ path('product_edit', {'type': book.type, 'id': book.id, 'redirect': app.request.uri}) }}" class="btn-edit">✏️ Modifier</a>
+						<a href="{{ path('product_delete', {'type': book.type, 'id': book.id, 'redirect': app.request.uri}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');">🗑 Supprimer</a>
+					{% endif %}
+				</li>
+			{% else %}
+				<p>Aucun livre trouvé pour ces filtres.</p>
+			{% endfor %}
+		</ul>
+		0
 
-        {# Pagination #}
-        <div class="pagination">
-            {{ knp_pagination_render(pagination) }}
-        </div>
+		{# Pagination #}
+		<div class="pagination">
+			{{ knp_pagination_render(pagination) }}
+		</div>
 
-        <br>
-        <a href="{{ path('books_new') }}">Nouveau titre</a>
-    </main>
+		<br>
+		<a href="{{ path('books_new') }}">Nouveau titre</a>
+	</main>
 
 {% endblock %}
 {% block javascript %}
-    {{ parent() }}
-    {# <script src="{{ asset('js/cart.js') }}?v={{ "now"|date("U") }}"></script>#}
+	{{ parent() }}
 {% endblock %}

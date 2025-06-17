@@ -24,9 +24,9 @@
                 <p>{{figurine.description}}</p>
                 <h3>Details</h3>
                 <div class="details">
-                    <a href="{{ path('cart_add', {type: figurine.type, id: figurine.id}) }}" class="add-to-cart" data-id="{{ figurine.id }}" data-type="{{ figurine.type }}">
+                    <button type="button" class="add-to-cart" data-id= "{{ figurine.id }}"  data-type= "{{ figurine.type }}">
                         ➕ Ajouter au panier
-                    </a>
+                    </button>
                     <ul>
                         <li>Marque: {{figurine.brand.name}}</li>
                         <li>Référence: {{figurine.reference}}</li>

@@ -56,14 +56,14 @@
 
 			<!-- Section Adresse -->
 			<section id="adresse">
-				<h2>Adresses</h2>
+				<h2>Adresse</h2>
 				{{ form_start(addressForm) }}
-				<div id="deliveryAddress" style="display: none;">
-					<h3>Adresse de livraison</h3>
-					{{ form_row(addressForm.deliveryAddress) }}
-				</div>
-
-				<button type="submit" class="btn">Enregistrer</button>
+					{{ form_row(addressForm.firstName) }}
+					{{ form_row(addressForm.lastName) }}
+					{{ form_row(addressForm.address) }}
+					{{ form_row(addressForm.postalCode) }}
+					{{ form_row(addressForm.city) }}
+					<button type="submit" class="btn">Mettre à jour</button>
 				{{ form_end(addressForm) }}
 			</section>
 
