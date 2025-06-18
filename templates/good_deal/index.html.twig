@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bons Plans{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">🔥 Bons Plans</h1>
+
+        {% if products is not empty %}
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" class="card-img-top" alt="{{ product.name }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">
+                                    <strong>{{ product.price|number_format(2, '.', ' ') }} €</strong>
+                                </p>
+                                {% set routeName = product.type ~ 's_show' %}
+                                <a href="{{ path(routeName, {'id': product.id}) }}" class="btn btn-primary">
+                                    Voir le produit
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">Aucun bon plan pour le moment.</p>
+        {% endif %}
+    </div>
+{% endblock %}

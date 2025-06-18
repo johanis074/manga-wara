@@ -1,18 +1,18 @@
 <?php
 namespace App\Service;
-use App\Repository\ProductRepository;
+use App\Service\ProductService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CartService
 {
     private $session;
-    private ProductRepository $productRepository;
+    private ProductService $productService;
 
-    public function __construct(RequestStack $requestStack, ProductRepository $productRepository)
+    public function __construct(RequestStack $requestStack, ProductService $productService)
     {
         $this->session = $requestStack->getSession();
-        $this->productRepository = $productRepository;
+        $this->productService = $productService;
     }
 
     public function add(int $id, string $type): JsonResponse
@@ -20,8 +20,8 @@ class CartService
     // Récupère le panier depuis la session
     $cart = $this->session->get('cart', []);
 
-    // Recherche le produit dans le repository
-    $product = $this->productRepository->findByTypeAndId($type, $id);
+    // Recherche le produit dans le Service
+    $product = $this->productService->findByTypeAndId($type, $id);
 
     // Si le produit n'est pas trouvé, retourner une réponse JSON avec un message d'erreur
     if (!$product) {
@@ -55,7 +55,7 @@ private function calculateTotal(array $cart): float
 {
     $total = 0;
     foreach ($cart as $item) {
-        $product = $this->productRepository->findByTypeAndId($item['type'], $item['id']);
+        $product = $this->productService->findByTypeAndId($item['type'], $item['id']);
         if ($product) {
             $total += $product->getPrice() * $item['quantity'];
         }
@@ -70,7 +70,7 @@ private function calculateTotal(array $cart): float
         $cartWithData = [];
 
         foreach ($cart as $item) {
-            $product = $this->productRepository->findByTypeAndId($item['type'], $item['id']);
+            $product = $this->productService->findByTypeAndId($item['type'], $item['id']);
 
             if ($product) {
                 $cartWithData[] = [

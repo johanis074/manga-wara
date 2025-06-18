@@ -34,7 +34,7 @@ services:
     App\Twig\AppExtension:
         tags: ['twig.extension']
 
-    App\Repository\ProductRepository:
+    App\Service\ProductService:
         arguments:
             $bookRepository: '@App\Repository\BookRepository'
             $figurineRepository: '@App\Repository\FigurineRepository'

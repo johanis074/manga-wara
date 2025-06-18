@@ -60,7 +60,7 @@
                         </div>
                     </div>
                     <a href="{{ path('figurines_index') }}">Figurines</a>
-                    <a href="#">Bon plan</a>
+                    <a href="{{ path('product_good_deals') }}">Bon plan</a>
                     {% if is_granted('ROLE_ADMIN') %}
                         {# Contenu réservé à l'admin #}
                         <a href="{{ path('admin_dashboard') }}">Admin</a>

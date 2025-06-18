@@ -6,7 +6,7 @@ use App\Entity\Order;
 use App\Service\CartService;
 use App\Service\OrderService;
 use App\Service\StripeService;
-use App\Repository\ProductRepository;
+use App\Service\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,10 +34,10 @@ class CartController extends AbstractController
     }
 
     #[Route('/cart/add/{type}/{id}', name: 'cart_add', methods: ['POST'])]
-    public function add(string $type, int $id, CartService $cartService, ProductRepository $productRepository): JsonResponse
+    public function add(string $type, int $id, CartService $cartService, ProductService $productService): JsonResponse
     {
         try {
-            $product = $productRepository->findByTypeAndId($type, $id);
+            $product = $productService->findByTypeAndId($type, $id);
             if (!$product) {
                 return new JsonResponse(['success' => false, 'message' => 'Produit introuvable'], 404);
             }
@@ -55,10 +55,10 @@ class CartController extends AbstractController
     }
 
     #[Route('/cart/remove/{type}/{id}', name: 'cart_remove', methods: ['POST'])]
-    public function remove(string $type, int $id, CartService $cartService, ProductRepository $productRepository): Response
+    public function remove(string $type, int $id, CartService $cartService, ProductService $productService): Response
     {
         try {
-            if (!$productRepository->findByTypeAndId($type, $id)) {
+            if (!$productService->findByTypeAndId($type, $id)) {
                 return $this->redirectToRoute('cart_index');
             }
 

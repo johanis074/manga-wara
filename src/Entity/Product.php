@@ -113,6 +113,12 @@ abstract class Product
         return $this->sales;
     }
 
+    public function setSales(int $sales): static
+{
+    $this->sales = $sales;
+    return $this;
+}
+
     public function incrementSales(): static
     {
         $this->sales++;

@@ -3,7 +3,7 @@
 
 namespace App\Controller;
 
-use App\Repository\ProductRepository;
+use App\Service\ProductService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,11 +13,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class SearchController extends AbstractController
 {
     #[Route('/search', name: 'app_search', methods: ['GET'])]
-    public function search(Request $request, ProductRepository $productRepository): JsonResponse
+    public function search(Request $request, ProductService $productService): JsonResponse
     {
         try {
             $query = $request->query->get('q', '');
-            $products = $productRepository->findBySearchQuery($query);
+            $products = $productService->findBySearchQuery($query);
 
             return $this->json($products);
         } catch (\Exception $e) {
@@ -28,11 +28,11 @@ class SearchController extends AbstractController
     }
 
     #[Route('/search/results', name: 'app_search_results', methods: ['GET'])]
-    public function results(Request $request, ProductRepository $productRepository): Response
+    public function results(Request $request, ProductService $productService): Response
     {
         try {
             $query = $request->query->get('q', '');
-            $products = $productRepository->findBySearchQuery($query);
+            $products = $productService->findBySearchQuery($query);
 
             return $this->render('search/results.html.twig', [
                 'query' => $query,
