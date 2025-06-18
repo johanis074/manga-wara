@@ -4,11 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Book;
 use App\Entity\Product;
-use App\Repository\ProductRepository;
+use App\Service\ProductService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class ProductController extends AbstractController
 {
@@ -19,8 +19,8 @@ final class ProductController extends AbstractController
             $bookRepository = $entityManager->getRepository(Book::class);
             $books = $bookRepository->findAll();
 
-            $productRepository = $entityManager->getRepository(ProductRepository::class);
-            $products = $productRepository->findAll();
+            $productService = $entityManager->getRepository(ProductService::class);
+            $products = $productService->findAll();
 
             foreach ($products as $product) {
                 foreach ($books as $book) {
@@ -45,9 +45,9 @@ final class ProductController extends AbstractController
     {
         try {
             $bookRepository = $entityManager->getRepository(Book::class);
-            $productRepository = $entityManager->getRepository(ProductRepository::class);
+            $productService = $entityManager->getRepository(ProductService::class);
 
-            $product = $productRepository->findOneBy([]);
+            $product = $productService->findOneBy([]);
             $book = $bookRepository->findOneBy([]);
 
             if ($product && $book) {
