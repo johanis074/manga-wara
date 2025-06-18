@@ -89,8 +89,7 @@ CREATE TABLE IF NOT EXISTS `comment` (
 
 INSERT INTO `comment` (`id`, `user_id`, `book_id`, `content`, `date`, `figurine_id`) VALUES
 (2, 1, 1, 'salut', '2025-03-07 10:06:42', NULL),
-(3, 2, 1, 'hello', '2025-03-07 10:09:57', NULL),
-(5, NULL, 1, 'a', '2025-05-06 14:33:29', NULL);
+(3, 2, 1, 'hello', '2025-03-07 10:09:57', NULL);
 
 -- --------------------------------------------------------
 
