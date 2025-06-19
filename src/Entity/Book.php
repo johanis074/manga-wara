@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Editor;
 use CategoryManga;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,8 +19,8 @@ class Book extends Product
     #[ORM\Column]
     private ?int $ean = null;
 
-    #[ORM\Column(nullable: true, enumType: Editor::class)]
-    private ?Editor $editor = null;
+    #[ORM\Column(length: 255)]
+    private ?string $editor = null;
 
     #[ORM\Column(nullable: true, enumType: CategoryManga::class)]
     private ?CategoryManga $category = null;
@@ -31,12 +30,12 @@ class Book extends Product
 
     public function __construct()
     {
-        parent::__construct('book'); // Définition du type
-        $this->editor = Editor::KANA; // Valeur par défaut
-        $this->category = CategoryManga::SHONEN; // Valeur par défaut
+        parent::__construct('book');
+        $this->editor = 'KANA'; // Valeur par défaut en majuscule
+        $this->category = CategoryManga::SHONEN;
     }
 
-        public function getCollectionName(): string
+    public function getCollectionName(): string
     {
         return preg_replace('/\s*[Tt]ome\s*\d+/', '', $this->name);
     }
@@ -74,14 +73,14 @@ class Book extends Product
         return $this;
     }
 
-    public function getEditor(): ?Editor
+    public function getEditor(): ?string
     {
         return $this->editor;
     }
 
-    public function setEditor(?Editor $editor): static
+    public function setEditor(?string $editor): static
     {
-        $this->editor = $editor;
+        $this->editor = strtoupper($editor);
         return $this;
     }
 
@@ -107,3 +106,4 @@ class Book extends Product
         return $this;
     }
 }
+

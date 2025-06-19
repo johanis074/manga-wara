@@ -44,7 +44,7 @@ class BookRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-        public function findByFilters(?string $sort = 'name_asc', ?string $category = null)
+     public function findByFilters(?string $sort = 'name_asc', ?string $category = null, ?string $editor = null)
     {
         $qb = $this->createQueryBuilder('b');
 
@@ -52,6 +52,13 @@ class BookRepository extends ServiceEntityRepository
         if ($category) {
             $qb->andWhere('b.category = :category')
             ->setParameter('category', $category);
+        }
+
+        // Filtrer par éditeur (si sélectionné)
+        if ($editor) {
+            // Supposons que le champ editor est stocké en majuscules en base
+            $qb->andWhere('b.editor = :editor')
+            ->setParameter('editor', $editor);
         }
 
         // Gestion des tris
@@ -84,6 +91,7 @@ class BookRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
 
     // src/Repository/BookRepository.php
 

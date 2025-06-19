@@ -1,15 +1,51 @@
 
-{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
-            {{ form_row(form.picture) }}
-            {{ form_row(form.name) }}
-            {{ form_row(form.editor) }}
-            {{ form_row(form.category) }}
-            {{ form_row(form.synopsis) }}
-           <p> {{ form_row(form.price) }} €</p>
-           {{ form_row(form.reference) }}
-           {{ form_row(form.isbn) }}
-           {{ form_row(form.ean) }}
-            
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un nouveau manga - Admin{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+<main class="dashboard-container">
+    <section class="dashboard-content">
+        <h2>Ajouter un nouveau manga</h2>
+
+        {% if app.session.flashBag.has('success') %}
+            <div class="alert alert-success">
+                {{ app.session.flashBag.get('success')[0] }}
+            </div>
+        {% endif %}
+
+        {% if app.session.flashBag.has('error') %}
+            <div class="alert alert-danger">
+                {{ app.session.flashBag.get('error')[0] }}
+            </div>
+        {% endif %}
+        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+
+        {% for field in [form.picture, form.name, form.editor, form.category, form.synopsis, form.price, form.reference, form.isbn, form.ean] %}
+            <div>
+                {{ form_label(field) }}
+                {{ form_widget(field, {
+                    attr: {
+                        class: field.vars.errors|length > 0 ? 'error' : ''
+                    }
+                }) }}
+                {% if field.vars.errors|length > 0 %}
+                    <div class="form-error-message">
+                        {% for error in field.vars.errors %}
+                            {{ error.message }}<br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
         <button type="submit" class="btn btn-primary">Enregistrer</button>
         {{ form_end(form) }}
+    </section>
 <a href="{{ path('books_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+</main>
+{% endblock %}

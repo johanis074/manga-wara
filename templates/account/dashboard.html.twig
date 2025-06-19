@@ -7,8 +7,8 @@
 {% endblock %}
 
 {% block body %}
-	<div class="dashboard-container">
-		<div class="dashboard-content">
+	<main class="dashboard-container">
+		<section class="dashboard-content">
 			{% for message in app.flashes('success') %}
 				<div class="flash-success">{{ message }}</div>
 			{% endfor %}
@@ -107,6 +107,6 @@
 				{% endif %}
 			</section>
 
-		</div>
-	</div>
+		</section>
+	</main>
 {% endblock %}

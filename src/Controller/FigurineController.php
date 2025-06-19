@@ -23,7 +23,7 @@ class FigurineController extends AbstractController
     #[Route('/figurines', name: 'figurines_index')]
     public function index(Request $request, FigurineRepository $figurineRepository, PaginatorInterface $paginator): Response
     {
-        try {
+        //  try {
             $sort = $request->query->get('sort', 'name_asc');
             $brand = $request->query->get('brand', null);
 
@@ -41,11 +41,11 @@ class FigurineController extends AbstractController
                 'current_brand' => $brand,
                 'brands' => Brand::cases(),
             ]);
-        } catch (\Exception $e) {
-            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
-                'message' => 'Erreur chargement figurines : ' . $e->getMessage()
-            ]);
-        }
+        // } catch (\Exception $e) {
+        //     return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+        //         'message' => 'Erreur chargement figurines : ' . $e->getMessage()
+        //     ]);
+        // }
     }
 
     #[Route('/figurines/new', name: 'figurines_new', methods:['GET','POST'])]

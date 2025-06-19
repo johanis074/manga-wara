@@ -3,23 +3,6 @@
 {% block body %}
 	<main class="bg">
 		<section>
-			{# Formulaire de filtres 
-			            {# <form method="get" action="{{ path('books_index') }}" class="filter-form">
-			                <label for="editor">Éditeur :</label>
-			                <select name="editor" id="editor">
-			                    <option value="">Tous</option>
-			                    {% for editor in editors %}
-			                        <option value="{{ editor.name }}" {% if app.request.query.get('editor') == editor.name %} selected {% endif %}>
-			                            {{ editor.name }}
-			                        </option>
-			                    {% endfor %}
-			                </select>
-			
-			                {# Menu déroulant au survol de "Manga" 
-			
-			                <button type="submit">Filtrer</button>
-			            </form> #}
-
 			<div class="filters">
 				<p>Trier par :</p>
 				<a href="{{ path('books_index', {'sort': 'name_asc', 'category': current_category}) }}">🔼 Nom (A-Z)</a>
@@ -40,13 +23,13 @@
 
 
 			{% if is_granted('ROLE_ADMIN') %}
-				<a href="{{ path('books_new') }}" class="btn">➕ Ajouter un livre</a>
+				<a href="{{ path('books_new') }}" class="button">➕ Ajouter un livre</a>
 			{% endif %}
 
 			{# Affichage du titre de la catégorie actuelle #}
 			{% if current_category %}
 				<h2>Livres dans la catégorie :
-					{{ current_category.name }}</h2>
+					{{ current_category.value }}</h2>
 			{% else %}
 				<h2>Liste des livres</h2>
 			{% endif %}
@@ -67,10 +50,12 @@
 						<button type="button" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
 							➕ Ajouter au panier
 						</button>
-						{% if is_granted('ROLE_ADMIN') %}
-							<a href="{{ path('product_edit', {'type': book.type, 'id': book.id, 'redirect': app.request.uri}) }}" class="btn-edit">✏️ Modifier</a>
-							<a href="{{ path('product_delete', {'type': book.type, 'id': book.id, 'redirect': app.request.uri}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');">🗑 Supprimer</a>
-						{% endif %}
+						<div>
+							{% if is_granted('ROLE_ADMIN') %}
+								<a href="{{ path('product_edit', {'type': book.type, 'id': book.id, 'redirect': app.request.uri}) }}" class="btn-edit">✏️ Modifier</a>
+								<a href="{{ path('product_delete', {'type': book.type, 'id': book.id, 'redirect': app.request.uri}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');">🗑 Supprimer</a>
+							{% endif %}
+						</div>
 					</li>
 				{% else %}
 					<p>Aucun livre trouvé pour ces filtres.</p>

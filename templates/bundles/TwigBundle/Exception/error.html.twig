@@ -3,9 +3,10 @@
 {% block title %}Erreur{% endblock %}
 
 {% block body %}
-    <div class="error-page">
+<main class="bg">
+    <section class="error-page">
         <h1>{{ status_code }}</h1>
         <p>{{ status_text }}</p>
         <a href="{{ path('app_home') }}" class="btn">Retour à l'accueil</a>
-    </div>
+    </section>
 {% endblock %}

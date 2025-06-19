@@ -6,5 +6,16 @@ enum CategoryManga: string
     case SHOJO = 'shojo';
     case JOSEI = 'josei';
     case LIGTHNOVEL = 'ligthnovel';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::SHONEN => 'Shōnen',
+            self::SEINEN => 'Seinen',
+            self::SHOJO => 'Shōjo',
+            self::JOSEI => 'Josei',
+            self::LIGTHNOVEL => 'Light Novel',
+        };
+    }
 }
 ?>

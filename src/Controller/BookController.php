@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
-use Editor;
 use CategoryManga;
 use App\Entity\Book;
-use App\Form\BookType;
 use App\Entity\Comment;
+use App\Form\BookType;
 use App\Form\CommentType;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,32 +22,40 @@ class BookController extends AbstractController
     #[Route('/books', name: 'books_index')]
     public function index(Request $request, BookRepository $bookRepository, PaginatorInterface $paginator): Response
     {
-        try {
-            $sort = $request->query->get('sort', 'name_asc');
-            $category = $request->query->get('category', null);
-            $editor = $request->query->get('editor', null);
+        $sort = $request->query->get('sort', 'name_asc');
+        $categoryRaw = $request->query->get('category');
 
-            $query = $bookRepository->findByFilters($sort, $category, $editor);
-
-            $pagination = $paginator->paginate(
-                $query,
-                $request->query->getInt('page', 1),
-                10
-            );
-
-            return $this->render('book/index.html.twig', [
-                'pagination' => $pagination,
-                'current_sort' => $sort,
-                'current_category' => $category,
-                'current_editor' => $editor,
-                'categories' => CategoryManga::cases(),
-                'editors' => Editor::cases()
-            ]);
-        } catch (\Exception $e) {
-            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
-                'message' => 'Erreur chargement livres : ' . $e->getMessage()
-            ]);
+        // On récupère editor en majuscule ou null
+        $editor = strtoupper($request->query->get('editor', ''));
+        if ($editor === '') {
+            $editor = null;
         }
+
+        // Convertir la chaîne en enum ou null si pas trouvé
+        $category = null;
+        if ($categoryRaw !== null) {
+            foreach (CategoryManga::cases() as $case) {
+                if ($case->value === $categoryRaw) {
+                    $category = $case;
+                    break;
+                }
+            }
+        }
+
+        $query = $bookRepository->findByFilters($sort, $categoryRaw, $editor);
+
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            10
+        );
+
+        return $this->render('book/index.html.twig', [
+            'pagination' => $pagination,
+            'current_sort' => $sort,
+            'current_category' => $category,
+            'current_editor' => $editor,
+        ]);
     }
 
     #[Route('/books/new', name: 'books_new', methods:['GET','POST'])]
@@ -179,4 +186,5 @@ class BookController extends AbstractController
         }
     }
 }
+
 

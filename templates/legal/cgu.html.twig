@@ -3,51 +3,54 @@
 {% block title %}Conditions Générales d'Utilisation{% endblock %}
 
 {% block body %}
-<a href="{{ path('app_home') }}">Retour</a>
-<section class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md mt-6">
-  <h1 class="text-3xl font-bold mb-6">Conditions Générales d'Utilisation</h1>
+  <main class="bg">
+    <a href="{{ path('app_home') }}">Retour</a>
+    <section>
+      <h2>Conditions Générales d'Utilisation</h2>
 
-  <h2 class="text-xl font-semibold mt-4">1. Objet</h2>
-  <p>Les présentes conditions ont pour objet de définir les modalités d’utilisation du site {{ app.request.getHost }} spécialisé dans la vente de mangas, figurines, et produits dérivés.</p>
+      <h3>1. Objet</h3>
+      <p>Les présentes conditions ont pour objet de définir les modalités d’utilisation du site {{ app.request.getHost }} spécialisé dans la vente de mangas, figurines, et produits dérivés.</p>
 
-  <h2 class="text-xl font-semibold mt-4">2. Informations légales</h2>
-  <p>Éditeur : Manga-wara<br>
-     Statut : SARL<br>
-     Adresse : [Votre adresse]<br>
-     Email : contact@Manga-wara.com<br>
-     {# SIRET : [Votre numéro]</p> #}
+      <h3>2. Informations légales</h3>
+      <p>Éditeur : Manga-wara<br>
+        Statut : SARL<br>
+        Adresse : [Votre adresse]<br>
+        Email : contact@Manga-wara.com<br>
+        {# SIRET : [Votre numéro]</p> #}
 
-  <h2 class="text-xl font-semibold mt-4">3. Accès au site</h2>
-  <p>Le site est librement accessible. Certaines fonctionnalités comme l’achat ou le suivi des commandes nécessitent un compte utilisateur.</p>
+      <h3>3. Accès au site</h3>
+      <p>Le site est librement accessible. Certaines fonctionnalités comme l’achat ou le suivi des commandes nécessitent un compte utilisateur.</p>
 
-  <h2 class="text-xl font-semibold mt-4">4. Compte utilisateur</h2>
-  <p>L’utilisateur s’engage à fournir des informations exactes. Il est responsable de la confidentialité de ses identifiants et mot de passe.</p>
+      <h3>4. Compte utilisateur</h3>
+      <p>L’utilisateur s’engage à fournir des informations exactes. Il est responsable de la confidentialité de ses identifiants et mot de passe.</p>
 
-  <h2 class="text-xl font-semibold mt-4">5. Produits et commandes</h2>
-  <p>Les produits proposés sont principalement des mangas, figurines et produits dérivés. Les stocks sont limités. La commande est considérée comme définitive à réception du paiement.</p>
+      <h3>5. Produits et commandes</h3>
+      <p>Les produits proposés sont principalement des mangas, figurines et produits dérivés. Les stocks sont limités. La commande est considérée comme définitive à réception du paiement.</p>
 
-  <h2 class="text-xl font-semibold mt-4">6. Paiement sécurisé</h2>
-  <p>Les paiements sont sécurisés via notre partenaire Stripe. Aucune donnée bancaire n’est conservée sur notre site.</p>
+      <h3>6. Paiement sécurisé</h3>
+      <p>Les paiements sont sécurisés via notre partenaire Stripe. Aucune donnée bancaire n’est conservée sur notre site.</p>
 
-  <h2 class="text-xl font-semibold mt-4">7. Livraison</h2>
-  <p>Les commandes sont expédiées sous 15 jours ouvrés. Les délais peuvent varier selon la destination. Le suivi est disponible dans l’espace “Mon compte”.</p>
+      <h3>7. Livraison</h3>
+      <p>Les commandes sont expédiées sous 15 jours ouvrés. Les délais peuvent varier selon la destination. Le suivi est disponible dans l’espace “Mon compte”.</p>
 
-  <h2 class="text-xl font-semibold mt-4">8. Droit de rétractation</h2>
-  <p>Conformément à la loi, vous disposez de 14 jours après réception pour exercer votre droit de rétractation (sauf produits descellés ou personnalisés).</p>
+      <h3>8. Droit de rétractation</h3>
+      <p>Conformément à la loi, vous disposez de 14 jours après réception pour exercer votre droit de rétractation (sauf produits descellés ou personnalisés).</p>
 
-  <h2 class="text-xl font-semibold mt-4">9. Données personnelles</h2>
-  <p>Nous collectons uniquement les données nécessaires au traitement des commandes. Conformément au RGPD, vous disposez d’un droit d’accès, rectification et suppression.</p>
+      <h3>9. Données personnelles</h3>
+      <p>Nous collectons uniquement les données nécessaires au traitement des commandes. Conformément au RGPD, vous disposez d’un droit d’accès, rectification et suppression.</p>
 
-  <h2 class="text-xl font-semibold mt-4">10. Propriété intellectuelle</h2>
-  <p>Tous les contenus (textes, visuels, logos) sont protégés. Toute utilisation non autorisée est interdite.</p>
+      <h3>10. Propriété intellectuelle</h3>
+      <p>Tous les contenus (textes, visuels, logos) sont protégés. Toute utilisation non autorisée est interdite.</p>
 
-  <h2 class="text-xl font-semibold mt-4">11. Responsabilités</h2>
-  <p>Nous ne sommes pas responsables des interruptions de service ni des dommages liés à une mauvaise utilisation du site.</p>
+      <h3>11. Responsabilités</h3>
+      <p>Nous ne sommes pas responsables des interruptions de service ni des dommages liés à une mauvaise utilisation du site.</p>
 
-  <h2 class="text-xl font-semibold mt-4">12. Modification des CGU</h2>
-  <p>Les présentes CGU peuvent être modifiées à tout moment. La version en vigueur est celle publiée sur le site.</p>
+      <h3>12. Modification des CGU</h3>
+      <p>Les présentes CGU peuvent être modifiées à tout moment. La version en vigueur est celle publiée sur le site.</p>
 
-  <h2 class="text-xl font-semibold mt-4">13. Droit applicable</h2>
-  <p>Les présentes conditions sont régies par la loi française. En cas de litige, les tribunaux français seront seuls compétents.</p>
-</section>
+      <h3>13. Droit applicable</h3>
+      <p>Les présentes conditions sont régies par la loi française. En cas de litige, les tribunaux français seront seuls compétents.</p>
+    </section>
+
+  </main>
 {% endblock %}

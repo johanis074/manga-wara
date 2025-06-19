@@ -3,48 +3,50 @@
 {% block title %}Utilisateurs{% endblock %}
 
 {% block body %}
-<div style="max-width: 1000px; margin: 2rem auto; padding: 1rem;">
-    <h1 style="font-size: 2rem; margin-bottom: 1rem;">👥 Liste des utilisateurs</h1>
+<main class="bg">
+    <section class="cart-container">
+        <h2>👥 Liste des utilisateurs</h2>
 
-    <table style="width: 100%; border-collapse: collapse; border: 1px solid #ccc;">
-        <thead>
-            <tr style="background-color: #f0f0f0;">
-                <th style="padding: 10px; border: 1px solid #ccc;">ID</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Pseudo</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Email</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Rôles</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
                 <tr>
-                    <td style="padding: 10px; border: 1px solid #ccc;">{{ user.id }}</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">{{ user.pseudo }}</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">{{ user.email }}</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">{{ user.roles | join(', ') }}</td>
-                    <td style="padding: 10px; border: 1px solid #ccc;">
-                        <a href="{{ path('admin_user_edit', { id: user.id }) }}"
-                           style="color: blue; text-decoration: none; margin-right: 10px;">Modifier</a>
-                        <form method="post"
-                              action="{{ path('admin_user_delete', { id: user.id }) }}"
-                              onsubmit="return confirm('Supprimer l’utilisateur {{ user.pseudo }} ?');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
-                            <button type="submit"
-                                    style="color: red; background: none; border: none; cursor: pointer;">
-                                ❌ Supprimer
-                            </button>
-                        </form>
-                    </td>
+                    <th>ID</th>
+                    <th>Pseudo</th>
+                    <th>Email</th>
+                    <th>Rôles</th>
+                    <th>Actions</th>
                 </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5" style="padding: 10px; text-align: center; border: 1px solid #ccc;">
-                        Aucun utilisateur trouvé.
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.pseudo }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.roles | join(', ') }}</td>
+                        <td>
+                            <a href="{{ path('admin_user_edit', { id: user.id }) }}"
+                            style="color: blue; text-decoration: none; margin-right: 10px;">Modifier</a>
+                            <form method="post"
+                                action="{{ path('admin_user_delete', { id: user.id }) }}"
+                                onsubmit="return confirm('Supprimer l’utilisateur {{ user.pseudo }} ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
+                                <button type="submit"
+                                        style="color: red; background: none; border: none; cursor: pointer;">
+                                    Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="padding: 10px; text-align: center; border: 1px solid #ccc;">
+                            Aucun utilisateur trouvé.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    <section>
+</main>
 {% endblock %}

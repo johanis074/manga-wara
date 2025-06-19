@@ -3,9 +3,11 @@
 {% block title %}Erreur serveur - 500{% endblock %}
 
 {% block body %}
-    <div class="error-page">
+<main class="bg">
+    <section class="error-page">
         <h1>500</h1>
         <p>Oups ! Une erreur est survenue sur le serveur.</p>
         <a href="{{ path('app_home') }}" class="btn">Retour à l'accueil</a>
-    </div>
+    </section>
+</main>
 {% endblock %}

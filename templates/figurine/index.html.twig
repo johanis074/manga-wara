@@ -1,74 +1,71 @@
 {% extends 'base.html.twig' %}
+{% block body %}
+	<main class="bg">
+		<section>
+			<div class="filters">
+				<p>Trier par :</p>
+				<a href="{{ path('figurines_index', {'sort': 'name_asc', 'brand': current_brand}) }}">🔼 Nom (A-Z)</a>
+                <a href="{{ path('figurines_index', {'sort': 'name_desc', 'brand': current_brand}) }}">🔽 Nom (Z-A)</a>
+                <a href="{{ path('figurines_index', {'sort': 'price_asc', 'brand': current_brand}) }}">💲 Prix Croissant</a>
+                <a href="{{ path('figurines_index', {'sort': 'price_desc', 'brand': current_brand}) }}">💰 Prix Décroissant</a>
+                <a href="{{ path('figurines_index', {'sort': 'date_new', 'brand': current_brand}) }}">🆕 Nouveautés</a>
+                <a href="{{ path('figurines_index', {'sort': 'date_old', 'brand': current_brand}) }}">📜 Anciens</a>
+                <a href="{{ path('figurines_index', {'sort': 'popularity', 'brand': current_brand}) }}">🔥 Populaires</a>
+                <a href="{{ path('figurines_index', {'sort': 'best_sellers', 'brand': current_brand}) }}">🏆 Meilleures ventes</a>
+			</div>
 
-{% block body %} 
-    <main>
-        {# Formulaire de filtres #}
-        <form method="get" action="{{ path('figurines_index') }}" class="filter-form">
-            <label for="brand">Éditeur :</label>
-            <select name="brand" id="brand">
-                <option value="">Tous</option>
-                {% for brand in brands %}
-                    <option value="{{ brand.name }}" {% if app.request.query.get('brand') == brand.name %}selected{% endif %}>
-                        {{ brand.name }}
-                    </option>
-                {% endfor %}
-            </select>
+			<script>
+				document.getElementById('sortSelect').addEventListener('change', function () {
+				document.getElementById('sortForm').submit();
+				});
+			</script>
 
-            <button type="submit">Filtrer</button>
-        </form>
 
-        <div class="filters">
-            <h4> Trier par :</h4>
-            <a href="{{ path('figurines_index', {'sort': 'name_asc', 'brand': current_brand}) }}">🔼 Nom (A-Z)</a>
-            <a href="{{ path('figurines_index', {'sort': 'name_desc', 'brand': current_brand}) }}">🔽 Nom (Z-A)</a>
-            <a href="{{ path('figurines_index', {'sort': 'price_asc', 'brand': current_brand}) }}">💲 Prix Croissant</a>
-            <a href="{{ path('figurines_index', {'sort': 'price_desc', 'brand': current_brand}) }}">💰 Prix Décroissant</a>
-            <a href="{{ path('figurines_index', {'sort': 'date_new', 'brand': current_brand}) }}">🆕 Nouveautés</a>
-            <a href="{{ path('figurines_index', {'sort': 'date_old', 'brand': current_brand}) }}">📜 Anciens</a>
-            <a href="{{ path('figurines_index', {'sort': 'popularity', 'brand': current_brand}) }}">🔥 Populaires</a>
-            <a href="{{ path('figurines_index', {'sort': 'best_sellers', 'brand': current_brand}) }}">🏆 Meilleures ventes</a>
-        </div>
+			{% if is_granted('ROLE_ADMIN') %}
+				<a href="{{ path('figurines_new') }}" class="button">➕ Ajouter un livre</a>
+			{% endif %}
 
-        <script>
-            document.getElementById('sortSelect').addEventListener('change', function() {
-                document.getElementById('sortForm').submit();
-            });
-        </script>
+			{# Affichage du titre de la catégorie actuelle #}
+			
+				<h2>Liste des figurines</h2>
+		
+			{# Liste des livres filtrés #}
+			<ul class="cards-container">
+				{% for figurine in pagination %}
+					<li class="card">
+						<a href="{{ path('figurines_show', {'id': figurine.id}) }}">
+							<h3>{{ figurine.name }}</h3>
+							<img src="{{ asset('uploads/pictureProduct/' ~ figurine.picture) }}" alt="{{ figurine.name }}">
+							<p>
+								Prix:
+								{{ figurine.price }}
+								€
+							</p>
+						</a>
+						<button type="button" class="add-to-cart" data-id="{{ figurine.id }}" data-type="{{ figurine.type }}">
+							➕ Ajouter au panier
+						</button>
+						<div>
+							{% if is_granted('ROLE_ADMIN') %}
+								<a href="{{ path('product_edit', {'type': figurine.type, 'id': figurine.id, 'redirect': app.request.uri}) }}" class="btn-edit">✏️ Modifier</a>
+								<a href="{{ path('product_delete', {'type': figurine.type, 'id': figurine.id, 'redirect': app.request.uri}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');">🗑 Supprimer</a>
+							{% endif %}
+						</div>
+					</li>
+				{% else %}
+					<p>Aucun livre trouvé pour ces filtres.</p>
+				{% endfor %}
+			</ul>
 
-        {# Liste des figurines filtrées #}
-        {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('figurines_new') }}" class="btn">➕ Ajouter un livre </a>
-        {% endif %}
-        <ul class="cards-container">
-            {% for figurine in pagination %}
-                <li class="card">
-                    <a href="{{ path('figurines_show', {'id': figurine.id}) }}">
-                        <h3>  {{ figurine.name }}</h3>
-                        <img src="{{ asset('uploads/pictureProduct/' ~ figurine.picture) }}" alt="{{ figurine.name }}">
-                        <p> Prix: {{ figurine.price }} € </p>
-                    </a>
-                    <button type="button" class="add-to-cart" data-id= "{{ figurine.id }}"  data-type= "{{ figurine.type }}">
-                        ➕ Ajouter au panier
-                    </button>
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('product_edit', {'type': figurine.type, 'id': figurine.id, 'redirect': app.request.uri}) }}" class="btn-edit">✏️ Modifier</a>
-                        <a href="{{ path('product_delete', {'type': figurine.type, 'id': figurine.id, 'redirect': app.request.uri}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');">🗑 Supprimer</a>
-                    {% endif %}
-                </li>
-            {% else %}
-                <p>Aucune figurine trouvée pour ces filtres.</p>
-            {% endfor %}
-        </ul>
 
-        {# Pagination #}
-        <div class="pagination">
-            {{ knp_pagination_render(pagination) }}
-        </div>
+			{# Pagination #}
+			<div class="pagination">
+				{{ knp_pagination_render(pagination) }}
+			</div>
+		</main>
 
-        <br>
-        
-    </main>
-{% endblock %}
+	{% endblock %}
+
 {% block javascript %}
     {{ parent() }}
 {% endblock %}
