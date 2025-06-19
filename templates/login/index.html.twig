@@ -48,15 +48,6 @@
         </svg>
         <input placeholder="Enter your Password" class="input" type="password" id="password" name="_password" required />
     </div>
-
-    <div class="flex-row">
-        <label class="checkbox-btn">
-        <label for="checkbox"></label>
-        <input id="checkbox" type="checkbox">Se souvenir de moi</input>
-        <span class="checkmark"></span>
-        </label>
-        <span class="span">Mot de passe oubliée</span>
-    </div>
     <input type="hidden" name="_csrf_token"
                value="{{ csrf_token('authenticate') }}"
         >

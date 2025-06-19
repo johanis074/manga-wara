@@ -1,28 +1,42 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Admin Product{% endblock %}
+{% block title %}Modifier l'utilisateur - Admin{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+{% endblock %}
 
 {% block body %}
-<h2>Modifier l'utilisateur : {{ user.pseudo }}</h2>
+<main class="dashboard-container">
+	<section class="dashboard-content">
 
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button type="submit">Enregistrer</button>
-{{ form_end(form) }}
+		<div>
+			<h2>Modifier l'utilisateur : {{ user.pseudo }}</h2>
 
-<h3>Commentaires publiés</h3>
-<ul>
-    {% for comment in comments %}
-        <li style="margin-bottom: 1rem;">
-            <strong>{{ comment.date|date('d/m/Y H:i') }}</strong><br>
-            {{ comment.content }}
-            <form method="post" action="{{ path('admin_comment_delete', {id: comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');" style="display:inline;">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete-comment-' ~ comment.id) }}">
-                <button type="submit" class="btn btn-danger btn-sm">🗑️ Supprimer</button>
-            </form>
-        </li>
-    {% else %}
-        <li>Aucun commentaire</li>
-    {% endfor %}
-</ul>
+			{{ form_start(form) }}
+				{{ form_widget(form) }}
+				<button type="submit" class="btn">Enregistrer</button>
+			{{ form_end(form) }}
+		</div>
+
+		<div>
+			<h2>Commentaires publiés</h2>
+			<ul>
+				{% for comment in comments %}
+					<li style="margin-bottom: 1rem; border-left: 4px solid #E8DCCA; padding-left: 1rem;">
+						<strong>{{ comment.date|date('d/m/Y H:i') }}</strong><br>
+						{{ comment.content }}
+						<form method="post" action="{{ path('admin_comment_delete', {id: comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');" style="display:inline;">
+							<input type="hidden" name="_token" value="{{ csrf_token('delete-comment-' ~ comment.id) }}">
+							<button type="submit" class="btn btn-danger">🗑️ Supprimer</button>
+						</form>
+					</li>
+				{% else %}
+					<li>Aucun commentaire</li>
+				{% endfor %}
+			</ul>
+		</div>
+
+	</section>
+</main>
 {% endblock %}

@@ -1,32 +1,39 @@
-{# templates/search/results.html.twig #}
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Résultats de recherche{% endblock %}
 
 {% block body %}
-    <h1>Résultats pour : "{{ query }}"</h1>
+<main class="bg">
+    <section>
+        <h2>Résultats pour : "{{ query }}"</h2>
 
-    {% if products is empty %}
-        <p>Aucun résultat trouvé.</p>
-    {% else %}
-        <ul class="cards-container">
-            {% for product in products %}
-                <li class="card">
-                    {% set routeName = product.type ~ 's_show' %}
-                    <a href="{{ path(routeName, {'id': product.id}) }}">
-                        <h3>{{ product.name }}</h3>
-                        <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
-                        <p> Prix: {{ product.price }} € </p>
-                    </a>
-                    <button type="button" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
-                        ➕ Ajouter au panier
-                    </button>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        {% if pagination|length == 0 %}
+            <p>Aucun résultat trouvé.</p>
+        {% else %}
+            <ul class="cards-container">
+                {% for product in pagination %}
+                    <li class="card">
+                        {% set routeName = product.type ~ 's_show' %}
+                        <a href="{{ path(routeName, {'id': product.id}) }}">
+                            <h3>{{ product.name }}</h3>
+                            <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" class="card-img-top" alt="{{ product.name }}">
+                            <p>Prix : {{ product.price }} €</p>
+                        </a>
+                        <button type="button" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
+                            ➕ Ajouter au panier
+                        </button>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="pagination">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        {% endif %}
+    </section>
+</main>
 {% endblock %}
+
 {% block javascript %}
     {{ parent() }}
 {% endblock %}

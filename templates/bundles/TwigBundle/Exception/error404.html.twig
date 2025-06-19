@@ -3,9 +3,11 @@
 {% block title %}Page non trouvée - 404{% endblock %}
 
 {% block body %}
-    <div class="error-page">
+<main class="bg">
+    <section class="error-page">
         <h1>404</h1>
         <p>La page que vous cherchez est introuvable.</p>
         <a href="{{ path('app_home') }}" class="btn">Retour à l'accueil</a>
-    </div>
+    </section>
+</main>
 {% endblock %}

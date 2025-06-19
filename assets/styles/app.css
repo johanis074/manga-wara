@@ -23,6 +23,7 @@ header section{
 header img {
     width: 265px;
     height: 160px;
+    
 }
 header input{
     width: 25rem;
@@ -38,6 +39,12 @@ header div, header span, header a{
     font-size: 1.2rem;
     font-weight: 500;
     padding: 10px;
+}
+
+.header-actions{
+    display: flex;
+    align-items: center;
+    margin-right: 1%;
 }
 nav{
     display: flex;
@@ -58,6 +65,7 @@ nav a {
     width: 80%;
     margin: 0 auto;
     padding-top: 3%;
+
 }
 .home h2{
     color: #257EB5;
@@ -95,6 +103,9 @@ nav a {
     margin: 0 auto;
     /* background-color: #fff; */
 
+}
+.filters {
+    margin: 20px 10%;
 }
 .card {
     width: 15%;
@@ -164,6 +175,11 @@ nav a {
 
     .card:hover p{
       font-size: 1.2rem;
+    }
+
+    .card div{
+      display: flex;
+      flex-direction: column;
     }
     
     .pagination {
@@ -335,6 +351,24 @@ nav a {
   .btn:active {
     transform: scale(0.9);
   }
+
+  .button {
+    margin: 10px 35%;
+    width: 30%;
+    height: 50px;
+    border-radius: 10em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    border: 1px solid #ededef;
+    background-color: #257EB5;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+      color: #E8DCCA;
+      text-decoration: none
+    }
+
 
   .book-show1 {
     display: flex;
@@ -792,7 +826,7 @@ footer li {
     
 }
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   header section{
     flex-wrap: wrap;
   }
@@ -842,7 +876,15 @@ footer li {
     flex-direction: column;
     padding: 1rem;
   }
- 
+ footer ul{
+    display: flex;
+    flex-direction: column;
+  }
+}
+  @media (max-width: 768px) {
+  .commandes table {
+      margin: auto 5%;
+  }
   .carousel {
       aspect-ratio: 16 / 10;
   }
@@ -858,10 +900,7 @@ footer li {
       margin: 0 3px;
   }
 
-  footer ul{
-    display: flex;
-    flex-direction: column;
-  }
+  
 }
 @media (max-width: 480px) {
   .carousel {

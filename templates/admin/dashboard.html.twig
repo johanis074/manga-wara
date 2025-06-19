@@ -23,7 +23,7 @@
             <h2>📚 5 derniers mangas</h2>
             <ul>
                 {% for book in books %}
-                    <li><strong>{{ book.name }}</strong> - {{ book.editor.name }}</li>
+                    <li><strong>{{ book.name }}</strong> - {{ book.editor }}</li>
                 {% else %}
                     <li>Aucun manga trouvé.</li>
                 {% endfor %}
@@ -86,113 +86,6 @@
         </div>
     </section>
 </main>
-<style>
-/* Conteneur principal */
-.admin-container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 20px;
-    background: #E2938A;
-    border-radius: 12px;
-}
-
-.form {
-    margin-bottom: -5%;
-}
-/* Titre principal */
-.admin-title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 30px;
-    color: #257EB5;
-    text-align: center;
-}
-
-/* Section */
-.admin-section {
-    margin: 0 20%;
-    gap: 20px;
-    justify-content: space-between;
-}
-
-/* Boîte admin */
-.admin-box {
-    padding: 20px;
-    margin: 5% 0;
-    background: #E8DCCA;
-    min-height: 220px;
-}
-
-.admin-box h2 {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    color: #257EB5;
-}
-
-/* Liste */
-.admin-box ul {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 15px;
-}
-
-.admin-box li {
-    padding: 6px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 0.95rem;
-    color: #257EB5;
-}
-
-/* Tableau */
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 15px;
-}
-
-.admin-table th,
-.admin-table td {
-    color: #257EB5;
-    text-align: left;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    font-size: 0.95rem;
-}
-
-.admin-table th {
-    font-weight: bold;
-}
-
-/* Bouton */
-.btn-blue {
-    align-self: flex-start;
-    background-color: #3498db;
-    color: white;
-    padding: 10px 16px;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: background-color 0.3s;
-    font-weight: 500;
-    font-size: 0.95rem;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-blue:hover {
-    background-color: #2980b9;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .admin-box {
-        flex: 1 1 100%;
-    }
-
-    .admin-title {
-        font-size: 1.6rem;
-    }
-}
-
 {% endblock %}
 
 
