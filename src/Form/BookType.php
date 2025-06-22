@@ -2,116 +2,115 @@
 
 namespace App\Form;
 
-use Editor;
-use CategoryManga;
 use App\Entity\Book;
+use App\Enum\CategoryManga;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Validator\Constraints as Assert;
-
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class BookType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-    ->add('picture', FileType::class, [
-        'label' => 'Image du manga (fichier)',
-        'required' => true,
-        'attr' => ['class' => 'form-control'],
-        'constraints' => [
-            new Assert\NotBlank(['message' => 'Veuillez ajouter une image.']),
-            new Assert\File([
-                'maxSize' => '2M',
-                'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
-                'mimeTypesMessage' => 'Formats acceptés : jpg, png, webp.',
-            ]),
-        ],
-    ])
-    ->add('name', TextType::class, [
-        'label' => 'Nom du manga',
-        'required' => true,
-        'constraints' => [
-            new Assert\NotBlank(['message' => 'Le nom est requis.']),
-            new Assert\Length([
-                'min' => 2,
-                'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères.',
-            ]),
-        ],
-    ])
-    ->add('editor', TextType::class, [
-        'label' => 'Éditeur',
-        'required' => true,
-        'constraints' => [
-            new Assert\NotBlank(['message' => 'L’éditeur est requis.']),
-        ],
-    ])
-    ->add('category', ChoiceType::class, [
-        'label' => 'Catégorie',
-        'choices' => CategoryManga::cases(),
-        'choice_label' => fn(CategoryManga $category) => $category->name,
-        'choice_value' => fn(CategoryManga $category) => $category->value,
-        'required' => true,
-        'constraints' => [
-            new Assert\NotBlank(['message' => 'La catégorie est obligatoire.']),
-        ],
-    ])
-    ->add('price', TextType::class, [
-        'label' => 'Prix',
-        'required' => true,
-        'constraints' => [
-            new Assert\NotBlank(['message' => 'Le prix est requis.']),
-            new Assert\Regex([
-                'pattern' => '/^\d+(\.\d{1,2})?$/',
-                'message' => 'Le prix doit être un nombre valide.',
-            ]),
-        ],
-    ])
-    ->add('synopsis', TextType::class, [
-        'label' => 'Synopsis',
-        'required' => true,
-        'constraints' => [
-            new Assert\NotBlank(['message' => 'Le synopsis est requis.']),
-            new Assert\Length([
-                'min' => 10,
-                'minMessage' => 'Le synopsis doit contenir au moins {{ limit }} caractères.',
-            ]),
-        ],
-    ])
-    ->add('reference', TextType::class, [
-        'label' => 'Référence',
-        'required' => true,
-        'constraints' => [
-            new Assert\NotBlank(['message' => 'La référence est obligatoire.']),
-        ],
-    ])
-    ->add('isbn', TextType::class, [
-        'label' => 'ISBN',
-        'required' => true,
-        'constraints' => [
-            new Assert\NotBlank(['message' => 'L’ISBN est requis.']),
-            new Assert\Regex([
-                'pattern' => '/^\d{10}(\d{3})?$/',
-                'message' => 'L’ISBN doit contenir 10 ou 13 chiffres.',
-            ]),
-        ],
-    ])
-    ->add('ean', TextType::class, [
-        'label' => 'EAN',
-        'required' => true,
-        'constraints' => [
-            new Assert\NotBlank(['message' => 'L’EAN est requis.']),
-            new Assert\Regex([
-                'pattern' => '/^\d{13}$/',
-                'message' => 'L’EAN doit contenir 13 chiffres.',
-            ]),
-        ],
-    ]);
-
+            ->add('name', TextType::class, [
+                'label' => 'Nom',
+                'constraints' => [
+                    new NotBlank(['message' => 'Le nom est requis.']),
+                    new Length(['max' => 255]),
+                ],
+            ])
+            ->add('editor', TextType::class, [
+                'label' => 'Éditeur',
+                'constraints' => [
+                    new NotBlank(['message' => 'L’éditeur est requis.']),
+                    new Length(['max' => 255]),
+                ],
+            ])
+            ->add('category', ChoiceType::class, [
+                'label' => 'Catégorie',
+                'choices' => CategoryManga::cases(),
+                'choice_label' => fn(CategoryManga $cat) => $cat->name,
+                'choice_value' => fn(?CategoryManga $cat) => $cat?->value,
+                'placeholder' => 'Choisir une catégorie',
+                'constraints' => [
+                    new NotBlank(['message' => 'La catégorie est requise.']),
+                ],
+            ])
+            ->add('price', MoneyType::class, [
+                'currency' => 'EUR',
+                'label' => 'Prix',
+                'constraints' => [
+                    new NotBlank(['message' => 'Le prix est requis.']),
+                ],
+            ])
+            ->add('ean', TextType::class, [
+                'label' => 'Code EAN',
+                'attr' => [
+                    'maxlength' => 13,
+                    'placeholder' => 'ex : 9781234567890',
+                    'inputmode' => 'numeric',
+                ],
+                'constraints' => [
+                    new NotBlank(['message' => 'Le code EAN est requis.']),
+                    new Length([
+                        'min' => 13,
+                        'max' => 13,
+                        'exactMessage' => 'Le code EAN doit contenir exactement {{ limit }} chiffres.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/^\d{13}$/',
+                        'message' => 'Le code EAN doit contenir uniquement 13 chiffres.',
+                    ]),
+                ],
+            ])
+            ->add('isbn', TextType::class, [
+                'label' => 'ISBN',
+                'attr' => [
+                    'maxlength' => 13,
+                    'placeholder' => 'ex : 9781234567897',
+                    'inputmode' => 'numeric',
+                ],
+                'constraints' => [
+                    new NotBlank(['message' => 'Le champ ISBN est requis.']),
+                    new Length([
+                        'min' => 13,
+                        'max' => 13,
+                        'exactMessage' => 'L\'ISBN doit contenir exactement {{ limit }} chiffres.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/^\d{13}$/',
+                        'message' => 'L\'ISBN doit contenir uniquement 13 chiffres.',
+                    ]),
+                ],
+            ])
+            ->add('reference', TextType::class, [
+                'label' => 'Référence',
+                'constraints' => [
+                    new NotBlank(['message' => 'La référence est requise.']),
+                    new Length(['max' => 100]),
+                ],
+            ])
+            ->add('picture', FileType::class, [
+                'label' => 'Image de couverture',
+                'required' => false,
+                'mapped' => false,
+                'attr' => ['class' => 'form-control'],
+            ])
+            ->add('synopsis', TextareaType::class, [
+                'label' => 'Synopsis',
+                'attr' => ['rows' => 10],
+                'required' => false,
+            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

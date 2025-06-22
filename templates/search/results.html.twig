@@ -15,7 +15,7 @@
                     <li class="card">
                         {% set routeName = product.type ~ 's_show' %}
                         <a href="{{ path(routeName, {'id': product.id}) }}">
-                            <h3>{{ product.name }}</h3>
+                            <h3 class="truncate-title">{{ product.name }}</h3>
                             <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" class="card-img-top" alt="{{ product.name }}">
                             <p>Prix : {{ product.price }} €</p>
                         </a>

@@ -7,34 +7,37 @@
 {% endblock %}
 
 {% block body %}
-<main class="dashboard-container">
+<main class="bg">
     <section class="dashboard-content">
         <h2>Ajouter une nouvelle figurine</h2>
 
-        {# Flash messages #}
-        {% if app.session.flashBag.has('success') %}
-            <div class="alert alert-success">
-                {{ app.session.flashBag.get('success')[0] }}
-            </div>
-        {% endif %}
-        {% if app.session.flashBag.has('error') %}
-            <div class="alert alert-danger">
-                {{ app.session.flashBag.get('error')[0] }}
-            </div>
-        {% endif %}
+        {# Affichage des flash messages #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success" role="alert">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger" role="alert">{{ message }}</div>
+        {% endfor %}
 
-        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+        {{ form_start(form, {
+            'attr': {
+                'class': 'needs-validation',
+                'novalidate': 'novalidate',
+                'enctype': 'multipart/form-data',
+                'name': 'figurine'  
+            }
+        }) }}
 
-        {# Champs à afficher #}
+        {# Boucle sur les champs à afficher #}
         {% for field in [form.picture, form.name, form.brand, form.description, form.price, form.reference, form.height] %}
-            <div>
-                {{ form_label(field) }}
+            <div class="form-group">
+                {{ form_label(field, null, {'label_attr': {'class': 'form-label'}}) }}
                 {{ form_widget(field, {
-                    attr: { class: field.vars.errors|length > 0 ? 'error' : '' }
+                    attr: { class: field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control' }
                 }) }}
 
                 {% if field.vars.errors|length > 0 %}
-                    <div class="form-error-message">
+                    <div class="invalid-feedback">
                         {% for error in field.vars.errors %}
                             {{ error.message }}<br>
                         {% endfor %}
@@ -43,11 +46,11 @@
             </div>
         {% endfor %}
 
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <button type="submit" class="btn btn-primary mt-3">Enregistrer</button>
 
         {{ form_end(form) }}
     </section>
 
-    <a href="{{ path('figurines_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+    <a href="{{ path('figurines_index') }}" class="btn btn-secondary mt-4">Retour à la liste</a>
 </main>
 {% endblock %}

@@ -1,4 +1,5 @@
 <?php
+namespace App\Enum;
 enum Editor: string
 {
     case DOKIDOKI = 'doki-doki';

@@ -3,7 +3,7 @@
 namespace App\Twig;
 
 
-use CategoryManga;
+use App\Enum\CategoryManga;
 use twig\Extension\GlobalsInterface;
 use twig\Extension\AbstractExtension;
 

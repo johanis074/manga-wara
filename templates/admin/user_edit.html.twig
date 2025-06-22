@@ -8,35 +8,35 @@
 
 {% block body %}
 <main class="dashboard-container">
-	<section class="dashboard-content">
+    <section class="dashboard-content">
 
-		<div>
-			<h2>Modifier l'utilisateur : {{ user.pseudo }}</h2>
+        <div>
+            <h2>Modifier l'utilisateur : {{ user.pseudo }}</h2>
 
-			{{ form_start(form) }}
-				{{ form_widget(form) }}
-				<button type="submit" class="btn">Enregistrer</button>
-			{{ form_end(form) }}
-		</div>
+            {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+                {{ form_widget(form) }}
+                <button type="submit" class="btn">Enregistrer</button>
+            {{ form_end(form) }}
+        </div>
 
-		<div>
-			<h2>Commentaires publiés</h2>
-			<ul>
-				{% for comment in comments %}
-					<li style="margin-bottom: 1rem; border-left: 4px solid #E8DCCA; padding-left: 1rem;">
-						<strong>{{ comment.date|date('d/m/Y H:i') }}</strong><br>
-						{{ comment.content }}
-						<form method="post" action="{{ path('admin_comment_delete', {id: comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');" style="display:inline;">
-							<input type="hidden" name="_token" value="{{ csrf_token('delete-comment-' ~ comment.id) }}">
-							<button type="submit" class="btn btn-danger">🗑️ Supprimer</button>
-						</form>
-					</li>
-				{% else %}
-					<li>Aucun commentaire</li>
-				{% endfor %}
-			</ul>
-		</div>
+        <div>
+            <h2>Commentaires publiés</h2>
+            <ul>
+                {% for comment in comments %}
+                    <li style="margin-bottom: 1rem; border-left: 4px solid #E8DCCA; padding-left: 1rem;">
+                        <strong>{{ comment.date|date('d/m/Y H:i') }}</strong><br>
+                        {{ comment.content }}
+                        <form method="post" action="{{ path('admin_comment_delete', {id: comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-comment-' ~ comment.id) }}">
+                            <button type="submit" class="btn btn-danger">🗑️ Supprimer</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li>Aucun commentaire</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-	</section>
+    </section>
 </main>
 {% endblock %}

@@ -1,4 +1,3 @@
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Ajouter un nouveau manga - Admin{% endblock %}
@@ -8,44 +7,123 @@
 {% endblock %}
 
 {% block body %}
-<main class="dashboard-container">
+<main class="bg">
     <section class="dashboard-content">
         <h2>Ajouter un nouveau manga</h2>
 
-        {% if app.session.flashBag.has('success') %}
-            <div class="alert alert-success">
-                {{ app.session.flashBag.get('success')[0] }}
-            </div>
-        {% endif %}
-
-        {% if app.session.flashBag.has('error') %}
-            <div class="alert alert-danger">
-                {{ app.session.flashBag.get('error')[0] }}
-            </div>
-        {% endif %}
-        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
-
-        {% for field in [form.picture, form.name, form.editor, form.category, form.synopsis, form.price, form.reference, form.isbn, form.ean] %}
-            <div>
-                {{ form_label(field) }}
-                {{ form_widget(field, {
-                    attr: {
-                        class: field.vars.errors|length > 0 ? 'error' : ''
-                    }
-                }) }}
-                {% if field.vars.errors|length > 0 %}
-                    <div class="form-error-message">
-                        {% for error in field.vars.errors %}
-                            {{ error.message }}<br>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
+        {# Affichage des flash messages #}
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ type == 'success' ? 'success' : 'danger' }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% endfor %}
 
+        {{ form_start(form, {
+            attr: {
+                class: 'needs-validation',
+                novalidate: 'novalidate',
+                enctype: 'multipart/form-data',
+                'name': 'book'
+            }
+        }) }}
+
+        <div>
+            {{ form_label(form.picture, 'Image de couverture') }}
+            {{ form_widget(form.picture, {
+                attr: { class: form.picture.vars.errors|length > 0 ? 'error' : '' }
+            }) }}
+            {% for error in form.picture.vars.errors %}
+                <div class="form-error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form_label(form.name, 'Nom') }}
+            {{ form_widget(form.name, {
+                attr: { class: form.name.vars.errors|length > 0 ? 'error' : '' }
+            }) }}
+            {% for error in form.name.vars.errors %}
+                <div class="form-error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form_label(form.editor, 'Éditeur') }}
+            {{ form_widget(form.editor, {
+                attr: { class: form.editor.vars.errors|length > 0 ? 'error' : '' }
+            }) }}
+            {% for error in form.editor.vars.errors %}
+                <div class="form-error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form_label(form.category, 'Catégorie') }}
+            {{ form_widget(form.category, {
+                attr: { class: form.category.vars.errors|length > 0 ? 'error' : '' }
+            }) }}
+            {% for error in form.category.vars.errors %}
+                <div class="form-error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form_label(form.synopsis, 'Synopsis') }}
+            {{ form_widget(form.synopsis, {
+                attr: { class: form.synopsis.vars.errors|length > 0 ? 'error' : '', rows: 10 }
+            }) }}
+            {% for error in form.synopsis.vars.errors %}
+                <div class="form-error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form_label(form.price, 'Prix (€)') }}
+            {{ form_widget(form.price, {
+                attr: { class: form.price.vars.errors|length > 0 ? 'error' : '' }
+            }) }}
+            {% for error in form.price.vars.errors %}
+                <div class="form-error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form_label(form.reference, 'Référence') }}
+            {{ form_widget(form.reference, {
+                attr: { class: form.reference.vars.errors|length > 0 ? 'error' : '' }
+            }) }}
+            {% for error in form.reference.vars.errors %}
+                <div class="form-error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form_label(form.isbn, 'ISBN') }}
+            {{ form_widget(form.isbn, {
+                attr: { class: form.isbn.vars.errors|length > 0 ? 'error' : '' }
+            }) }}
+            {% for error in form.isbn.vars.errors %}
+                <div class="form-error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form_label(form.ean, 'EAN') }}
+            {{ form_widget(form.ean, {
+                attr: { class: form.ean.vars.errors|length > 0 ? 'error' : '' }
+            }) }}
+            {% for error in form.ean.vars.errors %}
+                <div class="form-error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
         <button type="submit" class="btn btn-primary">Enregistrer</button>
+
         {{ form_end(form) }}
+
+        <a href="{{ path('books_index') }}" class="btn btn-secondary mt-3">← Retour à la liste</a>
     </section>
-<a href="{{ path('books_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
 </main>
 {% endblock %}

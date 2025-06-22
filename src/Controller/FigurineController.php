@@ -8,6 +8,7 @@ use App\Form\FigurineType;
 use App\Entity\Comment;
 use App\Form\CommentType;
 use App\Repository\FigurineRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,13 +50,14 @@ class FigurineController extends AbstractController
     }
 
     #[Route('/figurines/new', name: 'figurines_new', methods:['GET','POST'])]
-    public function new(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
-    {
-        $figurine = new Figurine();
-        $form = $this->createForm(FigurineType::class, $figurine);
-        $form->handleRequest($request);
+public function new(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
+{
+    $figurine = new Figurine();
+    $form = $this->createForm(FigurineType::class, $figurine);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+    if ($form->isSubmitted()) {
+        if ($form->isValid()) {
             $pictureFile = $form->get('picture')->getData();
 
             if ($pictureFile) {
@@ -67,6 +69,9 @@ class FigurineController extends AbstractController
                     $uploadedFilePath = $this->convertImageToWebpAndSave($pictureFile, $newFilename);
                     $figurine->setPicture($newFilename);
                 } catch (\Exception $e) {
+                    if ($request->isXmlHttpRequest()) {
+                        return new JsonResponse(['success' => false, 'message' => 'Erreur image : ' . $e->getMessage()], 400);
+                    }
                     $this->addFlash('error', 'Erreur image : ' . $e->getMessage());
                     return $this->redirectToRoute('figurines_new');
                 }
@@ -75,18 +80,48 @@ class FigurineController extends AbstractController
             try {
                 $em->persist($figurine);
                 $em->flush();
+
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse([
+                        'success' => true,
+                        'message' => 'Figurine ajoutée avec succès.',
+                        'redirectUrl' => $this->generateUrl('figurines_index') // <-- URL de redirection
+                    ]);
+                }
+
+                $this->addFlash('success', 'Figurine ajoutée avec succès.');
                 return $this->redirectToRoute('figurines_index');
             } catch (\Exception $e) {
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse(['success' => false, 'message' => 'Erreur création figurine : ' . $e->getMessage()], 500);
+                }
                 return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
                     'message' => 'Erreur création figurine : ' . $e->getMessage()
                 ]);
             }
+        } else {
+            if ($request->isXmlHttpRequest()) {
+                $errors = [];
+                foreach ($form->getErrors(true) as $error) {
+                    $field = $error->getOrigin()->getName();
+                    $errors[$field][] = $error->getMessage();
+                }
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => 'Le formulaire contient des erreurs.',
+                    'errors' => $errors,
+                ], 400);
+            }
+            $this->addFlash('error', 'Le formulaire contient des erreurs. Veuillez les corriger.');
         }
-
-        return $this->render('figurine/new.html.twig', [
-            'form' => $form->createView(),
-        ]);
     }
+
+    return $this->render('figurine/new.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
+
 
     private function convertImageToWebpAndSave(UploadedFile $file, string $newFilename): string
     {
@@ -123,7 +158,7 @@ class FigurineController extends AbstractController
         return $destinationPath;
     }
 
-    #[Route('/figurines/{id}', name: 'figurines_show', methods: ['GET', 'POST'])]
+    #[Route('/admin/figurines/{id}', name: 'figurines_show', methods: ['GET', 'POST'])]
     public function show(int $id, FigurineRepository $figurineRepository, EntityManagerInterface $em, Request $request, PaginatorInterface $paginator): Response
     {
         try {
