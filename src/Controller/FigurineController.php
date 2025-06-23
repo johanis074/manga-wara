@@ -161,7 +161,7 @@ public function new(Request $request, EntityManagerInterface $em, SluggerInterfa
     #[Route('/admin/figurines/{id}', name: 'figurines_show', methods: ['GET', 'POST'])]
     public function show(int $id, FigurineRepository $figurineRepository, EntityManagerInterface $em, Request $request, PaginatorInterface $paginator): Response
     {
-        try {
+        // try {
             $figurine = $figurineRepository->find($id);
             if (!$figurine) {
                 throw $this->createNotFoundException('Figurine non trouvée');
@@ -207,10 +207,10 @@ public function new(Request $request, EntityManagerInterface $em, SluggerInterfa
                 'pagination' => $pagination,
                 'relatedFigurines' => $relatedFigurines,
             ]);
-        } catch (\Exception $e) {
-            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
-                'message' => 'Erreur affichage figurine : ' . $e->getMessage()
-            ]);
-        }
+        // } catch (\Exception $e) {
+        //     return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+        //         'message' => 'Erreur affichage figurine : ' . $e->getMessage()
+        //     ]);
+        // }
     }
 }

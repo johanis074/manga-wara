@@ -396,6 +396,12 @@ nav a {
   }
 
 
+  .book-show1 img{
+    width: 200px;
+    height: 300px;
+  }
+
+
   .cart-popup {
     position: fixed;
     bottom: 20px;
