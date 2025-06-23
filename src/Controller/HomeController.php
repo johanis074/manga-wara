@@ -48,19 +48,19 @@ class HomeController extends AbstractController
             $products = [];
 
             switch ($filter) {
-                case 'new':
+                case 'Nouveaux':
                     $products = array_merge(
                         $bookRepository->findNewBooks(6),
                         $figurineRepository->findNewFigurines(6)
                     );
                     break;
-                case 'popular':
+                case 'Populaires':
                     $products = array_merge(
                         $bookRepository->findPopularBooks(6),
                         $figurineRepository->findPopularFigurines(6)
                     );
                     break;
-                case 'best':
+                case 'Vendus':
                     $products = array_merge(
                         $bookRepository->findBestSellingBooks(6),
                         $figurineRepository->findBestSellingFigurines(6)

@@ -1,30 +1,34 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ filter | capitalize }} Produits{% endblock %}
+{% block title %} Produits {{ filter | capitalize }}{% endblock %}
 
 {% block body %}
-    <h2>{{ filter | capitalize }} Produits</h2>
-    <ul class="cards-container">
-        {% for product in products %}
-            <li class="card">
-                    {% set routeName = product.type ~ 's_show' %}
-                    <a href="{{ path(routeName, {'id': product.id}) }}">
-                        <h3>{{ product.name }}</h3>
-                        <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
-                        <p> Prix: {{ product.price }} € </p>
-                    </a>
-                    <button type="button" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
-                        ➕ Ajouter au panier
-                    </button>
-                    {% if is_granted('ROLE_ADMIN') %}
-								<a href="{{ path('product_edit', {'type': product.type, 'id': product.id, 'redirect': app.request.uri}) }}" class="btn-edit">✏️ Modifier</a>
-								<a href="{{ path('product_delete', {'type': product.type, 'id': product.id, 'redirect': app.request.uri}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');">🗑 Supprimer</a>
-							{% endif %}
-                </li>
-        {% else %}
-            <p>Aucun produit trouvé.</p>
-        {% endfor %}
-    </ul>
+    <main class="bg">
+        <section>
+            <h2> Produits {{ filter | capitalize }}</h2>
+            <ul class="cards-container">
+                {% for product in products %}
+                    <li class="card">
+                            {% set routeName = product.type ~ 's_show' %}
+                            <a href="{{ path(routeName, {'id': product.id}) }}">
+                                <h3 class="truncate-title">{{ product.name }}</h3>
+                                <img src="{{ asset('uploads/pictureProduct/' ~ product.picture) }}" alt="{{ product.name }}">
+                                <p> Prix: {{ product.price }} € </p>
+                            </a>
+                            <button type="button" class="add-to-cart" data-id="{{ product.id }}" data-type="{{ product.type }}">
+                                ➕ Ajouter au panier
+                            </button>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                        <a href="{{ path('product_edit', {'type': product.type, 'id': product.id, 'redirect': app.request.uri}) }}" class="btn-edit">✏️ Modifier</a>
+                                        <a href="{{ path('product_delete', {'type': product.type, 'id': product.id, 'redirect': app.request.uri}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');">🗑 Supprimer</a>
+                                    {% endif %}
+                        </li>
+                {% else %}
+                    <p>Aucun produit trouvé.</p>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
 {% endblock %}
 {% block javascript %}
     {{ parent() }}

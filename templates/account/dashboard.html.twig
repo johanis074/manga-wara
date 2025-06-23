@@ -1,112 +1,117 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon compte
-{% endblock %}
+{% block title %}Mon compte{% endblock %}
+
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 {% endblock %}
 
 {% block body %}
-	<main class="dashboard-container">
-		<section class="dashboard-content">
-			{% for message in app.flashes('success') %}
-				<div class="flash-success">{{ message }}</div>
-			{% endfor %}
+<main class="dashboard-container">
+    <section class="dashboard-content">
+        {% for message in app.flashes('success') %}
+            <div class="flash-success">{{ message }}</div>
+        {% endfor %}
 
-			{% for message in app.flashes('error') %}
-				<div class="flash-error">{{ message }}</div>
-			{% endfor %}
-			<!-- Section Profil -->
-			<section id="profil">
-				<h2>Profil</h2>
-				{{ form_start(profileForm) }}
-				{{ form_row(profileForm.pseudo) }}
+        {% for message in app.flashes('error') %}
+            <div class="flash-error">{{ message }}</div>
+        {% endfor %}
 
-				<div class="avatar-selection">
-					{% for choice in profileForm.pictureUser %}
-						<label class="avatar-option">
-							{{ form_widget(choice) }}
-							<img src="{{ asset('uploads/pictureUser/' ~ choice.vars.value) }}" alt="{{ choice.vars.label }}">
-						</label>
-					{% endfor %}
-					{{ form_errors(profileForm.pictureUser) }}
-				</div>
+        <!-- Section Profil -->
+        <section id="profil">
+            <h2>Profil</h2>
+            {{ form_start(profileForm, {'attr': {'class': 'needs-validation'}}) }}
+                {{ form_errors(profileForm) }}
+                {{ form_row(profileForm.pseudo) }}
 
-				<button type="submit" class="btn">Modifier</button>
-				{{ form_end(profileForm) }}
-			</section>
+                <fieldset class="avatar-selection">
+                    <legend>Choisissez un avatar :</legend>
+                    {% for choice in profileForm.pictureUser %}
+                        <label class="avatar-option">
+                            {{ form_widget(choice) }}
+                            <img src="{{ asset('uploads/pictureUser/' ~ choice.vars.value) }}" alt="{{ choice.vars.label }}">
+                        </label>
+                    {% endfor %}
+                    {{ form_errors(profileForm.pictureUser) }}
+                </fieldset>
 
-			<!-- Section Sécurité -->
-			<section id="securite">
-				<h2>Sécurité</h2>
-				{{ form_start(emailForm) }}
-				{{ form_row(emailForm.email) }}
-				<button type="submit" class="btn">Modifier l'e-mail</button>
-				{{ form_end(emailForm) }}
+                <button type="submit" class="btn" name="form_submit" value="profile">Modifier</button>
+            {{ form_end(profileForm) }}
+        </section>
 
-				<hr>
+        <!-- Section Sécurité -->
+        <section id="securite">
+            <h2>Sécurité</h2>
+            {{ form_start(emailForm, {'attr': {'class': 'needs-validation'}}) }}
+                {{ form_errors(emailForm) }}
+                {{ form_row(emailForm.email) }}
+                <button type="submit" class="btn" name="form_submit" value="email">Modifier l'e-mail</button>
+            {{ form_end(emailForm) }}
 
-				{{ form_start(passwordForm) }}
-				{{ form_row(passwordForm.current_password) }}
-				{{ form_row(passwordForm.new_password.first) }}
-				{{ form_row(passwordForm.new_password.second) }}
-				<button type="submit" class="btn">Changer le mot de passe</button>
-				{{ form_end(passwordForm) }}
-			</section>
+            <hr>
 
-			<!-- Section Adresse -->
-			<section id="adresse">
-				<h2>Adresse</h2>
-				{{ form_start(addressForm) }}
-					{{ form_row(addressForm.firstName) }}
-					{{ form_row(addressForm.lastName) }}
-					{{ form_row(addressForm.address) }}
-					{{ form_row(addressForm.postalCode) }}
-					{{ form_row(addressForm.city) }}
-					<button type="submit" class="btn">Mettre à jour</button>
-				{{ form_end(addressForm) }}
-			</section>
+            {{ form_start(passwordForm, {'attr': {'class': 'needs-validation'}}) }}
+                {{ form_errors(passwordForm) }}
+                {{ form_row(passwordForm.current_password) }}
+                {{ form_row(passwordForm.new_password.first) }}
+                {{ form_row(passwordForm.new_password.second) }}
+                <button type="submit" class="btn" name="form_submit" value="password">Changer le mot de passe</button>
+            {{ form_end(passwordForm) }}
+        </section>
 
-			<!-- Section Commandes -->
-			<section id="commandes">
-				<h2>Vos commandes (3 derniers mois)</h2>
-				{% if orders|length > 0 %}
-					<table>
-						<thead>
-							<tr>
-								<th>Date</th>
-								<th>Numéro</th>
-								<th>Total</th>
-								<th>Statut</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for order in orders %}
-								<tr>
-									<td>{{ order.createdAt|date('d/m/Y') }}</td>
-									<td>#{{ order.id }}</td>
-									<td>{{ order.total }}
-										€</td>
-									<td>{{ order.status.name }}</td>
-									<td>
-										<a href="{{ path('account_order_pdf', {'id': order.id}) }}" target="_blank">
-											📄 PDF
-										</a>
-									</td>
-								</tr>
-							{% endfor %}
-						</tbody>
-					</table>
+        <!-- Section Adresse -->
+        <section id="adresse">
+            <h2>Adresse</h2>
+            {{ form_start(addressForm, {'attr': {'class': 'needs-validation'}}) }}
+                {{ form_errors(addressForm) }}
+                {{ form_row(addressForm.firstName) }}
+                {{ form_row(addressForm.lastName) }}
+                {{ form_row(addressForm.address) }}
+                {{ form_row(addressForm.postalCode) }}
+                {{ form_row(addressForm.city) }}
+                <button type="submit" class="btn" name="form_submit" value="address">Mettre à jour</button>
+            {{ form_end(addressForm) }}
+        </section>
 
-					<div class="pagination-container">
-						{{ knp_pagination_render(orders) }}
-					</div>
-				{% else %}
-					<p>Aucune commande récente.</p>
-				{% endif %}
-			</section>
+        <!-- Section Commandes -->
+        <section id="commandes">
+            <h2>Vos commandes (3 derniers mois)</h2>
+            {% if orders|length > 0 %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Numéro</th>
+                            <th>Total</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>{{ order.createdAt|date('d/m/Y') }}</td>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.total }} €</td>
+                                <td>{{ order.status.name }}</td>
+                                <td>
+                                    <a href="{{ path('account_order_pdf', {'id': order.id}) }}" target="_blank">
+                                        📄 PDF
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-		</section>
-	</main>
+                <div class="pagination-container">
+                    {{ knp_pagination_render(orders) }}
+                </div>
+            {% else %}
+                <p>Aucune commande récente.</p>
+            {% endif %}
+        </section>
+
+    </section>
+</main>
 {% endblock %}

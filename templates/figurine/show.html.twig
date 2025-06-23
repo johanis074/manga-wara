@@ -77,7 +77,6 @@
             <ul>
                 {% for comment in pagination %}
                     <li class="comment">
-                        <li>
                             {% if comment.user.pictureUser is not null %}
                                 <img src="{{ asset('uploads/pictureUser/' ~ comment.user.pictureUser) }}" alt="image du profil">
                             {% else %}
@@ -89,8 +88,17 @@
                                     <p>Posté par: {{ comment.user.pseudo }} le: {{ comment.date|date('d/m/Y') }} à {{ comment.date|date('H:i') }}</p>
                                 </div>
                                 <p class="comment-text">{{ comment.content }}</p>
-                            </div>
-                        </li>
+                            
+                                    <div class="comment-header">
+                                        {% if app.user and (comment.user == app.user or is_granted('ROLE_ADMIN')) %}
+                                            <form method="post" action="{{ path('comment_delete', {id: comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');" style="display:inline;">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
+                                                <button type="submit" class="btn btn-danger">Supprimer</button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                        </div>
+                        
                     </li>
                 {% else %}
                     <p>Aucun commentaire pour le moment.</p>

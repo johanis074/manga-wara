@@ -11,6 +11,7 @@ use App\Enum\OrderStatus;
 use App\Form\ProductType;
 use App\Form\RegistrationFormType;
 use App\Form\UserType;
+
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Repository\BookRepository;
 use App\Repository\FigurineRepository;
@@ -107,7 +108,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/user/delete/{id}', name: 'admin_user_delete', methods: ['POST'])]
+    #[Route('/admin/users/delete/{id}', name: 'admin_user_delete', methods: ['POST'])]
     public function deleteUser(int $id, Request $request, EntityManagerInterface $em): Response
     {
         try {
@@ -179,7 +180,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_orders');
     }
 
-    #[Route('/admin/utilisateur/{id}', name: 'admin_user_edit')]
+    #[Route('/admin/users/{id}', name: 'admin_user_edit')]
     public function editUser(User $user, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(UserType::class, $user);

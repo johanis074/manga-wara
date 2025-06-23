@@ -18,59 +18,101 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface as HasherUserPasswordHasherInterface;
 use FPDF;
 
+namespace App\Controller;
+
+use App\Entity\Order;
+use App\Entity\User;
+use App\Form\ProfileType;
+use App\Form\EmailType;
+use App\Form\PasswordType;
+use App\Form\AddressType;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Knp\Component\Pager\PaginatorInterface;
+
 class ProfileController extends AbstractController
 {
     #[Route('/mon-compte', name: 'app_profile')]
-    public function index(Request $request, EntityManagerInterface $em, HasherUserPasswordHasherInterface $hasher, PaginatorInterface $paginator): Response
-    {
+    public function index(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $hasher,
+        PaginatorInterface $paginator
+    ): Response {
         try {
+            /** @var User $user */
             $user = $this->getUser();
 
+            // PROFIL
             $profileForm = $this->createForm(ProfileType::class, $user);
             $profileForm->handleRequest($request);
-            if ($profileForm->isSubmitted() && $profileForm->isValid()) {
-                $picture = $profileForm->get('pictureUser')->getData();
-                if ($picture) {
-                    $user->setPictureUser($picture);
+            if ($profileForm->isSubmitted()) {
+                if ($profileForm->isValid()) {
+                    $picture = $profileForm->get('pictureUser')->getData();
+                    if ($picture) {
+                        $user->setPictureUser($picture);
+                    }
+                    $em->flush();
+
+                    return $this->handleResponse($request, true, 'Profil mis à jour.');
                 }
-                $em->flush();
-                $this->addFlash('success', 'Profil mis à jour.');
-                return $this->redirectToRoute('app_profile');
+
+                return $this->handleResponse($request, false, 'Formulaire profil invalide.', $profileForm);
             }
 
+            // EMAIL
             $emailForm = $this->createForm(EmailType::class, $user);
             $emailForm->handleRequest($request);
-            if ($emailForm->isSubmitted() && $emailForm->isValid()) {
-                $em->flush();
-                $this->addFlash('success', 'Email modifié.');
-                return $this->redirectToRoute('app_profile');
+            if ($emailForm->isSubmitted()) {
+                if ($emailForm->isValid()) {
+                    $em->flush();
+                    return $this->handleResponse($request, true, 'Email modifié.');
+                }
+
+                return $this->handleResponse($request, false, 'Formulaire email invalide.', $emailForm);
             }
 
+            // PASSWORD
             $passwordForm = $this->createForm(PasswordType::class);
             $passwordForm->handleRequest($request);
-            if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
-                $current = $passwordForm->get('current_password')->getData();
-                $new = $passwordForm->get('new_password')->getData();
-                if (!$hasher->isPasswordValid($user, $current)) {
-                    $this->addFlash('error', 'Mot de passe actuel incorrect.');
-                } else {
+            if ($passwordForm->isSubmitted()) {
+                if ($passwordForm->isValid()) {
+                    $current = $passwordForm->get('current_password')->getData();
+                    $new = $passwordForm->get('new_password')->getData();
+
+                    if (!$hasher->isPasswordValid($user, $current)) {
+                        return $this->handleResponse($request, false, 'Mot de passe actuel incorrect.');
+                    }
+
                     $user->setPassword($hasher->hashPassword($user, $new));
                     $em->flush();
-                    $this->addFlash('success', 'Mot de passe mis à jour.');
-                    return $this->redirectToRoute('app_profile');
+                    return $this->handleResponse($request, true, 'Mot de passe mis à jour.');
                 }
+
+                return $this->handleResponse($request, false, 'Formulaire mot de passe invalide.', $passwordForm);
             }
 
+            // ADRESSE
             $addressForm = $this->createForm(AddressType::class, $user);
             $addressForm->handleRequest($request);
-            if ($addressForm->isSubmitted() && $addressForm->isValid()) {
-                $em->flush();
-                $this->addFlash('success', 'Adresse mise à jour.');
-                return $this->redirectToRoute('app_profile');
+            if ($addressForm->isSubmitted()) {
+                if ($addressForm->isValid()) {
+                    $em->flush();
+                    return $this->handleResponse($request, true, 'Adresse mise à jour.');
+                }
+
+                return $this->handleResponse($request, false, 'Formulaire adresse invalide.', $addressForm);
             }
 
+            // Commandes sur 3 mois
             $threeMonthsAgo = new \DateTimeImmutable('-3 months');
-            $query = $em->getRepository(Order::class)->createQueryBuilder('o')
+            $query = $em->getRepository(Order::class)
+                ->createQueryBuilder('o')
                 ->where('o.user = :user')
                 ->andWhere('o.createdAt >= :date')
                 ->setParameter('user', $user)
@@ -93,6 +135,37 @@ class ProfileController extends AbstractController
             ]);
         }
     }
+
+    private function handleResponse(Request $request, bool $success, string $message, $form = null): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $response = ['success' => $success, 'message' => $message];
+
+            if (!$success && $form) {
+                $response['errors'] = $this->getFormErrors($form);
+            }
+
+            return new JsonResponse($response, $success ? 200 : 400);
+        }
+
+        $this->addFlash($success ? 'success' : 'error', $message);
+        return $this->redirectToRoute('app_profile');
+    }
+
+    private function getFormErrors($form): array
+    {
+        $errors = [];
+
+        foreach ($form->all() as $child) {
+            foreach ($child->getErrors(true) as $error) {
+                $errors[$child->getName()][] = $error->getMessage();
+            }
+        }
+
+        return $errors;
+    }
+
+
 
     #[Route('/mon-compte/commande/{id}/pdf', name: 'account_order_pdf')]
     public function generateOrderPdf(Order $order): Response

@@ -240,20 +240,5 @@ public function edit(Comment $comment, Request $request, EntityManagerInterface 
     ]);
 }
 
-#[Route('/comment/{id}/delete', name: 'comment_delete', methods: ['POST'])]
-public function delete(Comment $comment, Request $request, EntityManagerInterface $em): Response
-{
-    $this->denyAccessUnlessGranted('delete', $comment);
-
-    if ($this->isCsrfTokenValid('delete_comment_' . $comment->getId(), $request->request->get('_token'))) {
-        $em->remove($comment);
-        $em->flush();
-    }
-
-    return $this->redirectToRoute('books_show', ['id' => $comment->getBook()->getId()]);
 }
-
-
-}
-
 

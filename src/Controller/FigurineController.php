@@ -5,13 +5,13 @@ namespace App\Controller;
 use App\Enum\Brand;
 use App\Entity\Figurine;
 use App\Form\FigurineType;
-use App\Entity\Comment;
-use App\Form\CommentType;
+use Symfony\Component\HttpFoundation\Request;
 use App\Repository\FigurineRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Component\HttpFoundation\Request;
+use App\Entity\Comment;
+use App\Form\CommentType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -49,7 +49,7 @@ class FigurineController extends AbstractController
         // }
     }
 
-    #[Route('/figurines/new', name: 'figurines_new', methods:['GET','POST'])]
+    #[Route('/admin/figurines/new', name: 'figurines_new', methods:['GET','POST'])]
 public function new(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
 {
     $figurine = new Figurine();
@@ -158,7 +158,7 @@ public function new(Request $request, EntityManagerInterface $em, SluggerInterfa
         return $destinationPath;
     }
 
-    #[Route('/admin/figurines/{id}', name: 'figurines_show', methods: ['GET', 'POST'])]
+    #[Route('/figurines/{id}', name: 'figurines_show', methods: ['GET', 'POST'])]
     public function show(int $id, FigurineRepository $figurineRepository, EntityManagerInterface $em, Request $request, PaginatorInterface $paginator): Response
     {
         try {
@@ -213,4 +213,7 @@ public function new(Request $request, EntityManagerInterface $em, SluggerInterfa
             ]);
         }
     }
+
+    
+
 }

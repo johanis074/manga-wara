@@ -12,11 +12,7 @@
 
     <section class="admin-section">
         <!-- Ajouter un admin -->
-        <form action="{{ path('admin_register') }}" method="post" class="admin-boutton">
-            <button type="submit" class="btn-blue">
-                ➕ Ajouter un admin
-            </button>
-        </form>
+        <a href="{{ path('admin_register') }}" class="btn-blue">➕ Ajouter un admin</a>
 
         <!-- Derniers mangas -->
         <div class="admin-box half">
@@ -28,7 +24,7 @@
                     <li>Aucun manga trouvé.</li>
                 {% endfor %}
             </ul>
-            <a href="" class="btn-blue">Voir tous les livres</a>
+            <a href="{{ path('books_index') }}" class="btn-blue">Voir tous les livres</a>
         </div>
 
         <!-- Dernières figurines -->
@@ -41,7 +37,7 @@
                     <li>Aucune figurine trouvée.</li>
                 {% endfor %}
             </ul>
-            <a href="" class="btn-blue">Voir toutes les figurines</a>
+            <a href="{{ path('figurines_index') }}" class="btn-blue">Voir toutes les figurines</a>
         </div>
 
         <!-- Derniers utilisateurs -->
