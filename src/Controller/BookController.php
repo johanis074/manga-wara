@@ -221,6 +221,39 @@ public function new(Request $request, EntityManagerInterface $entityManager, Slu
             ]);
         }
     }
+
+    #[Route('/comment/{id}/edit', name: 'comment_edit')]
+public function edit(Comment $comment, Request $request, EntityManagerInterface $em): Response
+{
+    $this->denyAccessUnlessGranted('edit', $comment); // On crée une règle plus bas
+
+    $form = $this->createForm(CommentType::class, $comment);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $em->flush();
+        return $this->redirectToRoute('books_show', ['id' => $comment->getBook()->getId()]);
+    }
+
+    return $this->render('comment/edit.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
+#[Route('/comment/{id}/delete', name: 'comment_delete', methods: ['POST'])]
+public function delete(Comment $comment, Request $request, EntityManagerInterface $em): Response
+{
+    $this->denyAccessUnlessGranted('delete', $comment);
+
+    if ($this->isCsrfTokenValid('delete_comment_' . $comment->getId(), $request->request->get('_token'))) {
+        $em->remove($comment);
+        $em->flush();
+    }
+
+    return $this->redirectToRoute('books_show', ['id' => $comment->getBook()->getId()]);
+}
+
+
 }
 
 

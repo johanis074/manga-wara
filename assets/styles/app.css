@@ -395,6 +395,11 @@ nav a {
 
   }
 
+  .book-show1 img{
+    width: 250px;
+    height: 350px;
+  }
+
 
   .cart-popup {
     position: fixed;
