@@ -2,29 +2,28 @@
 
 namespace App\Entity;
 
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Enum\Brand;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\FigurineRepository;
 
 #[ORM\Entity(repositoryClass: FigurineRepository::class)]
 class Figurine extends Product
 {
-
-
     #[ORM\Column(type: "text")]
     private ?string $description = null;
 
-    #[ORM\Column]
-    private ?int $reference = null;
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $reference = null;
+
+
+
 
     #[ORM\Column]
     private ?float $height = null;
 
-    #[ORM\Column(enumType: Brand::class)]
-    private ?Brand $brand = null;
+    #[ORM\Column(type: "string", length: 50)]
+    private ?string $brand = null;
 
     /**
      * @var Collection<int, Comment>
@@ -35,10 +34,9 @@ class Figurine extends Product
     public function __construct()
     {
         parent::__construct('figurine'); // Définition du type
-        $this->brand = Brand::BANDAI; // Valeur par défaut
+        $this->brand = 'BANDAI'; // Valeur par défaut (optionnel)
         $this->comments = new ArrayCollection();
     }
-
 
     public function getDescription(): ?string
     {
@@ -47,16 +45,16 @@ class Figurine extends Product
 
     public function setDescription(string $description): static
     {
-        $this->description = $description;
+        $this->description = mb_strtoupper($description);
         return $this;
     }
 
-    public function getReference(): ?int
+    public function getReference(): ?string
     {
         return $this->reference;
     }
 
-    public function setReference(int $reference): static
+    public function setReference(?string $reference): static
     {
         $this->reference = $reference;
         return $this;
@@ -73,15 +71,14 @@ class Figurine extends Product
         return $this;
     }
 
-    public function getBrand(): ?Brand
+    public function getBrand(): ?string
     {
         return $this->brand;
     }
 
-    public function setBrand(Brand $brand): static
+    public function setBrand(string $brand): static
     {
-        $this->brand = $brand;
-
+        $this->brand = mb_strtoupper($brand);
         return $this;
     }
 

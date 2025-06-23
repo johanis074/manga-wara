@@ -1,4 +1,6 @@
 <?php
+namespace App\Enum;
+
 enum CategoryManga: string
 {
     case SHONEN = 'shonen';

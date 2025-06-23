@@ -34,7 +34,7 @@
 				{% for figurine in pagination %}
 					<li class="card">
 						<a href="{{ path('figurines_show', {'id': figurine.id}) }}">
-							<h3>{{ figurine.name }}</h3>
+							<h3 class="truncate-title">{{ figurine.name }}</h3>
 							<img src="{{ asset('uploads/pictureProduct/' ~ figurine.picture) }}" alt="{{ figurine.name }}">
 							<p>
 								Prix:

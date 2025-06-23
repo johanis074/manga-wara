@@ -69,7 +69,6 @@ class ProductService
 
         return array_slice($all, 0, $limit);
     }
-
     public function findByTypeAndId(string $type, int $id): mixed
     {
         return match ($type) {

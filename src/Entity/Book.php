@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use CategoryManga;
+use App\Enum\CategoryManga;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BookRepository;
@@ -10,14 +10,14 @@ use App\Repository\BookRepository;
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book extends Product
 {
-    #[ORM\Column]
-    private ?int $reference = null;
+    #[ORM\Column(length: 100)]
+    private ?string $reference = null;
 
-    #[ORM\Column]
-    private ?int $isbn = null;
+    #[ORM\Column(length: 13)]
+    private ?string $isbn = null;
 
-    #[ORM\Column]
-    private ?int $ean = null;
+    #[ORM\Column(length: 13)]
+    private ?string $ean = null;
 
     #[ORM\Column(length: 255)]
     private ?string $editor = null;
@@ -40,34 +40,34 @@ class Book extends Product
         return preg_replace('/\s*[Tt]ome\s*\d+/', '', $this->name);
     }
 
-    public function getReference(): ?int
+    public function getReference(): ?string
     {
         return $this->reference;
     }
 
-    public function setReference(int $reference): static
+    public function setReference(string $reference): static
     {
         $this->reference = $reference;
         return $this;
     }
 
-    public function getIsbn(): ?int
+    public function getIsbn(): ?string
     {
         return $this->isbn;
     }
 
-    public function setIsbn(int $isbn): static
+    public function setIsbn(string $isbn): static
     {
         $this->isbn = $isbn;
         return $this;
     }
 
-    public function getEan(): ?int
+    public function getEan(): ?string
     {
         return $this->ean;
     }
 
-    public function setEan(int $ean): static
+    public function setEan(string $ean): static
     {
         $this->ean = $ean;
         return $this;
@@ -106,4 +106,3 @@ class Book extends Product
         return $this;
     }
 }
-

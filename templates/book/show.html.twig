@@ -27,7 +27,7 @@
                         ➕ Ajouter au panier
                     </button>
                         <ul >
-                            <li>Éditeur: {{book.editor.name}}</li>
+                            <li>Éditeur: {{book.editor}}</li>
                             <li>Catégorie: {{book.category.name}}</li>
                             <li>Référence: {{book.reference}}</li>
                             <li>ISBN: {{book.isbn}}</li>
@@ -84,14 +84,12 @@
     {# Affichage des commentaires #}
         <ul>
             {% for comment in pagination %}
-                {#<div class="comment-header">
-                        {% if app.user and app.user.id == comment.user.id %}
-                            <a href="{{ path('comment_delete', {id: comment.id}) }}" class="btn btn-danger">Supprimer</a>
+                <div class="comment-header">
+                        {% if app.user and (comment.user == app.user or is_granted('ROLE_ADMIN')) %}
+                            <a href="{{ path('comment_delete', {id: comment.id}) }}" class="btn-delete" onclick="return confirm('⚠️ Es-tu sûr de vouloir supprimer ce produit ?');"> Supprimer</a>
+                            <a href="{{ path('comment_edit', {id: comment.id}) }}" class="btn-edit"">Modifier</a>
                         {% endif %}
-                        {% if app.user and app.user.id == comment.user.id %}
-                            <a href="{{ path('comment_edit', {id: comment.id}) }}" class="btn btn-primary">Modifier</a>
-                        {% endif %}
-                </div>#}
+                </div>
                 <li class="comment">
                     {# Affichage de l'image de profil de l'utilisateur #}
                     

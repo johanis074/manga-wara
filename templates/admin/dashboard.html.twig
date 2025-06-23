@@ -36,7 +36,7 @@
             <h2>🧸 5 dernières figurines</h2>
             <ul>
                 {% for figurine in figurines %}
-                    <li><strong>{{ figurine.name }}</strong> - {{ figurine.brand.name }}</li>
+                    <li><strong>{{ figurine.name }}</strong> - {{ figurine.brand }}</li>
                 {% else %}
                     <li>Aucune figurine trouvée.</li>
                 {% endfor %}

@@ -1,52 +1,40 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Utilisateurs{% endblock %}
-
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+{% endblock %}
 {% block body %}
 <main class="bg">
-    <section class="cart-container">
-        <h2>👥 Liste des utilisateurs</h2>
+    <section class="admin-container">
+        <h2>Liste des utilisateurs</h2>
 
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Pseudo</th>
-                    <th>Email</th>
-                    <th>Rôles</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                    <tr>
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.pseudo }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.roles | join(', ') }}</td>
-                        <td>
-                            <a href="{{ path('admin_user_edit', { id: user.id }) }}"
-                            style="color: blue; text-decoration: none; margin-right: 10px;">Modifier</a>
-                            <form method="post"
-                                action="{{ path('admin_user_delete', { id: user.id }) }}"
-                                onsubmit="return confirm('Supprimer l’utilisateur {{ user.pseudo }} ?');">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
-                                <button type="submit"
-                                        style="color: red; background: none; border: none; cursor: pointer;">
-                                    Supprimer
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="5" style="padding: 10px; text-align: center; border: 1px solid #ccc;">
-                            Aucun utilisateur trouvé.
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    <section>
+        {% for user in users %}
+            <div class="admin-box half">
+                <p><strong>ID :</strong> {{ user.id }}</p>
+                <p><strong>Pseudo :</strong> {{ user.pseudo }}</p>
+                <p><strong>Rôles :</strong> {{ user.roles | join(', ') }}</p>
+
+                <div style="margin-top: 0.5rem;">
+                    <a href="{{ path('admin_user_edit', { id: user.id }) }}"
+                       style="color: blue; text-decoration: none; margin-right: 10px;">Modifier</a>
+
+                    <form method="post"
+                          action="{{ path('admin_user_delete', { id: user.id }) }}"
+                          style="display: inline;"
+                          onsubmit="return confirm('Supprimer l’utilisateur {{ user.pseudo }} ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
+                        <button type="submit"
+                                style="color: red; background: none; border: none; cursor: pointer;">
+                            Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucun utilisateur trouvé.</p>
+        {% endfor %}
+    </section>
 </main>
 {% endblock %}
+

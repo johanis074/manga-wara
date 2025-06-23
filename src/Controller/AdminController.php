@@ -11,8 +11,10 @@ use App\Enum\OrderStatus;
 use App\Form\ProductType;
 use App\Form\RegistrationFormType;
 use App\Form\UserType;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Repository\BookRepository;
 use App\Repository\FigurineRepository;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -183,24 +185,47 @@ class AdminController extends AbstractController
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
-        try {
-            if ($form->isSubmitted() && $form->isValid()) {
-                $em->flush();
-                $this->addFlash('success', 'Utilisateur mis à jour avec succès.');
-                return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
+        if ($request->isXmlHttpRequest()) {
+            try {
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $em->flush();
+
+                    return $this->json([
+                        'status' => 'success',
+                        'message' => 'Utilisateur mis à jour avec succès.',
+                        'redirect' => $this->generateUrl('admin_user_edit', ['id' => $user->getId()])
+                    ]);
+                }
+
+                if ($form->isSubmitted() && !$form->isValid()) {
+                    $errors = [];
+                    foreach ($form->getErrors(true) as $error) {
+                        $field = $error->getOrigin()->getName();
+                        $errors[$field][] = $error->getMessage();
+                    }
+
+                    return $this->json([
+                        'status' => 'error',
+                        'message' => 'Le formulaire contient des erreurs.',
+                        'errors' => $errors,
+                    ], 400);
+                }
+            } catch (\Exception $e) {
+                return $this->json([
+                    'status' => 'error',
+                    'message' => 'Erreur mise à jour utilisateur : ' . $e->getMessage()
+                ], 500);
             }
-        } catch (\Exception $e) {
-            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
-                'message' => 'Erreur mise à jour utilisateur : ' . $e->getMessage()
-            ]);
         }
 
+        // Requête normale (non-AJAX)
         return $this->render('admin/user_edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
             'comments' => $user->getComments(),
         ]);
     }
+
 
     #[Route('/admin/commentaire/{id}/supprimer', name: 'admin_comment_delete', methods: ['POST'])]
     public function deleteComment(Comment $comment, Request $request, EntityManagerInterface $em): Response
@@ -224,37 +249,51 @@ class AdminController extends AbstractController
     }
 
     #[Route('/admin/product/{type}/{id}/edit', name: 'product_edit')]
-    public function editProduct(string $type, int $id, Request $request, EntityManagerInterface $em, BookRepository $bookRepo, FigurineRepository $figRepo): Response
-    {
-        $product = $type === 'book' ? $bookRepo->find($id) : $figRepo->find($id);
+public function editProduct(string $type, int $id, Request $request, EntityManagerInterface $em, BookRepository $bookRepo, FigurineRepository $figRepo, SluggerInterface $slugger ): Response {
+    $product = $type === 'book' ? $bookRepo->find($id) : $figRepo->find($id);
 
-        if (!$product) {
-            return $this->render('bundles/TwigBundle/Exception/error404.html.twig', [
-                'message' => 'Produit non trouvé.'
-            ]);
-        }
-
-        $form = $this->createForm(ProductType::class, $product, ['data_class' => get_class($product)]);
-        $form->handleRequest($request);
-
-        try {
-            if ($form->isSubmitted() && $form->isValid()) {
-                $em->flush();
-                $this->addFlash('success', 'Produit modifié avec succès.');
-                $redirectUrl = $request->query->get('redirect') ?? $this->generateUrl('admin_dashboard');
-                return $this->redirect($redirectUrl);
-            }
-        } catch (\Exception $e) {
-            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
-                'message' => 'Erreur modification produit : ' . $e->getMessage()
-            ]);
-        }
-
-        return $this->render('admin/product_edit.html.twig', [
-            'form' => $form->createView(),
-            'product' => $product,
+    if (!$product) {
+        return $this->render('bundles/TwigBundle/Exception/error404.html.twig', [
+            'message' => 'Produit non trouvé.'
         ]);
     }
+
+    $form = $this->createForm(ProductType::class, $product, ['data_class' => get_class($product)]);
+    $form->handleRequest($request);
+
+    try {
+        if ($form->isSubmitted() && $form->isValid()) {
+            $pictureFile = $form->get('picture')->getData();
+
+            if ($pictureFile instanceof UploadedFile) {
+                $originalFilename = pathinfo($pictureFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.webp';
+
+                try {
+                    $this->convertImageToWebpAndSave($pictureFile, $newFilename);
+                    $product->setPicture($newFilename);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur image : ' . $e->getMessage());
+                }
+            }
+
+            $em->flush();
+            $this->addFlash('success', 'Produit modifié avec succès.');
+            $redirectUrl = $request->query->get('redirect') ?? $this->generateUrl('admin_dashboard');
+            return $this->redirect($redirectUrl);
+        }
+    } catch (\Exception $e) {
+        return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+            'message' => 'Erreur modification produit : ' . $e->getMessage()
+        ]);
+    }
+
+    return $this->render('admin/product_edit.html.twig', [
+        'form' => $form->createView(),
+        'product' => $product,
+    ]);
+}
 
     #[Route('/admin/product/{type}/{id}/delete', name: 'product_delete', methods: ['POST', 'GET'])]
     public function deleteProduct(string $type, int $id, BookRepository $bookRepo, FigurineRepository $figRepo, EntityManagerInterface $em, Request $request): Response

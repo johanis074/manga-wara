@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use CategoryManga;
+use App\Enum\CategoryManga;
 use App\Entity\Book;
 use App\Entity\Comment;
 use App\Form\BookType;
@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -58,14 +59,15 @@ class BookController extends AbstractController
         ]);
     }
 
-    #[Route('/books/new', name: 'books_new', methods:['GET','POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
-    {
-        $book = new Book();
-        $form = $this->createForm(BookType::class, $book);
-        $form->handleRequest($request);
+    #[Route('/admin/books/new', name: 'books_new', methods:['GET','POST'])]
+public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+{
+    $book = new Book();
+    $form = $this->createForm(BookType::class, $book);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+    if ($form->isSubmitted()) {
+        if ($form->isValid()) {
             $pictureFile = $form->get('picture')->getData();
 
             if ($pictureFile) {
@@ -77,6 +79,9 @@ class BookController extends AbstractController
                     $uploadedFilePath = $this->convertImageToWebpAndSave($pictureFile, $newFilename);
                     $book->setPicture($newFilename);
                 } catch (\Exception $e) {
+                    if ($request->isXmlHttpRequest()) {
+                        return new JsonResponse(['success' => false, 'message' => 'Erreur image : ' . $e->getMessage()], 400);
+                    }
                     $this->addFlash('error', 'Erreur image : ' . $e->getMessage());
                     return $this->redirectToRoute('books_new');
                 }
@@ -85,18 +90,49 @@ class BookController extends AbstractController
             try {
                 $entityManager->persist($book);
                 $entityManager->flush();
+
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse([
+                        'success' => true,
+                        'message' => 'Livre ajouté avec succès.',
+                        'redirectUrl' => $this->generateUrl('books_index')  // URL pour la redirection côté client
+                    ]);
+                }
+
+                $this->addFlash('success', 'Livre ajouté avec succès.');
                 return $this->redirectToRoute('books_index');
             } catch (\Exception $e) {
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse(['success' => false, 'message' => 'Erreur enregistrement livre : ' . $e->getMessage()], 500);
+                }
                 return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
                     'message' => 'Erreur enregistrement livre : ' . $e->getMessage()
                 ]);
             }
+        } else {
+            if ($request->isXmlHttpRequest()) {
+                $errors = [];
+                foreach ($form->getErrors(true) as $error) {
+                    $field = $error->getOrigin()->getName();
+                    $errors[$field][] = $error->getMessage();
+                }
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => 'Le formulaire contient des erreurs.',
+                    'errors' => $errors,
+                ], 400);
+            }
+            $this->addFlash('error', 'Le formulaire contient des erreurs. Veuillez les corriger.');
         }
-
-        return $this->render('book/new.html.twig', [
-            'form' => $form->createView(),
-        ]);
     }
+
+    return $this->render('book/new.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
+
+
 
     private function convertImageToWebpAndSave(UploadedFile $file, string $newFilename): string
     {
@@ -185,6 +221,39 @@ class BookController extends AbstractController
             ]);
         }
     }
+
+    #[Route('/comment/{id}/edit', name: 'comment_edit')]
+public function edit(Comment $comment, Request $request, EntityManagerInterface $em): Response
+{
+    $this->denyAccessUnlessGranted('edit', $comment); // On crée une règle plus bas
+
+    $form = $this->createForm(CommentType::class, $comment);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $em->flush();
+        return $this->redirectToRoute('books_show', ['id' => $comment->getBook()->getId()]);
+    }
+
+    return $this->render('comment/edit.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+
+#[Route('/comment/{id}/delete', name: 'comment_delete', methods: ['POST'])]
+public function delete(Comment $comment, Request $request, EntityManagerInterface $em): Response
+{
+    $this->denyAccessUnlessGranted('delete', $comment);
+
+    if ($this->isCsrfTokenValid('delete_comment_' . $comment->getId(), $request->request->get('_token'))) {
+        $em->remove($comment);
+        $em->flush();
+    }
+
+    return $this->redirectToRoute('books_show', ['id' => $comment->getBook()->getId()]);
+}
+
+
 }
 
 

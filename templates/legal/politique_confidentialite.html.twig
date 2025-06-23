@@ -3,81 +3,85 @@
 
 {% block body %}
 <a href="{{ path('app_home') }}">Retour</a>
-<section class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md mt-6 leading-relaxed text-gray-800">
-  <h1 class="text-3xl font-bold mb-6">Politique de confidentialité</h1>
+<main class="bg">
+  <section class="legal">
+    <h2>Politique de confidentialité</h2>
 
-  <p>La présente politique de confidentialité a pour objectif de vous informer de manière transparente sur la collecte, l’utilisation et la protection de vos données personnelles lorsque vous naviguez sur le site {{ app.request.getHost }}.</p>
+    <p>La présente politique de confidentialité a pour objectif de vous informer de manière transparente sur la collecte, l’utilisation et la protection de vos données personnelles lorsque vous naviguez sur le site {{ app.request.getHost }}.</p>
 
-  <h2 class="text-xl font-semibold mt-6">1. Responsable du traitement</h2>
-  <p>Le responsable du traitement des données est Manga-wara{#, immatriculée sous le numéro [SIRET]#}, dont le siège social est situé à [adresse complète]. Vous pouvez nous contacter à : contact@maga-wara.com.</p>
+    <h3>1. Responsable du traitement</h3>
+    <p>Le responsable du traitement des données est Manga-wara{#, immatriculée sous le numéro [SIRET]#}, dont le siège social est situé à [adresse complète]. Vous pouvez nous contacter à : contact@maga-wara.com.</p>
 
-  <h2 class="text-xl font-semibold mt-6">2. Données collectées</h2>
-  <p>Nous collectons uniquement les données strictement nécessaires à la fourniture de nos services :</p>
-  <ul class="list-disc pl-6 mt-2">
-    <li>Données d’identification : nom, prénom, adresse email, numéro de téléphone d</li>
-    <li>Données de livraison : adresse postale, instructions de livraison</li>
-    <li>Données de connexion : adresse IP, logs de navigation (via cookies ou outils d’analyse anonymisés)</li>
-    <li>Données de commande : produits achetés, historique, préférences</li>
-  </ul>
+    <h3h3. Données collectées</h3>
+    <p>Nous collectons uniquement les données strictement nécessaires à la fourniture de nos services :</p>
+    <ul>
+      <li>Données d’identification : nom, prénom, adresse email, numéro de téléphone</li>
+      <li>Données de livraison : adresse postale, instructions de livraison</li>
+      <li>Données de connexion : adresse IP, logs de navigation (via cookies ou outils d’analyse anonymisés)</li>
+      <li>Données de commande : produits achetés, historique, préférences</li>
+    </ul>
 
-  <h2 class="text-xl font-semibold mt-6">3. Finalités du traitement</h2>
-  <p>Les données sont collectées pour les finalités suivantes :</p>
-  <ul class="list-disc pl-6 mt-2">
-    <li>Traitement des commandes et livraisons</li>
-    <li>Gestion du compte client</li>
-    <li>Facturation</li>
-    <li>Service client et support</li>
-    <li>Envoi d’emails transactionnels et informatifs</li>
-    <li>Amélioration du site et des services (statistiques anonymes)</li>
-  </ul>
+    <h3>3. Finalités du traitement</h3>
+    <p>Les données sont collectées pour les finalités suivantes :</p>
+    <ul>
+      <li>Traitement des commandes et livraisons</li>
+      <li>Gestion du compte client</li>
+      <li>Facturation</li>
+      <li>Service client et support</li>
+      <li>Envoi d’emails transactionnels et informatifs</li>
+      <li>Amélioration du site et des services (statistiques anonymes)</li>
+    </ul>
 
-  <h2 class="text-xl font-semibold mt-6">4. Base légale du traitement</h2>
-  <p>Les traitements sont fondés sur :</p>
-  <ul class="list-disc pl-6 mt-2">
-    <li>L’exécution d’un contrat (commande, livraison)</li>
-    <li>Le consentement (inscription à la newsletter, cookies)</li>
-    <li>L’intérêt légitime (prévention de la fraude, amélioration du service)</li>
-    <li>Les obligations légales (conservation des factures, etc.)</li>
-  </ul>
+    <h3>4. Base légale du traitement</h3>
+    <p>Les traitements sont fondés sur :</p>
+    <ul>
+      <li>L’exécution d’un contrat (commande, livraison)</li>
+      <li>Le consentement (inscription à la newsletter, cookies)</li>
+      <li>L’intérêt légitime (prévention de la fraude, amélioration du service)</li>
+      <li>Les obligations légales (conservation des factures, etc.)</li>
+    </ul>
 
-  <h2 class="text-xl font-semibold mt-6">5. Destinataires des données</h2>
-  <p>Vos données peuvent être transmises aux prestataires suivants, uniquement pour assurer la bonne exécution des services :</p>
-  <ul class="list-disc pl-6 mt-2">
-    <li>Prestataires de paiement (ex. Stripe, PayPal)</li>
-    <li>Transporteurs (La Poste, Mondial Relay, etc.)</li>
-    <li>Hébergeur du site et prestataires techniques</li>
-    <li>Autorités compétentes sur demande légale</li>
-  </ul>
+    <h3>5. Destinataires des données</h3>
+    <p>Vos données peuvent être transmises aux prestataires suivants, uniquement pour assurer la bonne exécution des services :</p>
+    <ul>
+      <li>Prestataires de paiement (ex. Stripe, PayPal)</li>
+      <li>Transporteurs (La Poste, Mondial Relay, etc.)</li>
+      <li>Hébergeur du site et prestataires techniques</li>
+      <li>Autorités compétentes sur demande légale</li>
+    </ul>
 
-  <h2 class="text-xl font-semibold mt-6">6. Durée de conservation</h2>
-  <p>Les données sont conservées selon les durées suivantes :</p>
-  <ul class="list-disc pl-6 mt-2">
-    <li>Compte inactif : 3 ans après la dernière activité</li>
-    <li>Données de commande : 6 ans (obligation fiscale)</li>
-    <li>Données de navigation anonymes : 13 mois</li>
-  </ul>
+    <h3>6. Durée de conservation</h3>
+    <p>Les données sont conservées selon les durées suivantes :</p>
+    <ul>
+      <li>Compte inactif : 3 ans après la dernière activité</li>
+      <li>Données de commande : 6 ans (obligation fiscale)</li>
+      <li>Données de navigation anonymes : 13 mois</li>
+    </ul>
 
-  <h2 class="text-xl font-semibold mt-6">7. Vos droits</h2>
-  <p>Conformément au RGPD, vous disposez des droits suivants :</p>
-  <ul class="list-disc pl-6 mt-2">
-    <li>Droit d’accès</li>
-    <li>Droit de rectification</li>
-    <li>Droit à l’effacement (sauf obligation légale)</li>
-    <li>Droit à la portabilité</li>
-    <li>Droit d’opposition et limitation du traitement</li>
-  </ul>
-  <p>Vous pouvez exercer ces droits en nous contactant à : contact@manga-wara.com. Une réponse vous sera apportée sous 30 jours.</p>
+    <h3>7. Vos droits</h3>
+    <p>Conformément au RGPD, vous disposez des droits suivants :</p>
+    <ul>
+      <li>Droit d’accès</li>
+      <li>Droit de rectification</li>
+      <li>Droit à l’effacement (sauf obligation légale)</li>
+      <li>Droit à la portabilité</li>
+      <li>Droit d’opposition et limitation du traitement</li>
+    </ul>
+    <p>Vous pouvez exercer ces droits en nous contactant à : contact@manga-wara.com. Une réponse vous sera apportée sous 30 jours.</p>
 
-  <h2 class="text-xl font-semibold mt-6">8. Sécurité des données</h2>
-  <p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données (chiffrement, stockage sécurisé, accès restreint, sauvegardes régulières).</p>
+    <h3>8. Sécurité des données</h3>
+    <p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données (chiffrement, stockage sécurisé, accès restreint, sauvegardes régulières).</p>
 
-  <h2 class="text-xl font-semibold mt-6">9. Cookies</h2>
-  <p>Des cookies peuvent être déposés pour améliorer l’expérience utilisateur et mesurer l’audience de manière anonyme. Un bandeau de consentement vous permet de les accepter ou refuser à tout moment.</p>
+    <h3>9. Cookies</h3>
+    <p>Des cookies peuvent être déposés pour améliorer l’expérience utilisateur et mesurer l’audience de manière anonyme. Un bandeau de consentement vous permet de les accepter ou refuser à tout moment.</p>
 
-  <h2 class="text-xl font-semibold mt-6">10. Modifications</h2>
-  <p>Cette politique peut être modifiée à tout moment. La version applicable est celle affichée sur le site à la date de votre navigation.</p>
+    <h3>10. Modifications</h3>
+    <p>Cette politique peut être modifiée à tout moment. La version applicable est celle affichée sur le site à la date de votre navigation.</p>
 
-  <h2 class="text-xl font-semibold mt-6">11. Contact</h2>
-  <p>Pour toute question relative à vos données personnelles, contactez-nous à : <strong>contact@manga-wara.com</strong>.</p>
-</section>
+    <h3>11. Contact</h3>
+    <p>Pour toute question relative à vos données personnelles, contactez-nous à : <strong>contact@manga-wara.com</strong>.</p>
+  </section>
+
+</main>
+
 {% endblock %}
