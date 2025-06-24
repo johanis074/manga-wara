@@ -30,7 +30,9 @@
                         <td>{{ item.quantity }}</td>
                         <td>{{ (item.product.price * item.quantity)|number_format(2, '.', ',') }} €</td>
                         <td>
-                            <a href="{{ path('cart_add', {type: item.product.type, id: item.product.id}) }}" class="cart-action">➕</a>
+                            <button type="button" class="add-to-cart" data-id="{{ book.id }}" data-type="{{ book.type }}">
+							➕
+						</button>
                             <a href="{{ path('cart_remove', {type: item.product.type, id: item.product.id}) }}" class="cart-action">❌</a>
                         </td>
                     </tr>
