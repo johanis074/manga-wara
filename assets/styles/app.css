@@ -862,6 +862,10 @@ nav a {
     padding: 5%;
   }
 
+  .users{
+    color: #000;
+  }
+
 footer {
     text-align: center;
     background-color: #257EB5;

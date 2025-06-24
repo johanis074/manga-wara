@@ -40,8 +40,12 @@
 
         <h3>Total : {{ total|number_format(2, '.', ',') }} €</h3>
 
-        <button id="checkout-button">Payer avec Stripe</button>
 
+        {% if app.user %}
+        <button id="checkout-button">Commander</button>
+        {% else %}
+        <a href="{{ path('app_login') }}" class="cart-action">Commander</a>
+        {% endif %}
         <script src="https://js.stripe.com/v3/"></script>
         <script>
             document.querySelector('#checkout-button').addEventListener('click', () => {

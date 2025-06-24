@@ -108,30 +108,35 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/users/delete/{id}', name: 'admin_user_delete', methods: ['POST'])]
-    public function deleteUser(int $id, Request $request, EntityManagerInterface $em): Response
-    {
-        try {
-            $user = $em->getRepository(User::class)->find($id);
-            if (!$user) {
-                throw new \Exception('Utilisateur introuvable.');
-            }
+#[Route('/admin/users/delete/{id}', name: 'admin_user_delete', methods: ['POST'])]
+public function deleteUser(int $id, Request $request, EntityManagerInterface $em): Response
+{
+    try {
+        $user = $em->getRepository(User::class)->find($id);
 
-            if ($this->isCsrfTokenValid('delete_user_' . $user->getId(), $request->request->get('_token'))) {
-                $em->remove($user);
-                $em->flush();
-                $this->addFlash('success', 'Utilisateur supprimé avec succès.');
-            } else {
-                $this->addFlash('danger', 'Jeton CSRF invalide.');
-            }
-        } catch (\Exception $e) {
-            return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
-                'message' => 'Erreur suppression utilisateur : ' . $e->getMessage()
-            ]);
+        if (!$user) {
+            $this->addFlash('danger', 'Utilisateur introuvable.');
+            return $this->redirectToRoute('admin_users'); // adapte selon ta route
         }
 
-        return $this->redirectToRoute('admin_users');
+        if ($this->isCsrfTokenValid('delete_user_' . $user->getId(), $request->request->get('_token'))) {
+            $em->remove($user);
+            $em->flush();
+            $this->addFlash('success', 'Utilisateur supprimé avec succès.');
+        } else {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+        }
+    } catch (\Exception $e) {
+        return $this->render('bundles/TwigBundle/Exception/error500.html.twig', [
+            'message' => 'Erreur lors de la suppression utilisateur : ' . $e->getMessage(),
+        ]);
     }
+
+    return $this->redirectToRoute('admin_users'); // adapte selon ta route
+}
+
+
+
 
     #[Route('/admin/orders', name: 'admin_orders')]
     public function orderDashboard(EntityManagerInterface $em): Response

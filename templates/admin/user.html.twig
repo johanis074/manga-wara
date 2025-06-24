@@ -10,7 +10,7 @@
         <h2>Liste des utilisateurs</h2>
 
         {% for user in users %}
-            <div class="admin-box half">
+            <div class="admin-box half users">
                 <p><strong>ID :</strong> {{ user.id }}</p>
                 <p><strong>Pseudo :</strong> {{ user.pseudo }}</p>
                 <p><strong>Rôles :</strong> {{ user.roles | join(', ') }}</p>
@@ -18,17 +18,13 @@
                 <div style="margin-top: 0.5rem;">
                     <a href="{{ path('admin_user_edit', { id: user.id }) }}"
                        style="color: blue; text-decoration: none; margin-right: 10px;">Modifier</a>
-
-                    <form method="post"
-                          action="{{ path('admin_user_delete', { id: user.id }) }}"
-                          style="display: inline;"
-                          onsubmit="return confirm('Supprimer l’utilisateur {{ user.pseudo }} ?');">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
-                        <button type="submit"
-                                style="color: red; background: none; border: none; cursor: pointer;">
+                    <form method="post" action="{{ path('admin_user_delete', {id: user.id}) }}" onsubmit="return confirm('Supprimer l’utilisateur {{ user.pseudo }}?');" style="display:inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
+                                        <button type="submit" style="color: red; background: none; border: none; cursor: pointer;">
                             Supprimer
                         </button>
-                    </form>
+                                    </form>
+
                 </div>
             </div>
         {% else %}
