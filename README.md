@@ -75,14 +75,6 @@ php -S localhost:8000 -t public
 
 ---
 
-## ✅ Accès rapide
-
-- **Site client** : [http://localhost:8000](http://localhost:8000)
-- **Espace admin** : [http://localhost:8000/admin](http://localhost:8000/admin)  
-  **Identifiants test** : `admin@example.com` / `password`
-
----
-
 ## 🧪 Tests (optionnel)
 
 > Ajouter des tests avec PHPUnit pour valider les entités, services et contrôleurs (à venir).
